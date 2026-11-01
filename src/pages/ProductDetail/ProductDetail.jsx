@@ -51,6 +51,8 @@ import "swiper/css/navigation"
 import "swiper/css/thumbs"
 import "swiper/css/effect-creative"
 
+const PLACEHOLDER = "/placeholder-product.svg"
+
 /* ============================================================
    Helpers used by the mobile (≤lg) layout below.
    Pure functions — no effect on the desktop render.
@@ -111,8 +113,8 @@ const DStars = ({ rating = 0, size = 15 }) => (
                 <Star
                     key={i}
                     size={size}
-                    style={{ color: on ? "var(--color-primary)" : "var(--color-border-strong)" }}
-                    fill={on ? "var(--color-primary)" : "var(--color-border-strong)"}
+                    style={{ color: on ? "#F59E0B" : "#D1CEC9" }}
+                    fill={on ? "#F59E0B" : "#D1CEC9"}
                     strokeWidth={0}
                 />
             )
@@ -120,7 +122,7 @@ const DStars = ({ rating = 0, size = 15 }) => (
     </span>
 )
 
-const AVATAR_COLORS = ["var(--color-accent-subtle)", "var(--color-info-border)", "var(--color-error-subtle)", "var(--color-surface-muted)", "var(--color-success-border)", "var(--color-accent-subtle)"]
+const AVATAR_COLORS = ["#DCE8E0", "#DCE0E8", "#E8DCDC", "#E8E8DC", "#DCE8E8", "#E8DCE0"]
 
 const ProductDetail = () => {
     const { id } = useParams()
@@ -503,6 +505,7 @@ const ProductDetail = () => {
     const scrollRelated = (dir) => {
         relatedScrollRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" })
     }
+
 
     return (
         <div className="bg-background min-h-screen text-ink overflow-x-hidden selection:bg-surface-inverse selection:text-inverse" ref={containerRef}>
@@ -911,7 +914,7 @@ const ProductDetail = () => {
                                                 disabled={mobileCartItem.quantity >= (displayStock || 0)}
                                                 onClick={() => {
                                                     const qty = nextAddQuantity(cartItems, currentCartCompoundId)
-                const cartPayload = buildCartPayload(product, activeOption)
+                                                    const cartPayload = buildCartPayload(product, activeOption)
                                                     dispatch(addCart({ ...cartPayload, id: currentCartCompoundId, compound_id: currentCartCompoundId, qtyToAdd: 1 }))
                                                     upsertCartItem(user?.uid, cartPayload, qty, activeVariant?.id || null)
                                                 }}
@@ -926,7 +929,7 @@ const ProductDetail = () => {
                                         <button
                                             onClick={() => {
                                                 if (!user) { navigate("/login"); return }
-                const cartPayload = buildCartPayload(product, activeOption)
+                                                const cartPayload = buildCartPayload(product, activeOption)
                                                 const qty = nextAddQuantity(cartItems, currentCartCompoundId)
                                                 dispatch(addCart({ ...cartPayload, id: currentCartCompoundId, compound_id: currentCartCompoundId, qtyToAdd: 1 }))
                                                 upsertCartItem(user.uid, cartPayload, qty, activeVariant?.id || null)
@@ -944,7 +947,7 @@ const ProductDetail = () => {
                                         if (!user) { navigate("/login"); return }
                                         const currentCartCompoundId = activeVariant ? `${product?.id || id}_${activeVariant.id}` : (product?.id || id)
                                         const mobileCartItem = cartItems.find((item) => String(item.compound_id || item.id) === String(currentCartCompoundId))
-                const cartPayload = buildCartPayload(product, activeOption)
+                                        const cartPayload = buildCartPayload(product, activeOption)
                                         if (!mobileCartItem) {
                                             const qty = nextAddQuantity(cartItems, currentCartCompoundId)
                                             dispatch(addCart({ ...cartPayload, id: currentCartCompoundId, compound_id: currentCartCompoundId, qtyToAdd: 1 }))
@@ -962,243 +965,267 @@ const ProductDetail = () => {
                     </div>
 
                     {/* ============================================================
-              DESKTOP LAYOUT (lg+) — new design, matches html.png
+              DESKTOP LAYOUT (lg+) — Pelago design
           ============================================================ */}
-                    <div className="hidden lg:block" style={{ background: "var(--color-background)", fontFamily: "Inter, sans-serif" }}>
-                        <div className="mx-auto" style={{ maxWidth: "1280px", padding: "32px" }}>
+                    <div
+                        className="hidden lg:block"
+                        style={{
+                            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+                            background: "#EDE8E1",
+                            backgroundImage: "radial-gradient(rgba(20,40,35,0.02) 1px, transparent 0)",
+                            backgroundSize: "24px 24px",
+                            minHeight: "100vh",
+                        }}
+                    >
+                        <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "32px 24px" }}>
 
-                            {/* SECTION 1 — BREADCRUMBS */}
-                            <div className="dt-breadcrumb flex items-center" style={{ gap: "8px", marginBottom: "32px" }}>
-                                <button onClick={() => navigate("/")} className="text-[16px]" style={{ color: "var(--color-body)", fontWeight: 400 }}>Home</button>
-                                <ChevronRight size={14} style={{ color: "var(--color-body)" }} />
-                                <button onClick={() => navigate("/products")} className="text-[16px] capitalize" style={{ color: "var(--color-body)", fontWeight: 400 }}>{product.category}</button>
-                                <ChevronRight size={14} style={{ color: "var(--color-body)" }} />
-                                <span className="text-[16px]" style={{ color: "var(--color-ink)", fontWeight: 500 }}>
-                                    {dName.length > 15 ? dName.slice(0, 15) + "..." : dName}
-                                </span>
+                            {/* ── BREADCRUMBS + TOP NAV ── */}
+                            <div className="dt-breadcrumb flex items-center justify-between" style={{ marginBottom: "28px", flexWrap: "wrap", gap: "12px" }}>
+                                {/* Left: breadcrumb trail */}
+                                <div className="flex items-center flex-wrap" style={{ gap: "6px", fontSize: "12px", color: "#7A8481", fontWeight: 500 }}>
+                                    <button onClick={() => navigate("/")} style={{ color: "#7A8481", fontWeight: 500 }} className="hover:text-[#114A46] transition-colors">Home</button>
+                                    <span>/</span>
+                                    <button onClick={() => navigate("/products")} style={{ color: "#7A8481", fontWeight: 500 }} className="capitalize hover:text-[#114A46] transition-colors">{product.category}</button>
+                                    <span>/</span>
+                                    <span style={{ color: "#1E2524", fontWeight: 600 }}>{dName.length > 30 ? dName.slice(0, 30) + "…" : dName}</span>
+                                </div>
+                                {/* Right: actions */}
+                                <div className="flex items-center" style={{ gap: "10px" }}>
+                                    <button
+                                        onClick={() => navigate("/products")}
+                                        className="inline-flex items-center"
+                                        style={{ gap: "6px", fontSize: "12px", fontWeight: 600, color: "#114A46", background: "#FFFFFF", padding: "6px 14px", borderRadius: "10px", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+                                    >
+                                        <ArrowLeft size={14} /> Back to Products
+                                    </button>
+                                    {stockNum > 0 && (
+                                        <span
+                                            className="inline-flex items-center"
+                                            style={{ gap: "6px", fontSize: "11px", fontWeight: 500, color: "#065f46", background: "#d1fae5", padding: "6px 12px", borderRadius: "10px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                                        >
+                                            <span style={{ width: "8px", height: "8px", borderRadius: "9999px", background: "#10b981", display: "inline-block" }} />
+                                            In Stock{untrackedStock ? "" : ` (${stockNum} units)`}
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={handleShare}
+                                        className="inline-flex items-center"
+                                        style={{ gap: "6px", fontSize: "12px", fontWeight: 500, color: "#7A8481", background: "#FFFFFF", padding: "6px 14px", borderRadius: "10px", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+                                    >
+                                        <Share2 size={14} /> Share
+                                    </button>
+                                </div>
                             </div>
 
-                            {/* SECTION 2 — PRODUCT HERO */}
-                            <div className="flex items-start" style={{ gap: "40px" }}>
+                            {/* ── PRODUCT HERO — 12-col grid ── */}
+                            <div className="dt-gallery grid" style={{ gridTemplateColumns: "7fr 5fr", gap: "32px", alignItems: "start", marginBottom: "48px" }}>
 
-                                {/* LEFT — Image Gallery (~half the width) */}
-                                <div className="dt-gallery flex flex-1 min-w-0" style={{ gap: "16px" }}>
-                                    {/* Thumbnail strip */}
-                                    <div className="flex flex-col flex-shrink-0 no-scrollbar" style={{ width: "96px", gap: "12px", maxHeight: "520px", overflowY: "auto" }}>
+                                {/* LEFT — Image Gallery */}
+                                <div className="flex" style={{ gap: "16px", flexDirection: "row-reverse" }}>
+                                    {/* Main image */}
+                                    <div
+                                        className="relative flex-1 group overflow-hidden"
+                                        style={{ borderRadius: "20px", background: "#FFFFFF", padding: "10px", boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}
+                                    >
+                                        <div style={{ position: "relative", borderRadius: "14px", overflow: "hidden", background: "#F7F5F0", aspectRatio: "4/5" }}>
+                                            <img
+                                                ref={mainImgRef}
+                                                src={desktopMainImage}
+                                                alt={dName}
+                                                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top", transition: "transform 0.7s ease", display: "block" }}
+                                                className="group-hover:scale-105"
+                                            />
+                                            {/* Discount badge overlay */}
+                                            {discountPct > 0 && (
+                                                <span
+                                                    style={{ position: "absolute", top: "14px", left: "14px", background: "rgba(168,77,56,0.92)", backdropFilter: "blur(8px)", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "4px 10px", borderRadius: "9999px", letterSpacing: "0.5px" }}
+                                                >
+                                                    {discountPct}% OFF
+                                                </span>
+                                            )}
+                                            {/* Category badge */}
+                                            <span
+                                                style={{ position: "absolute", top: discountPct > 0 ? "46px" : "14px", left: "14px", background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", color: "#114A46", fontSize: "11px", fontWeight: 700, padding: "4px 10px", borderRadius: "9999px", letterSpacing: "0.6px", textTransform: "uppercase" }}
+                                            >
+                                                {product.category}
+                                            </span>
+                                        </div>
+                                        {/* SKU row */}
+                                        <div className="flex items-center justify-between" style={{ padding: "10px 6px 2px", fontSize: "11px", color: "#7A8481" }}>
+                                            <span style={{ fontFamily: "monospace" }}>SKU: {product.id?.toString().slice(0, 8).toUpperCase()}</span>
+                                            <span className="flex items-center" style={{ gap: "4px" }}>
+                                                <Check size={12} color="#114A46" /> Verified Product
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {/* Thumbnail strip (vertical) */}
+                                    <div className="flex flex-col" style={{ gap: "10px", flexShrink: 0, maxHeight: "520px", overflowY: "auto" }}>
                                         {allImages.map((img, i) => (
                                             <button
                                                 key={i}
                                                 onClick={() => handleSelectImage(i)}
-                                                className="flex-shrink-0 overflow-hidden"
                                                 style={{
-                                                    width: "96px",
-                                                    height: "96px",
-                                                    borderRadius: "8px",
-                                                    border: i === selectedImageIndex ? "2px solid var(--color-ink)" : "1px solid var(--color-border-strong)",
-                                                    background: "var(--color-surface)",
+                                                    width: "72px", height: "88px", flexShrink: 0, borderRadius: "12px", overflow: "hidden",
+                                                    background: "#FFFFFF", padding: "3px",
+                                                    boxShadow: i === selectedImageIndex ? "0 0 0 2px #114A46" : "0 1px 4px rgba(0,0,0,0.1)",
+                                                    opacity: i === selectedImageIndex ? 1 : 0.7,
+                                                    transition: "all 0.2s",
                                                 }}
+                                                className="hover:opacity-100"
                                             >
-                                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                                <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }} />
                                             </button>
                                         ))}
                                     </div>
-                                    {/* Main image — grows to fill the gallery column (square) */}
-                                    <div
-                                        className="flex-1 min-w-0 aspect-square self-start"
-                                        style={{
-                                            borderRadius: "12px",
-                                            boxShadow: "0px 4px 12px rgba(0,0,0,0.05)",
-                                            background: "rgba(255,255,255,0.002)",
-                                            overflow: "hidden",
-                                        }}
-                                    >
-                                        <img ref={mainImgRef} src={desktopMainImage} alt={dName} className="w-full h-full object-cover" />
-                                    </div>
                                 </div>
 
-                                {/* RIGHT — Product Details (~half the width) */}
-                                <div className="dt-details flex flex-col flex-1 min-w-0" style={{ gap: "24px" }}>
-                                    {/* Top block */}
-                                    <div className="flex flex-col" style={{ gap: "8px" }}>
-                                        <span
-                                            className="self-start capitalize"
-                                            style={{ background: "var(--color-border)", borderRadius: "9999px", padding: "4px 16px", fontWeight: 600, fontSize: "14px", color: "var(--color-body)", letterSpacing: "0.14px" }}
-                                        >
-                                            {product.category}
-                                        </span>
-                                        <h1 style={{ fontWeight: 600, fontSize: "32px", color: "var(--color-ink)", letterSpacing: "-0.8px", lineHeight: "40px" }}>
-                                            {dName}
-                                        </h1>
-                                        {reviewCount > 0 ? (
-                                            <div
-                                                className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
-                                                style={{ gap: "12px" }}
-                                                onClick={() => document.getElementById("customer-reviews-section")?.scrollIntoView({ behavior: "smooth" })}
-                                            >
-                                                <span style={{ fontWeight: 700, fontSize: "14px", color: "var(--color-ink)" }}>{avgRating.toFixed(1)}</span>
-                                                <DStars rating={avgRating} size={15} />
-                                                <span style={{ fontWeight: 400, fontSize: "14px", color: "var(--color-body)" }}>
-                                                    ({reviewCount.toLocaleString("en-IN")} {reviewCount === 1 ? "Review" : "Reviews"})
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <div
-                                                className="flex items-center cursor-pointer group transition-opacity"
-                                                style={{ gap: "8px" }}
-                                                onClick={() => document.getElementById("customer-reviews-section")?.scrollIntoView({ behavior: "smooth" })}
-                                            >
-                                                <span style={{ fontWeight: 500, fontSize: "14px", color: "var(--color-muted)" }}>No reviews yet</span>
-                                                <span style={{ color: "var(--color-muted)" }}>·</span>
+                                {/* RIGHT — Purchase Panel */}
+                                <div className="dt-details flex flex-col" style={{ gap: "20px" }}>
+                                    <div style={{ background: "#FFFFFF", borderRadius: "20px", padding: "28px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+
+                                        {/* Category badge + Rating */}
+                                        <div className="flex items-center justify-between" style={{ marginBottom: "10px" }}>
+                                            <span style={{ background: "#DCE8E0", color: "#114A46", fontSize: "11px", fontWeight: 700, padding: "4px 12px", borderRadius: "9999px", textTransform: "uppercase", letterSpacing: "0.6px" }}>
+                                                {product.category}
+                                            </span>
+                                            <div className="flex items-center" style={{ gap: "4px", fontSize: "12px", color: "#7A8481" }}>
+                                                <DStars rating={avgRating} size={13} />
+                                                <span style={{ fontWeight: 700, color: "#1E2524", marginLeft: "2px" }}>{reviewCount > 0 ? avgRating.toFixed(1) : "—"}</span>
                                                 <span
-                                                    className="group-hover:underline"
-                                                    style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-primary)" }}
+                                                    style={{ cursor: "pointer" }}
+                                                    onClick={() => document.getElementById("dt-reviews-section")?.scrollIntoView({ behavior: "smooth" })}
                                                 >
-                                                    Be the first to review
+                                                    ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
                                                 </span>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
 
-                                    {/* Price block */}
-                                    <div style={{ borderTop: "1px solid var(--color-border-strong)", borderBottom: "1px solid var(--color-border-strong)", padding: "24px 0", display: "flex", flexDirection: "column", gap: "12px" }}>
-                                        <div className="flex items-end flex-wrap" style={{ gap: "16px" }}>
-                                            <span style={{ fontWeight: 700, fontSize: "48px", color: "var(--color-ink)", letterSpacing: "-0.96px", lineHeight: 1 }}>
-                                                {formatINR(priceNum)}
-                                            </span>
-                                            {mrpNum > priceNum && (
-                                                <span style={{ fontWeight: 400, fontSize: "18px", color: "var(--color-body)", textDecoration: "line-through" }}>
-                                                    {formatINR(mrpNum)}
+                                        {/* Title */}
+                                        <h1 style={{ fontSize: "26px", fontWeight: 800, color: "#1E2524", letterSpacing: "-0.5px", lineHeight: "1.25", marginBottom: "4px" }}>{dName}</h1>
+                                        {product.description && (
+                                            <p style={{ fontSize: "13px", color: "#7A8481", lineHeight: "1.5", marginBottom: "16px" }}>
+                                                {product.description.slice(0, 100)}{product.description.length > 100 ? "…" : ""}
+                                            </p>
+                                        )}
+
+                                        {/* Pricing box */}
+                                        <div style={{ background: "rgba(247,245,240,0.8)", borderRadius: "14px", padding: "16px", marginBottom: "16px" }}>
+                                            <div className="flex items-baseline flex-wrap" style={{ gap: "10px", marginBottom: "10px" }}>
+                                                <span style={{ fontSize: "30px", fontWeight: 900, color: "#1E2524", letterSpacing: "-1px", lineHeight: 1 }}>
+                                                    {formatINR(priceNum)}
                                                 </span>
-                                            )}
-                                            {discountPct > 0 && (
-                                                <span style={{ background: "var(--color-accent-strong)", borderRadius: "4px", padding: "4px 8px", color: "var(--color-inverse)", fontWeight: 600, fontSize: "14px" }}>
-                                                    {discountPct}% OFF
-                                                </span>
-                                            )}
+                                                {mrpNum > priceNum && (
+                                                    <span style={{ fontSize: "14px", fontWeight: 500, color: "#7A8481", textDecoration: "line-through" }}>{formatINR(mrpNum)}</span>
+                                                )}
+                                                {discountPct > 0 && (
+                                                    <span style={{ fontSize: "11px", fontWeight: 700, background: "rgba(168,77,56,0.1)", color: "#A84D38", padding: "3px 8px", borderRadius: "9999px" }}>
+                                                        {discountPct}% OFF
+                                                    </span>
+                                                )}
+                                            </div>
                                             {discountPct > 0 && product?.discountExpiry && (
-                                                <div className="w-full text-[14px] font-semibold text-accent-strong bg-accent-subtle border border-accent-subtle rounded-lg p-3 mt-2 flex items-center gap-2">
-                                                    <span> Offer valid till: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</span>
-                                                </div>
+                                                <p style={{ fontSize: "11px", color: "#A84D38", fontWeight: 500, marginBottom: "8px" }}>
+                                                    Offer ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                                                </p>
                                             )}
-                                        </div>
-                                        <div className="flex items-center" style={{ gap: "8px" }}>
-                                            <span style={{ width: "10px", height: "10px", borderRadius: "9999px", background: stockNum > 0 ? "var(--color-success)" : "var(--color-error)" }} />
-                                            <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-ink)" }}>
-                                                {stockNum > 0 ? (untrackedStock ? "In Stock" : `In Stock | Available Quantity: ${stockNum} units`) : "Out of Stock"}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Purchasable options — desktop */}
-                                    <OptionPicker product={product} selectedVariant={selectedVariant} onSelect={setSelectedVariant} mainImage={mainImage} layout="desktop" />
-                                    <OptionMeta product={product} selectedVariant={selectedVariant} />
-
-                                    {/* Quantity + Actions */}
-                                    <div className="flex flex-col" style={{ gap: "20px" }}>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex flex-col" style={{ gap: "8px" }}>
-                                                <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-body)" }}>Quantity</span>
-                                                <div
-                                                    className="flex items-center"
-                                                    style={{ background: "var(--color-background)", border: "1px solid var(--color-muted)", borderRadius: "12px", width: "146px", height: "48px", padding: "0 8px" }}
-                                                >
-                                                    <button
-                                                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                                                        className="flex items-center justify-center"
-                                                        style={{ width: "40px", height: "40px", borderRadius: "8px" }}
-                                                        aria-label="Decrease quantity"
-                                                    >
-                                                        <Minus size={16} style={{ color: "var(--color-ink)" }} />
-                                                    </button>
-                                                    <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-ink)", width: "48px", textAlign: "center" }}>{quantity}</span>
-                                                    <button
-                                                        onClick={() => setQuantity((q) => (stockNum ? Math.min(stockNum, q + 1) : q + 1))}
-                                                        className="flex items-center justify-center"
-                                                        style={{ width: "40px", height: "40px", borderRadius: "8px" }}
-                                                        aria-label="Increase quantity"
-                                                    >
-                                                        <Plus size={16} style={{ color: "var(--color-ink)" }} />
-                                                    </button>
-                                                </div>
+                                            <div className="flex items-center justify-between" style={{ fontSize: "12px", paddingTop: "4px" }}>
+                                                <span className="flex items-center" style={{ gap: "6px", color: "#065f46", fontWeight: 600 }}>
+                                                    <span style={{ width: "8px", height: "8px", borderRadius: "9999px", background: stockNum > 0 ? "#10b981" : "#ef4444", display: "inline-block" }} />
+                                                    {stockNum > 0 ? (untrackedStock ? "In Stock" : `${stockNum} units left`) : "Out of Stock"}
+                                                </span>
+                                                <span style={{ color: "#7A8481", fontFamily: "monospace" }}>Tax incl.</span>
                                             </div>
-
-                                            {inCartQty > 0 && (
-                                                <div
-                                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold self-end"
-                                                    style={{
-                                                        background: "color-mix(in srgb, var(--color-primary) 12%, transparent)",
-                                                        color: "var(--color-primary)",
-                                                        border: "1px solid color-mix(in srgb, var(--color-primary) 25%, transparent)",
-                                                        marginBottom: "4px"
-                                                    }}
-                                                >
-                                                    <Check size={14} className="stroke-[2.5]" />
-                                                    <span>{inCartQty} in your cart</span>
+                                            {/* Stock bar */}
+                                            {!untrackedStock && stockNum > 0 && (
+                                                <div style={{ marginTop: "10px", height: "5px", background: "#FFFFFF", borderRadius: "9999px", overflow: "hidden" }}>
+                                                    <div style={{ height: "100%", width: `${Math.min(100, (stockNum / Math.max(stockNum, 100)) * 100)}%`, background: "#10b981", borderRadius: "9999px" }} />
                                                 </div>
                                             )}
                                         </div>
 
-                                        <div className="flex items-center" style={{ gap: "16px" }}>
-                                                                                    {isOutOfStock ? (
-                                            <button
-                                                onClick={handleToggleStockAlert}
-                                                disabled={alertBusy}
-                                                className="flex items-center justify-center gap-2 flex-1"
-                                                style={{ height: "56px", background: hasAlert ? "color-mix(in srgb, var(--color-primary) 10%, transparent)" : "var(--color-surface)", border: `1.5px solid ${hasAlert ? "var(--color-primary)" : "var(--color-border-strong)"}`, borderRadius: "12px", gap: "8px", cursor: alertBusy ? "not-allowed" : "pointer", opacity: alertBusy ? 0.5 : 1 }}
-                                            >
-                                                {hasAlert ? <BellOff size={20} color="var(--color-primary)" /> : <Bell size={20} color="var(--color-muted)" />}
-                                                <span style={{ color: hasAlert ? "var(--color-primary)" : "var(--color-muted)", fontWeight: 600, fontSize: "15px" }}>{hasAlert ? "You'll be notified" : "Notify Me"}</span>
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={handleAddToCartDesktop}
-                                                className="flex items-center justify-center flex-1"
-                                                style={{ height: "56px", background: "var(--color-ink)", borderRadius: "12px", gap: "8px", boxShadow: "0px 4px 12px rgba(0,0,0,0.05)", cursor: "pointer" }}
-                                            >
-                                                <ShoppingCart size={20} color="var(--color-inverse)" />
-                                                <span style={{ color: "var(--color-inverse)", textTransform: "uppercase", letterSpacing: "0.8px", fontWeight: 400, fontSize: "16px" }}>Add to Cart</span>
-                                            </button>
-                                        )}
+                                        {/* Variant / Option picker */}
+                                        <OptionPicker product={product} selectedVariant={selectedVariant} onSelect={setSelectedVariant} mainImage={mainImage} layout="desktop" />
+                                        <OptionMeta product={product} selectedVariant={selectedVariant} />
+
+                                        {/* Quantity + Wishlist row */}
+                                        <div className="flex items-center" style={{ gap: "12px", marginTop: "16px" }}>
+                                            {/* Qty stepper */}
+                                            <div className="flex items-center justify-between" style={{ background: "#F7F5F0", borderRadius: "12px", padding: "4px", width: "120px", boxShadow: "inset 0 1px 3px rgba(0,0,0,0.06)" }}>
+                                                <button
+                                                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                                                    style={{ width: "34px", height: "34px", borderRadius: "8px", background: "#FFFFFF", color: "#1E2524", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", transition: "all 0.15s" }}
+                                                    aria-label="Decrease"
+                                                >
+                                                    <Minus size={14} />
+                                                </button>
+                                                <span style={{ fontWeight: 700, fontSize: "15px", color: "#1E2524", fontFamily: "monospace", minWidth: "24px", textAlign: "center" }}>{quantity}</span>
+                                                <button
+                                                    onClick={() => setQuantity((q) => (stockNum ? Math.min(stockNum, q + 1) : q + 1))}
+                                                    style={{ width: "34px", height: "34px", borderRadius: "8px", background: "#FFFFFF", color: "#1E2524", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.08)", transition: "all 0.15s" }}
+                                                    aria-label="Increase"
+                                                >
+                                                    <Plus size={14} />
+                                                </button>
+                                            </div>
+                                            {/* Wishlist button */}
                                             <button
                                                 onClick={handleWishlist}
-                                                className="flex items-center justify-center flex-shrink-0"
-                                                style={{ width: "56px", height: "56px", border: "1px solid var(--color-muted)", borderRadius: "12px" }}
                                                 aria-label="Toggle wishlist"
+                                                style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#F7F5F0", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s" }}
+                                                className="hover:bg-rose-50"
                                             >
-                                                <Heart size={20} style={{ color: isWishlisted ? "var(--color-primary)" : "var(--color-body)" }} fill={isWishlisted ? "var(--color-primary)" : "none"} />
+                                                <Heart size={18} style={{ color: isWishlisted ? "#e11d48" : "#7A8481" }} fill={isWishlisted ? "#e11d48" : "none"} />
                                             </button>
-                                            <button
-                                                onClick={handleShare}
-                                                className="flex items-center justify-center flex-shrink-0"
-                                                style={{ width: "56px", height: "56px", border: "1px solid var(--color-muted)", borderRadius: "12px" }}
-                                                aria-label="Share product"
-                                            >
-                                                <Share2 size={20} style={{ color: "var(--color-body)" }} />
-                                            </button>
+                                            {/* In-cart badge */}
+                                            {inCartQty > 0 && (
+                                                <span className="flex items-center" style={{ gap: "4px", fontSize: "12px", fontWeight: 600, color: "#114A46", background: "#DCE8E0", padding: "6px 12px", borderRadius: "9999px" }}>
+                                                    <Check size={12} strokeWidth={2.5} /> {inCartQty} in cart
+                                                </span>
+                                            )}
                                         </div>
 
-                                        {/* Delivery info */}
-                                        <div className="flex" style={{ gap: "16px" }}>
-                                            <div className="flex items-center flex-1" style={{ height: "62px", background: "var(--color-surface-muted)", borderRadius: "12px", padding: "16px", gap: "8px" }}>
-                                                <Truck size={22} style={{ color: "var(--color-ink)" }} />
-                                                {/* Task 1.17: this tile used to promise "Free Delivery"
-                                                    unconditionally, which contradicts the threshold-based
-                                                    rate the cart actually charges. Now states the real
-                                                    threshold from live `shippingSettings`. */}
-                                                <div className="flex flex-col">
-                                                    <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-ink)" }}>
-                                                        {shippingSettings
-                                                            ? `Free over ₹${Number(shippingSettings.freeShippingThreshold || 0).toFixed(0)}`
-                                                            : "Delivery"}
-                                                    </span>
-                                                    <span style={{ fontWeight: 500, fontSize: "12px", color: "var(--color-body)" }}>Within 3-5 days</span>
+                                        {/* Add to Cart / Notify Me CTA */}
+                                        <div style={{ marginTop: "14px" }}>
+                                            {isOutOfStock ? (
+                                                <button
+                                                    onClick={handleToggleStockAlert}
+                                                    disabled={alertBusy}
+                                                    className="w-full flex items-center justify-center"
+                                                    style={{ height: "52px", borderRadius: "14px", gap: "10px", fontWeight: 700, fontSize: "14px", letterSpacing: "0.5px", border: `2px solid ${hasAlert ? "#114A46" : "#E3DDD4"}`, background: hasAlert ? "#DCE8E0" : "#F7F5F0", color: hasAlert ? "#114A46" : "#7A8481", cursor: alertBusy ? "not-allowed" : "pointer", opacity: alertBusy ? 0.6 : 1, transition: "all 0.2s" }}
+                                                >
+                                                    {hasAlert ? <BellOff size={18} /> : <Bell size={18} />}
+                                                    {hasAlert ? "You'll be notified" : "Notify Me When Back"}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={handleAddToCartDesktop}
+                                                    className="w-full flex items-center justify-center"
+                                                    style={{ height: "52px", borderRadius: "14px", gap: "10px", background: "#A84D38", color: "#FFFFFF", fontWeight: 700, fontSize: "14px", letterSpacing: "0.8px", textTransform: "uppercase", boxShadow: "0 4px 14px rgba(168,77,56,0.3)", transition: "all 0.2s", cursor: "pointer" }}
+                                                    onMouseEnter={e => e.currentTarget.style.background = "#8F3E2C"}
+                                                    onMouseLeave={e => e.currentTarget.style.background = "#A84D38"}
+                                                >
+                                                    <ShoppingCart size={18} />
+                                                    Add to Cart · {formatINR(priceNum * quantity)}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Delivery badges */}
+                                        <div className="grid grid-cols-2" style={{ gap: "12px", marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #F7F5F0" }}>
+                                            <div className="flex items-start" style={{ gap: "10px", background: "rgba(247,245,240,0.6)", borderRadius: "12px", padding: "12px" }}>
+                                                <Truck size={18} style={{ color: "#114A46", flexShrink: 0, marginTop: "1px" }} />
+                                                <div>
+                                                    <p style={{ fontSize: "12px", fontWeight: 700, color: "#1E2524" }}>
+                                                        {shippingSettings ? `Free over ₹${Number(shippingSettings.freeShippingThreshold || 0).toFixed(0)}` : "Free Shipping"}
+                                                    </p>
+                                                    <p style={{ fontSize: "11px", color: "#7A8481" }}>Arrives in 3–5 business days</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center flex-1" style={{ height: "62px", background: "var(--color-surface-muted)", borderRadius: "12px", padding: "16px", gap: "8px" }}>
-                                                <Shield size={20} style={{ color: "var(--color-ink)" }} />
-                                                <div className="flex flex-col">
-                                                    <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-ink)" }}>1 Year Warranty</span>
-                                                    <span style={{ fontWeight: 500, fontSize: "12px", color: "var(--color-body)" }}>Brand Warranty</span>
+                                            <div className="flex items-start" style={{ gap: "10px", background: "rgba(247,245,240,0.6)", borderRadius: "12px", padding: "12px" }}>
+                                                <Shield size={18} style={{ color: "#114A46", flexShrink: 0, marginTop: "1px" }} />
+                                                <div>
+                                                    <p style={{ fontSize: "12px", fontWeight: 700, color: "#1E2524" }}>1-Year Guarantee</p>
+                                                    <p style={{ fontSize: "11px", color: "#7A8481" }}>Brand warranty covered</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1206,9 +1233,10 @@ const ProductDetail = () => {
                                 </div>
                             </div>
 
-                            {/* SECTION 3 — TABS */}
-                            <div className="dt-tabs" style={{ marginTop: "64px" }}>
-                                <div className="flex" style={{ borderBottom: "1px solid var(--color-border-strong)", gap: "32px" }}>
+                            {/* ── TABS SECTION ── */}
+                            <div className="dt-tabs" style={{ background: "#FFFFFF", borderRadius: "20px", padding: "28px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", marginBottom: "24px" }}>
+                                {/* Tab buttons */}
+                                <div className="flex" style={{ borderBottom: "1px solid #F7F5F0", gap: "0", marginBottom: "24px", overflowX: "auto" }}>
                                     {[
                                         { key: "description", label: "Product Description" },
                                         { key: "specifications", label: "Specifications" },
@@ -1218,49 +1246,48 @@ const ProductDetail = () => {
                                             key={tab.key}
                                             onClick={() => setActiveTab(tab.key)}
                                             style={{
-                                                fontWeight: 600,
-                                                fontSize: "14px",
-                                                letterSpacing: "0.14px",
-                                                paddingBottom: "16px",
-                                                color: activeTab === tab.key ? "var(--color-ink)" : "var(--color-body)",
-                                                borderBottom: activeTab === tab.key ? "2px solid var(--color-ink)" : "2px solid transparent",
+                                                fontSize: "13px", fontWeight: activeTab === tab.key ? 700 : 600,
+                                                paddingBottom: "14px", paddingRight: "28px", whiteSpace: "nowrap",
+                                                color: activeTab === tab.key ? "#114A46" : "#7A8481",
+                                                borderBottom: `2px solid ${activeTab === tab.key ? "#114A46" : "transparent"}`,
+                                                transition: "all 0.2s",
                                             }}
+                                            className="hover:text-[#1E2524]"
                                         >
                                             {tab.label}
                                         </button>
                                     ))}
                                 </div>
 
-                                {/* TAB — Description */}
+                                {/* Tab — Description */}
                                 {activeTab === "description" && (
-                                    <div className="flex items-start" style={{ gap: "32px", marginTop: "32px" }}>
-                                        <div className="flex flex-col flex-1" style={{ gap: "24px" }}>
-                                            <h3 style={{ fontWeight: 600, fontSize: "20px", color: "var(--color-ink)" }}>Overview</h3>
-                                            {descPara1 && <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "26px", color: "var(--color-body)" }}>{descPara1}</p>}
-                                            {descPara2 && <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "26px", color: "var(--color-body)" }}>{descPara2}</p>}
+                                    <div className="flex items-start" style={{ gap: "32px" }}>
+                                        <div className="flex flex-col flex-1" style={{ gap: "20px" }}>
+                                            <h3 style={{ fontWeight: 700, fontSize: "18px", color: "#1E2524" }}>Overview</h3>
+                                            {descPara1 && <p style={{ fontSize: "15px", lineHeight: "1.7", color: "#1E2524", opacity: 0.8 }}>{descPara1}</p>}
+                                            {descPara2 && <p style={{ fontSize: "15px", lineHeight: "1.7", color: "#1E2524", opacity: 0.8 }}>{descPara2}</p>}
                                             {features.length > 0 && (
                                                 <>
-                                                    <h3 style={{ fontWeight: 600, fontSize: "20px", color: "var(--color-ink)", paddingTop: "16px" }}>Key Features</h3>
+                                                    <h3 style={{ fontWeight: 700, fontSize: "18px", color: "#1E2524", paddingTop: "8px" }}>Key Features</h3>
                                                     <div className="grid grid-cols-2" style={{ gap: "8px 24px" }}>
                                                         {features.map((f, i) => (
                                                             <div key={i} className="flex items-center" style={{ gap: "8px" }}>
-                                                                <Check size={20} style={{ color: "var(--color-primary)", flexShrink: 0 }} />
-                                                                <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}>{f}</span>
+                                                                <Check size={16} style={{ color: "#114A46", flexShrink: 0 }} />
+                                                                <span style={{ fontSize: "14px", color: "#1E2524" }}>{f}</span>
                                                             </div>
                                                         ))}
                                                     </div>
                                                 </>
                                             )}
                                         </div>
-
                                         {specRowsDetailed.length > 0 && (
-                                            <div className="flex-shrink-0" style={{ width: "373.33px", background: "var(--color-border)", borderRadius: "12px", padding: "32px" }}>
-                                                <h3 style={{ fontWeight: 600, fontSize: "20px", color: "var(--color-ink)", marginBottom: "16px" }}>Specifications</h3>
-                                                <div className="flex flex-col" style={{ gap: "16px" }}>
+                                            <div style={{ flexShrink: 0, width: "320px", background: "#F7F5F0", borderRadius: "14px", padding: "24px" }}>
+                                                <h3 style={{ fontWeight: 700, fontSize: "15px", color: "#1E2524", marginBottom: "16px" }}>Specifications</h3>
+                                                <div className="flex flex-col" style={{ gap: "0" }}>
                                                     {specRowsDetailed.filter((r) => r.value).map((row, i) => (
-                                                        <div key={i} className="flex items-center justify-between" style={{ borderBottom: "1px solid color-mix(in srgb, var(--color-border-strong) 30%, transparent)", paddingBottom: "16px" }}>
-                                                            <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>{row.label ? prettyLabel(row.label) : "Detail"}</span>
-                                                            <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-ink)", textAlign: "right" }}>{row.value}</span>
+                                                        <div key={i} className="flex items-center justify-between" style={{ borderBottom: "1px solid #E3DDD4", padding: "10px 0", fontSize: "13px" }}>
+                                                            <span style={{ color: "#7A8481", fontWeight: 500 }}>{row.label ? prettyLabel(row.label) : "Detail"}</span>
+                                                            <span style={{ color: "#1E2524", fontWeight: 600, textAlign: "right", maxWidth: "55%" }}>{row.value}</span>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -1269,63 +1296,57 @@ const ProductDetail = () => {
                                     </div>
                                 )}
 
-                                {/* TAB — Specifications */}
+                                {/* Tab — Specifications */}
                                 {activeTab === "specifications" && (
-                                    <div style={{ marginTop: "32px" }}>
+                                    <div>
                                         {specRowsDetailed.length > 0 ? (
-                                            <div className="flex flex-col" style={{ gap: "16px", maxWidth: "800px" }}>
+                                            <div style={{ maxWidth: "720px" }}>
                                                 {specRowsDetailed.filter((r) => r.value).map((row, i) => (
-                                                    <div key={i} className="flex items-center justify-between" style={{ borderBottom: "1px solid color-mix(in srgb, var(--color-border-strong) 30%, transparent)", paddingBottom: "16px" }}>
-                                                        <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>{row.label ? prettyLabel(row.label) : "Detail"}</span>
-                                                        <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-ink)", textAlign: "right" }}>{row.value}</span>
+                                                    <div key={i} className="flex items-center justify-between" style={{ borderBottom: "1px solid #E3DDD4", padding: "12px 0", fontSize: "14px" }}>
+                                                        <span style={{ color: "#7A8481", fontWeight: 500 }}>{row.label ? prettyLabel(row.label) : "Detail"}</span>
+                                                        <span style={{ color: "#1E2524", fontWeight: 600 }}>{row.value}</span>
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "26px", color: "var(--color-body)" }}>No specifications available.</p>
+                                            <p style={{ fontSize: "15px", color: "#7A8481" }}>No specifications available.</p>
                                         )}
                                     </div>
                                 )}
 
-                                {/* TAB — Shipping & Returns
-                                    Task 1.17: this tab previously made three
-                                    hardcoded claims that contradicted the
-                                    store's actual policy — it advertised an
-                                    "Express delivery" tier that doesn't exist,
-                                    and "Free returns within 30 days" against a
-                                    real 7-day return window. Replaced with the
-                                    genuine terms, with the shipping rates read
-                                    from the same live `shippingSettings` the
-                                    cart charges from, plus links to the full
-                                    policies. */}
+                                {/* Tab — Shipping & Returns */}
                                 {activeTab === "shipping" && (
-                                    <div className="flex flex-col" style={{ marginTop: "32px", gap: "16px", maxWidth: "800px" }}>
-                                        <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "26px", color: "var(--color-body)" }}>
+                                    <div className="flex flex-col" style={{ gap: "14px", maxWidth: "720px" }}>
+                                        <p style={{ fontSize: "15px", lineHeight: "1.7", color: "#1E2524", opacity: 0.8 }}>
                                             {shippingSettings
                                                 ? `Orders over ₹${Number(shippingSettings.freeShippingThreshold || 0).toFixed(2)} ship free. Below that, a flat ₹${Number(shippingSettings.shippingCost || 0).toFixed(2)} charge applies, shown at checkout before you pay.`
                                                 : "Shipping cost is calculated at checkout based on your order total."}
                                         </p>
-                                        <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "26px", color: "var(--color-body)" }}>
+                                        <p style={{ fontSize: "15px", lineHeight: "1.7", color: "#1E2524", opacity: 0.8 }}>
                                             Orders are packed and handed to our delivery partner within 1–2 business days, then typically take a further 2–5 business days to arrive.
                                         </p>
-                                        <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "26px", color: "var(--color-body)" }}>
-                                            {activeOption ? <>This item: <strong>{policySummary(activeOption)}</strong> (counted from delivery). </> : null}If an item arrives damaged, incorrect, or not as described, contact us within its return window and we&apos;ll arrange a replacement or refund.
+                                        <p style={{ fontSize: "15px", lineHeight: "1.7", color: "#1E2524", opacity: 0.8 }}>
+                                            {activeOption ? <>{`This item: `}<strong>{policySummary(activeOption)}</strong>{` (counted from delivery). `}</> : null}
+                                            If an item arrives damaged, incorrect, or not as described, contact us within its return window and we&apos;ll arrange a replacement or refund.
                                         </p>
                                         <PolicyLinks style={{ marginTop: "8px", maxWidth: "420px" }} />
                                     </div>
                                 )}
                             </div>
 
-                            {/* SECTION 4 — CUSTOMER REVIEWS */}
-                            <div id="customer-reviews-section" style={{ borderTop: "1px solid var(--color-border-strong)", paddingTop: "72px", marginTop: "72px", display: "flex", flexDirection: "column", gap: "48px" }}>
-                                <div className="flex items-center justify-between">
-                                    <h2 style={{ fontWeight: 600, fontSize: "32px", color: "var(--color-ink)" }}>Customer Reviews</h2>
+                            {/* ── CUSTOMER REVIEWS ── */}
+                            <div id="dt-reviews-section" style={{ background: "#FFFFFF", borderRadius: "20px", padding: "28px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", marginBottom: "24px" }}>
+                                <div className="flex items-center justify-between" style={{ marginBottom: "24px" }}>
+                                    <div>
+                                        <h2 style={{ fontWeight: 800, fontSize: "22px", color: "#1E2524" }}>Customer Reviews</h2>
+                                        <p style={{ fontSize: "12px", color: "#7A8481", marginTop: "2px" }}>Real impressions from our community</p>
+                                    </div>
                                     {reviewCount > 0 && (
-                                        <div className="flex items-center" style={{ gap: "8px" }}>
-                                            <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>Sort by:</span>
+                                        <div className="flex items-center" style={{ gap: "10px" }}>
+                                            <span style={{ fontSize: "14px", color: "#7A8481" }}>Sort by:</span>
                                             <ReviewSortSelect
                                                 rv={rv}
-                                                style={{ background: "var(--color-background)", border: "1px solid var(--color-muted)", borderRadius: "8px", padding: "8px 16px", fontSize: "14px", color: "var(--color-ink)" }}
+                                                style={{ background: "#F7F5F0", border: "1px solid #E3DDD4", borderRadius: "10px", padding: "8px 14px", fontSize: "13px", color: "#1E2524" }}
                                             />
                                         </div>
                                     )}
@@ -1333,45 +1354,25 @@ const ProductDetail = () => {
 
                                 {reviewCount === 0 ? (
                                     <div
-                                        className="flex flex-col items-center justify-center text-center w-full"
-                                        style={{
-                                            background: "var(--color-surface-muted)",
-                                            borderRadius: "16px",
-                                            padding: "56px 24px",
-                                            border: "1px dashed var(--color-border-strong)",
-                                            gap: "12px"
-                                        }}
+                                        className="flex flex-col items-center justify-center text-center"
+                                        style={{ background: "rgba(247,245,240,0.7)", borderRadius: "16px", padding: "56px 24px", border: "1px dashed #E3DDD4" }}
                                     >
-                                        <div
-                                            className="flex items-center justify-center"
-                                            style={{
-                                                width: "56px",
-                                                height: "56px",
-                                                borderRadius: "50%",
-                                                background: "color-mix(in srgb, var(--color-primary) 12%, transparent)",
-                                                color: "var(--color-primary)",
-                                                marginBottom: "4px"
-                                            }}
-                                        >
-                                            <Star size={26} strokeWidth={2} />
+                                        <div style={{ width: "56px", height: "56px", borderRadius: "9999px", background: "#F7F5F0", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "12px", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.05)" }}>
+                                            <Star size={24} style={{ color: "#A84D38" }} />
                                         </div>
-                                        <h3 style={{ fontWeight: 600, fontSize: "20px", color: "var(--color-ink)" }}>
-                                            No reviews yet
-                                        </h3>
-                                        <p style={{ fontWeight: 400, fontSize: "15px", color: "var(--color-body)", maxWidth: "440px", lineHeight: "22px" }}>
-                                            Have you purchased or tried this product? Be the first to share your thoughts and help other shoppers make their choice!
+                                        <h3 style={{ fontWeight: 700, fontSize: "16px", color: "#1E2524", marginBottom: "6px" }}>No reviews yet</h3>
+                                        <p style={{ fontSize: "13px", color: "#7A8481", maxWidth: "360px", lineHeight: "1.6", marginBottom: "20px" }}>
+                                            Have you purchased this product? Be the first to share your thoughts and help other shoppers!
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="flex items-start" style={{ gap: "48px" }}>
-                                        {/* Rating Summary */}
-                                        <div className="flex flex-col flex-shrink-0" style={{ width: "350px", background: "var(--color-surface-muted)", borderRadius: "12px", padding: "32px", gap: "32px" }}>
-                                            <div className="flex flex-col items-center" style={{ gap: "8px" }}>
-                                                <span style={{ fontWeight: 700, fontSize: "56px", color: "var(--color-ink)", lineHeight: 1 }}>{avgRating.toFixed(1)}</span>
-                                                <DStars rating={avgRating} size={20} />
-                                                <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>
-                                                    Total {reviewCount.toLocaleString("en-IN")} reviews
-                                                </span>
+                                    <div className="flex items-start" style={{ gap: "32px" }}>
+                                        {/* Rating summary */}
+                                        <div style={{ flexShrink: 0, width: "260px", background: "#F7F5F0", borderRadius: "16px", padding: "24px" }}>
+                                            <div className="flex flex-col items-center" style={{ gap: "6px", marginBottom: "24px" }}>
+                                                <span style={{ fontWeight: 800, fontSize: "52px", color: "#1E2524", lineHeight: 1 }}>{avgRating.toFixed(1)}</span>
+                                                <DStars rating={avgRating} size={18} />
+                                                <span style={{ fontSize: "13px", color: "#7A8481" }}>Based on {reviewCount} review{reviewCount !== 1 ? "s" : ""}</span>
                                             </div>
                                             <div className="flex flex-col" style={{ gap: "8px" }}>
                                                 {[5, 4, 3, 2, 1].map((star) => {
@@ -1379,11 +1380,12 @@ const ProductDetail = () => {
                                                     const pct = reviewCount > 0 ? (count / reviewCount) * 100 : 0
                                                     return (
                                                         <div key={star} className="flex items-center" style={{ gap: "8px" }}>
-                                                            <span style={{ fontSize: "16px", color: "var(--color-ink)", width: "12px" }}>{star}</span>
-                                                            <div className="flex-1 overflow-hidden" style={{ height: "8px", background: "var(--color-border)", borderRadius: "9999px" }}>
-                                                                <div style={{ height: "100%", width: `${pct}%`, background: "var(--color-primary)", borderRadius: "9999px" }} />
+                                                            <span style={{ fontSize: "12px", color: "#7A8481", width: "10px", textAlign: "right" }}>{star}</span>
+                                                            <Star size={11} style={{ color: "#F59E0B", flexShrink: 0 }} fill="#F59E0B" strokeWidth={0} />
+                                                            <div style={{ flex: 1, height: "6px", background: "#E3DDD4", borderRadius: "9999px", overflow: "hidden" }}>
+                                                                <div style={{ height: "100%", width: `${pct}%`, background: "#F59E0B", borderRadius: "9999px" }} />
                                                             </div>
-                                                            <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)", width: "24px", textAlign: "right" }}>{count}</span>
+                                                            <span style={{ fontSize: "12px", color: "#7A8481", width: "20px", textAlign: "right" }}>{count}</span>
                                                         </div>
                                                     )
                                                 })}
@@ -1391,37 +1393,36 @@ const ProductDetail = () => {
                                         </div>
 
                                         {/* Review cards */}
-                                        <div className="flex flex-col flex-1" style={{ gap: "32px" }}>
+                                        <div className="flex flex-col flex-1" style={{ gap: "24px" }}>
                                             <ReviewFilters rv={rv} />
                                             {displayedReviews.length === 0 && <ReviewFilterEmpty onClear={rv.clearFilters} />}
                                             {displayedReviews.map((review, i) => {
                                                 const initials = review.userInitials || getInitials(review.userName)
                                                 const avatarBg = review.avatarColor || AVATAR_COLORS[i % AVATAR_COLORS.length]
                                                 return (
-                                                    <div key={review.id} style={{ borderBottom: "1px solid var(--color-border-strong)", paddingBottom: "32px" }}>
-                                                        <div className="flex items-center" style={{ gap: "16px" }}>
+                                                    <div key={review.id} style={{ borderBottom: "1px solid #E3DDD4", paddingBottom: "24px" }}>
+                                                        <div className="flex items-center" style={{ gap: "12px", marginBottom: "10px" }}>
                                                             <div
                                                                 className="flex items-center justify-center flex-shrink-0"
-                                                                style={{ width: "48px", height: "48px", borderRadius: "9999px", background: avatarBg, fontWeight: 700, fontSize: "16px", color: "var(--color-ink)" }}
+                                                                style={{ width: "44px", height: "44px", borderRadius: "9999px", background: avatarBg, fontWeight: 700, fontSize: "15px", color: "#1E2524" }}
                                                             >
                                                                 {initials}
                                                             </div>
-                                                            <div className="flex flex-col" style={{ gap: "4px" }}>
-                                                                <div className="flex items-center" style={{ gap: "10px" }}>
-                                                                    <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}>{review.userName || "Anonymous"}</span>
-                                                                    <span className="flex items-center" style={{ gap: "3px", fontWeight: 600, fontSize: "12px", color: "var(--color-success)" }}>
-                                                                        <Check size={12} />
-                                                                        Verified Purchase
+                                                            <div className="flex flex-col" style={{ gap: "2px" }}>
+                                                                <div className="flex items-center" style={{ gap: "8px" }}>
+                                                                    <span style={{ fontWeight: 600, fontSize: "14px", color: "#1E2524" }}>{review.userName || "Anonymous"}</span>
+                                                                    <span className="flex items-center" style={{ gap: "3px", fontSize: "11px", fontWeight: 600, color: "#059669" }}>
+                                                                        <Check size={11} /> Verified Purchase
                                                                     </span>
                                                                 </div>
-                                                                <div className="flex items-center" style={{ gap: "12px" }}>
-                                                                    <DStars rating={Number(review.rating) || 0} size={15} />
-                                                                    <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>{formatReviewDate(review.createdAt)}</span>
+                                                                <div className="flex items-center" style={{ gap: "10px" }}>
+                                                                    <DStars rating={Number(review.rating) || 0} size={13} />
+                                                                    <span style={{ fontSize: "12px", color: "#7A8481" }}>{formatReviewDate(review.createdAt)}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        {review.title && <h4 style={{ fontWeight: 600, fontSize: "20px", color: "var(--color-ink)", paddingTop: "8px" }}>{review.title}</h4>}
-                                                        <p style={{ fontWeight: 400, fontSize: "16px", lineHeight: "24px", color: "var(--color-body)", paddingTop: review.title ? "4px" : "8px" }}>
+                                                        {review.title && <h4 style={{ fontWeight: 700, fontSize: "15px", color: "#1E2524", marginBottom: "4px" }}>{review.title}</h4>}
+                                                        <p style={{ fontSize: "14px", lineHeight: "1.65", color: "#1E2524", opacity: 0.8 }}>
                                                             {review.body || review.comment}
                                                         </p>
                                                         <ReviewExtras review={review} rv={rv} />
@@ -1432,9 +1433,11 @@ const ProductDetail = () => {
                                                 <button
                                                     onClick={() => setShowAllReviews((v) => !v)}
                                                     className="w-full"
-                                                    style={{ height: "60px", border: "2px solid var(--color-ink)", borderRadius: "12px", fontWeight: 700, fontSize: "16px", color: "var(--color-ink)" }}
+                                                    style={{ height: "52px", border: "2px solid #E3DDD4", borderRadius: "14px", fontWeight: 700, fontSize: "14px", color: "#1E2524", background: "transparent", transition: "all 0.2s" }}
+                                                    onMouseEnter={e => { e.currentTarget.style.borderColor = "#114A46"; e.currentTarget.style.color = "#114A46" }}
+                                                    onMouseLeave={e => { e.currentTarget.style.borderColor = "#E3DDD4"; e.currentTarget.style.color = "#1E2524" }}
                                                 >
-                                                    {showAllReviews ? "Show Less" : "View All Reviews"}
+                                                    {showAllReviews ? "Show Less" : `View All ${sortedReviews.length} Reviews`}
                                                 </button>
                                             )}
                                         </div>
@@ -1442,78 +1445,84 @@ const ProductDetail = () => {
                                 )}
                             </div>
 
-                            {/* SECTION 4b — PRODUCT Q&A (mounted only for this layout so the questions are fetched once) */}
+                            {/* ── PRODUCT Q&A ── */}
                             {!isMobile && <ProductQA productId={id} variant="desktop" sectionId="product-qa-section" />}
 
-                            {/* SECTION 5 — RELATED PRODUCTS */}
+                            {/* ── RELATED PRODUCTS ── */}
                             {relatedProducts.length > 0 && (
-                                <div style={{ paddingTop: "72px", display: "flex", flexDirection: "column", gap: "32px" }}>
-                                    <div className="flex items-center justify-between">
-                                        <h2 style={{ fontWeight: 600, fontSize: "32px", color: "var(--color-ink)" }}>You May Also Like</h2>
+                                <div style={{ marginTop: "24px" }}>
+                                    <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+                                        <div>
+                                            <h2 style={{ fontWeight: 800, fontSize: "22px", color: "#1E2524" }}>You May Also Like</h2>
+                                            <p style={{ fontSize: "12px", color: "#7A8481", marginTop: "2px" }}>Handpicked companions from our collection</p>
+                                        </div>
                                         <div className="flex items-center" style={{ gap: "8px" }}>
                                             <button
                                                 onClick={() => scrollRelated(-1)}
                                                 className="flex items-center justify-center"
-                                                style={{ width: "40px", height: "40px", border: "1px solid var(--color-border-strong)", borderRadius: "9999px" }}
+                                                style={{ width: "36px", height: "36px", borderRadius: "9999px", background: "#FFFFFF", boxShadow: "0 1px 4px rgba(0,0,0,0.1)", border: "1px solid #E3DDD4" }}
                                                 aria-label="Scroll left"
                                             >
-                                                <ChevronLeft size={16} style={{ color: "var(--color-ink)" }} />
+                                                <ChevronLeft size={16} style={{ color: "#1E2524" }} />
                                             </button>
                                             <button
                                                 onClick={() => scrollRelated(1)}
                                                 className="flex items-center justify-center"
-                                                style={{ width: "40px", height: "40px", border: "1px solid var(--color-border-strong)", borderRadius: "9999px" }}
+                                                style={{ width: "36px", height: "36px", borderRadius: "9999px", background: "#FFFFFF", boxShadow: "0 1px 4px rgba(0,0,0,0.1)", border: "1px solid #E3DDD4" }}
                                                 aria-label="Scroll right"
                                             >
-                                                <ChevronRight size={16} style={{ color: "var(--color-ink)" }} />
+                                                <ChevronRight size={16} style={{ color: "#1E2524" }} />
                                             </button>
                                         </div>
                                     </div>
-
-                                    <div ref={relatedScrollRef} className="flex no-scrollbar" style={{ gap: "24px", overflowX: "auto" }}>
+                                    <div ref={relatedScrollRef} className="flex no-scrollbar" style={{ gap: "20px", overflowX: "auto", paddingBottom: "8px" }}>
                                         {relatedProducts.map((rp) => {
                                             const rpName = rp.title || rp.name || "Product"
                                             const rpImg = rp.thumbnail || rp.image || rp.imageUrl
+                                            const rpMrp = Number(rp.price || 0)
+                                            const rpDisc = Number(rp.discount || 0)
+                                            const rpPrice = rpMrp - (rpMrp * rpDisc) / 100
                                             return (
                                                 <div
                                                     key={rp.id}
                                                     onClick={() => navigate(`/product/${rp.id}`, { state: { product: rp } })}
                                                     className="dt-related-card flex flex-col cursor-pointer flex-shrink-0 group"
-                                                    style={{ width: "286px", gap: "4px" }}
+                                                    style={{ width: "240px", background: "#FFFFFF", borderRadius: "16px", padding: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", transition: "box-shadow 0.2s" }}
+                                                    onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.12)"}
+                                                    onMouseLeave={e => e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.06)"}
                                                 >
-                                                    <div className="relative overflow-hidden" style={{ width: "286px", height: "357.5px", background: "var(--color-surface-muted)", borderRadius: "12px" }}>
-                                                        <img src={rpImg} alt={rpName} className="w-full h-full object-cover" />
-                                                        <button
-                                                            onClick={(e) => { e.stopPropagation() }}
-                                                            className="absolute flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            style={{ top: "16px", right: "16px", width: "32px", height: "32px", background: "color-mix(in srgb, var(--color-surface) 80%, transparent)", backdropFilter: "blur(4px)", borderRadius: "9999px" }}
-                                                            aria-label="Wishlist"
-                                                        >
-                                                            <Heart size={16} style={{ color: "var(--color-body)" }} />
-                                                        </button>
+                                                    <div
+                                                        className="relative overflow-hidden"
+                                                        style={{ aspectRatio: "1", borderRadius: "12px", background: "#F7F5F0", marginBottom: "10px" }}
+                                                    >
+                                                        <img
+                                                            src={rpImg}
+                                                            alt={rpName}
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        />
+                                                        {rpDisc > 0 && (
+                                                            <span style={{ position: "absolute", top: "8px", left: "8px", background: "rgba(168,77,56,0.9)", color: "#fff", fontSize: "10px", fontWeight: 700, padding: "3px 8px", borderRadius: "9999px" }}>
+                                                                {rpDisc}% OFF
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                    <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)", paddingTop: "12px" }} className="capitalize">{rp.brand || rp.category}</span>
-                                                    <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}>{rpName}</span>
-                                                    {(() => {
-                                                        const rpMrp = Number(rp.price || 0)
-                                                        const rpDisc = Number(rp.discount || 0)
-                                                        const rpPrice = rpMrp - (rpMrp * rpDisc) / 100
-                                                        return rpDisc > 0 ? (
-                                                            <div className="flex items-center" style={{ gap: "8px", flexWrap: "wrap" }}>
-                                                                <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-primary)" }}>{formatINR(rpPrice)}</span>
-                                                                <span style={{ fontWeight: 400, fontSize: "14px", color: "var(--color-muted)", textDecoration: "line-through" }}>{formatINR(rpMrp)}</span>
-                                                                <span style={{ background: "var(--color-error-subtle)", borderRadius: "4px", padding: "2px 6px", fontWeight: 600, fontSize: "11px", color: "var(--color-error)" }}>{rpDisc}% OFF</span>
-                                                            </div>
-                                                        ) : (
-                                                            <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-ink)" }}>{formatINR(rpMrp)}</span>
-                                                        )
-                                                    })()}
+                                                    <span style={{ fontSize: "10px", fontWeight: 700, color: "#7A8481", textTransform: "uppercase", letterSpacing: "0.6px" }} className="capitalize">{rp.category}</span>
+                                                    <span style={{ fontSize: "14px", fontWeight: 700, color: "#1E2524", marginTop: "2px", marginBottom: "4px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
+                                                        className="group-hover:text-[#114A46] transition-colors"
+                                                    >
+                                                        {rpName}
+                                                    </span>
+                                                    <div className="flex items-baseline" style={{ gap: "6px", marginTop: "4px", marginBottom: "10px" }}>
+                                                        <span style={{ fontSize: "15px", fontWeight: 800, color: "#1E2524" }}>{formatINR(rpDisc > 0 ? rpPrice : rpMrp)}</span>
+                                                        {rpDisc > 0 && <span style={{ fontSize: "12px", color: "#7A8481", textDecoration: "line-through" }}>{formatINR(rpMrp)}</span>}
+                                                    </div>
                                                 </div>
                                             )
                                         })}
                                     </div>
                                 </div>
                             )}
+
                         </div>
                     </div>
                 </>

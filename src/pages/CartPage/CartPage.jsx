@@ -1067,7 +1067,6 @@ Thank you.`;
                             <Plus size={14} />
                           </button>
                         </div>
-                        {/* <span style={{ color: "var(--color-ink)", fontWeight: 700, fontSize: "16px" }}>${Number(item.price * item.quantity).toFixed(2)}</span> */}
                         {(() => {
                           const price = Number(item.price);
                           const qty = Number(item.quantity);
@@ -1351,843 +1350,27 @@ Thank you.`;
     );
   }
 
+
+  /* ============================================================
+     DESKTOP LAYOUT (lg+) — Pelago artisanal redesign
+  ============================================================ */
   return (
-    <div
-      className="hidden lg:flex flex-col"
-      style={{
-        background: "var(--color-background)",
-        minHeight: "100vh",
-        color: "var(--color-ink)",
-        fontFamily: "Inter, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "1280px",
-          margin: "0 auto",
-          width: "100%",
-          padding: "40px 80px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "40px",
-        }}
-      >
+    <>
+      {paymentModal}
+      {addressModals}
 
-        {/* Phase 8.2: guest upgrade banner */}
-        {user?.is_anonymous && (
-          <div
-            className="flex items-center justify-between gap-6"
-            style={{ background: "color-mix(in srgb, var(--color-primary) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--color-primary) 20%, transparent)", borderRadius: "14px", padding: "14px 24px" }}
-          >
-            <div className="flex flex-col" style={{ gap: "2px" }}>
-              <span style={{ fontWeight: 700, fontSize: "15px", color: "var(--color-primary)" }}>You're shopping as a guest</span>
-              <span style={{ fontSize: "13px", color: "var(--color-body)" }}>Create an account to save your order history, wishlist, and address book.</span>
-            </div>
-            <a href="/signup" style={{ flexShrink: 0, fontWeight: 700, fontSize: "14px", color: "var(--color-inverse)", background: "var(--color-primary)", borderRadius: "9999px", padding: "10px 24px", textDecoration: "none", whiteSpace: "nowrap" }}>Create Account</a>
-          </div>
-        )}
-        {/* SECTION 1 — TITLE */}
-        <div
-          className="flex items-end"
-          style={{ justifyContent: "space-between", gap: "16px" }}
-        >
-          <div className="flex flex-col" style={{ gap: "8px" }}>
-            <h1
-              style={{
-                fontWeight: 900,
-                fontSize: "36px",
-                letterSpacing: "-0.9px",
-                color: "var(--color-ink)",
-              }}
-            >
-              Shopping Cart
-            </h1>
-            <p style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>
-              You have {totalItems} {totalItems === 1 ? "item" : "items"} in
-              your cart
-            </p>
-          </div>
-          {cartItems.length > 0 && (
-            <button
-              onClick={handleClearCart}
-              className="flex items-center flex-shrink-0"
-              style={{
-                gap: "8px",
-                height: "44px",
-                padding: "0 20px",
-                border: "1px solid var(--color-border)",
-                borderRadius: "9999px",
-                color: "var(--color-body)",
-                fontWeight: 600,
-                fontSize: "14px",
-                background: "var(--color-surface)",
-              }}
-            >
-              <Trash2 size={16} style={{ color: "var(--color-body)" }} />
-              Clear Cart
-            </button>
-          )}
-        </div>
-
-        {cartItems.length === 0 ? (
-          /* EMPTY STATE */
-          <div
-            className="flex flex-col items-center justify-center text-center"
-            style={{ gap: "16px", padding: "80px 0" }}
-          >
-            <div
-              className="flex items-center justify-center"
-              style={{
-                width: "96px",
-                height: "96px",
-                borderRadius: "9999px",
-                background: "var(--color-surface-muted)",
-              }}
-            >
-              <ShoppingBag size={40} style={{ color: "var(--color-primary)" }} />
-            </div>
-            <h2 style={{ fontWeight: 700, fontSize: "22px", color: "var(--color-ink)" }}>
-              Your cart is empty
-            </h2>
-            <p style={{ fontSize: "16px", color: "var(--color-body)" }}>
-              Looks like you haven't added anything yet.
-            </p>
-            <button
-              onClick={() => navigate("/products")}
-              style={{
-                background: "var(--color-primary)",
-                color: "var(--color-inverse)",
-                fontWeight: 700,
-                fontSize: "16px",
-                padding: "14px 32px",
-                borderRadius: "12px",
-              }}
-            >
-              Continue Shopping
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* SECTION 2 — TWO COLUMN GRID */}
-            <div
-              className="flex"
-              style={{ gap: "24px", alignItems: "flex-start" }}
-            >
-              {/* LEFT — cart item cards */}
-              <div
-                className="flex flex-col"
-                style={{ flex: "1 1 65%", gap: "24px", minWidth: 0 }}
-              >
-                {cartItems.map((item) => {
-                  const subtitle = item.variant_name || item.variant || item.category || "";
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex"
-                      style={{
-                        background: "var(--color-surface)",
-                        border: "1px solid var(--color-border)",
-                        boxShadow: "0px 4px 12px color-mix(in srgb, var(--color-accent) 5%, transparent)",
-                        borderRadius: "12px",
-                        padding: "24px",
-                        gap: "24px",
-                      }}
-                    >
-                      {item.thumbnail || item.image ? (
-                        <img
-                          src={item.thumbnail || item.image}
-                          alt={item.title}
-                          style={{
-                            width: "160px",
-                            height: "160px",
-                            borderRadius: "8px",
-                            objectFit: "cover",
-                            flexShrink: 0,
-                            background: "var(--color-surface-muted)",
-                          }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: "160px",
-                            height: "160px",
-                            borderRadius: "8px",
-                            background: "var(--color-surface-muted)",
-                            flexShrink: 0,
-                          }}
-                        />
-                      )}
-                      <div
-                        className="flex flex-col"
-                        style={{
-                          justifyContent: "space-between",
-                          height: "160px",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        <div
-                          className="flex"
-                          style={{
-                            justifyContent: "space-between",
-                            gap: "16px",
-                          }}
-                        >
-                          <div
-                            className="flex flex-col"
-                            style={{ gap: "4px", minWidth: 0 }}
-                          >
-                            <span
-                              style={{
-                                fontWeight: 400,
-                                fontSize: "16px",
-                                color: "var(--color-ink)",
-                              }}
-                            >
-                              {item.title}
-                              {item.unavailable ? <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 700, color: "var(--color-error)" }}>NO LONGER AVAILABLE</span> : null}
-                            </span>
-                            {subtitle && (
-                              <span
-                                style={{
-                                  fontWeight: 400,
-                                  fontSize: "16px",
-                                  color: "var(--color-body)",
-                                }}
-                              >
-                                {subtitle}
-                              </span>
-                            )}
-                          </div>
-                          {(() => {
-                            const price = Number(item.price);
-                            const qty = Number(item.quantity);
-                            const discount = isDiscountActive(item) ? Number(item.discount || 0) : 0;
-
-                            const originalTotal = price * qty;
-                            const discountedTotal =
-                              originalTotal - (originalTotal * discount) / 100;
-
-                            return discount > 0 ? (
-                              <div className="flex flex-col items-end">
-                                <span
-                                  style={{
-                                    fontWeight: 700,
-                                    fontSize: "16px",
-                                    color: "var(--color-primary)",
-                                  }}
-                                >
-                                  ₹{discountedTotal.toFixed(2)}
-                                </span>
-
-                                <span
-                                  style={{
-                                    textDecoration: "line-through",
-                                    color: "var(--color-muted)",
-                                    fontSize: "13px",
-                                  }}
-                                >
-                                  ₹{originalTotal.toFixed(2)}
-                                </span>
-
-                                <span
-                                  style={{
-                                    color: "var(--color-success)",
-                                    fontSize: "12px",
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {discount}% OFF
-                                </span>
-                              </div>
-                            ) : (
-                              <span
-                                style={{
-                                  fontWeight: 700,
-                                  fontSize: "16px",
-                                  color: "var(--color-primary)",
-                                }}
-                              >
-                                ₹{originalTotal.toFixed(2)}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                        <div
-                          className="flex items-center"
-                          style={{ justifyContent: "space-between" }}
-                        >
-                          <div
-                            className="flex items-center"
-                            style={{
-                              background: "var(--color-surface-muted)",
-                              border: "1px solid var(--color-border)",
-                              borderRadius: "8px",
-                              padding: "4px",
-                              width: "122px",
-                              height: "50px",
-                            }}
-                          >
-                            <button
-                              onClick={() => handleRemoveCart(item.id)}
-                              aria-label="Decrease quantity"
-                              className="flex items-center justify-center"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "6px",
-                              }}
-                            >
-                              <Minus size={16} style={{ color: "var(--color-ink)" }} />
-                            </button>
-                            <span
-                              style={{
-                                width: "48px",
-                                textAlign: "center",
-                                fontWeight: 700,
-                                fontSize: "16px",
-                                color: "var(--color-ink)",
-                              }}
-                            >
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => handleAddCart(item)}
-                              aria-label="Increase quantity"
-                              className="flex items-center justify-center"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "6px",
-                              }}
-                            >
-                              <Plus size={16} style={{ color: "var(--color-ink)" }} />
-                            </button>
-                          </div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                            <button
-                              onClick={() => handleSaveForLater(item)}
-                              disabled={savingId === String(item.compound_id || item.id)}
-                              className="flex items-center"
-                              style={{ gap: "6px", padding: "8px 12px", opacity: savingId === String(item.compound_id || item.id) ? 0.5 : 1 }}
-                            >
-                              <Bookmark size={14} style={{ color: "var(--color-primary)" }} />
-                              <span style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-primary)" }}>
-                                {savingId === String(item.compound_id || item.id) ? "Saving…" : "Save for later"}
-                              </span>
-                            </button>
-                            <button
-                              onClick={() => handleDeleteItem(item.id)}
-                              className="flex items-center"
-                              style={{ gap: "8px", padding: "8px 16px" }}
-                            >
-                              <Trash2 size={15} style={{ color: "var(--color-body)" }} />
-                              <span style={{ fontWeight: 600, fontSize: "16px", color: "var(--color-body)" }}>Remove</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Saved for later (Phase 5.2) */}
-              {savedItems.length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "16px", flex: "1 1 65%", minWidth: 0 }}>
-                  <h3 style={{ fontWeight: 700, fontSize: "18px", color: "var(--color-ink)" }}>Saved for later ({savedItems.length})</h3>
-                  {savedItems.map((item) => {
-                    const key = String(item.compound_id || item.id);
-                    const busy = movingId === key || removingId === key;
-                    return (
-                      <div key={key} style={{ display: "flex", gap: "16px", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "12px", padding: "20px", opacity: busy ? 0.55 : 1 }}>
-                        <div style={{ width: "80px", height: "80px", borderRadius: "8px", background: "var(--color-surface-muted)", overflow: "hidden", flexShrink: 0 }}>
-                          {item.image && <img src={item.image} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                          <p style={{ fontWeight: 600, fontSize: "15px", color: "var(--color-ink)" }}>{item.title}</p>
-                          <p style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-primary)" }}>₹{Number(item.price || 0).toFixed(2)}</p>
-                          <div style={{ display: "flex", gap: "16px", marginTop: "8px" }}>
-                            <button onClick={() => handleMoveSavedToCart(item)} disabled={busy} style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-primary)", background: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}><CartIcon size={14} /> Move to cart</button>
-                            <button onClick={() => handleRemoveSaved(item)} disabled={busy} style={{ fontSize: "14px", fontWeight: 600, color: "#ef4444", background: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" }}><Trash2 size={14} /> Remove</button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* RIGHT — order summary + help */}
-              <div
-                className="flex flex-col"
-                style={{
-                  flex: "0 0 32%",
-                  gap: "24px",
-                  position: "sticky",
-                  top: "104px",
-                }}
-              >
-                {/* Delivery address */}
-                <DeliverToCard onChange={() => setAddressPickerOpen(true)} onAdd={() => setAddressFormOpen(true)} />
-
-                {/* Order Summary */}
-                <div
-                  className="flex flex-col"
-                  style={{
-                    background: "var(--color-surface)",
-                    border: "1px solid var(--color-border)",
-                    boxShadow: "0px 4px 12px color-mix(in srgb, var(--color-accent) 5%, transparent)",
-                    borderRadius: "16px",
-                    padding: "32px",
-                    gap: "24px",
-                  }}
-                >
-                  <h2
-                    style={{
-                      borderBottom: "1px solid var(--color-border)",
-                      paddingBottom: "16px",
-                      fontWeight: 400,
-                      fontSize: "16px",
-                      color: "var(--color-ink)",
-                    }}
-                  >
-                    Order Summary
-                  </h2>
-
-                  <div className="flex flex-col" style={{ gap: "16px" }}>
-                    <div
-                      className="flex"
-                      style={{ justifyContent: "space-between" }}
-                    >
-                      <span style={{ color: "var(--color-body)" }}>Subtotal</span>
-                      <span style={{ fontWeight: 700, color: "var(--color-ink)" }}>
-                        {money(subtotalRounded)}
-                      </span>
-                    </div>
-                    <div
-                      className="flex"
-                      style={{ justifyContent: "space-between" }}
-                    >
-                      <span style={{ color: "var(--color-body)" }}>
-                        Shipping Estimate
-                      </span>
-                      <span style={{ fontWeight: 700, color: "var(--color-ink)" }}>
-                        {money(shippingEstimate)}
-                      </span>
-                    </div>
-                    {/* Gift wrap charge row — shown only when admin enabled + user toggled on */}
-                    {giftWrapConfig.giftWrapEnabled && giftWrap && (
-                      <div className="flex" style={{ justifyContent: "space-between" }}>
-                        <span style={{ color: "var(--color-body)" }}>🎁 Gift Wrapping</span>
-                        <span style={{ fontWeight: 700, color: giftWrapConfig.giftWrapFree ? "var(--color-success)" : "var(--color-ink)" }}>
-                          {giftWrapConfig.giftWrapFree ? "Free" : money(giftWrapConfig.giftWrapCost)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex" style={{ justifyContent: "space-between" }}>
-                      <span style={{ color: "var(--color-body)" }}>Tax</span>
-                      <span style={{ fontWeight: 500, color: "var(--color-muted)", fontSize: "13px" }}>Included in price (GST)</span>
-                    </div>
-                    {promoDiscount > 0 && (
-                      <div
-                        className="flex"
-                        style={{ justifyContent: "space-between" }}
-                      >
-                        <span style={{ color: "var(--color-body)" }}>Promo Discount</span>
-                        <span style={{ fontWeight: 700, color: "var(--color-success)" }}>
-                          -{money(promoDiscount)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div
-                    className="flex"
-                    style={{
-                      justifyContent: "space-between",
-                      borderTop: "1px dashed var(--color-border)",
-                      paddingTop: "16px",
-                    }}
-                  >
-                    <span style={{ fontWeight: 700, color: "var(--color-ink)" }}>
-                      Order Total
-                    </span>
-                    <span style={{ fontWeight: 900, color: "var(--color-primary)" }}>
-                      {money(orderTotal)}
-                    </span>
-                  </div>
-
-                  {/* Price-change banner (Phase 5.9) */}
-                  {hasAnyPriceChange && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(234,179,8,0.1)", border: "1px solid rgba(234,179,8,0.3)", borderRadius: "10px", padding: "12px 14px", marginBottom: "8px" }}>
-                      <AlertTriangle size={16} style={{ color: "#ca8a04", flexShrink: 0 }} />
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-ink)" }}>{Object.keys(priceChanges).length === 1 ? "1 item price has changed" : `${Object.keys(priceChanges).length} items have new prices`}</p>
-                        <p style={{ fontSize: "12px", color: "var(--color-muted)" }}>Totals reflect the latest prices.</p>
-                      </div>
-                      <button onClick={handleAcknowledgePriceChanges} style={{ background: "#ca8a04", color: "#fff", fontWeight: 700, fontSize: "13px", padding: "6px 12px", borderRadius: "8px", cursor: "pointer" }}>Got it</button>
-                    </div>
-                  )}
-                  {/* PROMO CODE */}
-                  <div
-                    className="flex flex-col"
-                    style={{ gap: "8px", padding: "8px 0" }}
-                  >
-                    <span
-                      style={{
-                        textTransform: "uppercase",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        color: "var(--color-body)",
-                        letterSpacing: "0.8px",
-                      }}
-                    >
-                      Promo Code
-                    </span>
-                    <div className="relative" style={{ height: "40px" }}>
-                      <input
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        placeholder="Enter code"
-                        style={{
-                          width: "100%",
-                          height: "40px",
-                          background: "var(--color-surface-muted)",
-                          border: "1px solid var(--color-border)",
-                          borderRadius: "8px",
-                          padding: "10px 88px 10px 12px",
-                          color: "var(--color-ink)",
-                          fontSize: "14px",
-                          outline: "none",
-                        }}
-                      />
-                      <button
-                        onClick={handleApplyPromo}
-                        className="absolute"
-                        style={{
-                          right: 0,
-                          top: 0,
-                          width: "78px",
-                          height: "40px",
-                          background: "var(--color-body)",
-                          borderRadius: "8px",
-                          fontWeight: 700,
-                          fontSize: "16px",
-                          color: "var(--color-inverse)",
-                        }}
-                      >
-                        Apply
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Available coupons (Phase 5.5) */}
-                  {couponsLoaded && coupons.length > 0 && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", paddingBottom: "4px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-muted)" }}>Available coupons</span>
-                        <button onClick={() => setShowCoupons(v => !v)} style={{ fontSize: "13px", color: "var(--color-primary)", background: "none", cursor: "pointer", fontWeight: 600 }}>{showCoupons ? "Hide" : "Show all"}</button>
-                      </div>
-                      {showCoupons && coupons.map((coupon) => (
-                        <div key={coupon.code} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", background: "var(--color-surface-muted)", border: "1px solid var(--color-border)", borderRadius: "8px", padding: "10px 12px", marginBottom: "6px" }}>
-                          <div><p style={{ fontWeight: 700, fontSize: "14px", color: "var(--color-primary)" }}>{coupon.code}</p><p style={{ fontSize: "12px", color: "var(--color-muted)" }}>{describeCoupon(coupon)}</p></div>
-                          {appliedPromo?.code === coupon.code ? (<span style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-success)" }}>✓ Applied</span>) : (<button onClick={() => handleApplyCouponFromList(coupon)} style={{ background: "var(--color-primary)", color: "var(--color-inverse)", fontWeight: 700, fontSize: "13px", padding: "6px 14px", borderRadius: "8px", cursor: "pointer" }}>Apply</button>)}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Gift wrap (Phase 5.11) — only shown when admin enables gift wrap */}
-                  {giftWrapConfig.giftWrapEnabled && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", paddingBottom: "4px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <p style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-ink)" }}> Gift wrap</p>
-                        <p style={{ fontSize: "12px", color: "var(--color-muted)" }}>{giftWrapConfig.giftWrapFree ? "🎁 Gift wrapping is free!" : `🎁 Add gift wrapping for ₹${giftWrapConfig.giftWrapCost}`}</p>
-                      </div>
-                      <button
-                        onClick={() => setGiftWrap(v => !v)}
-                        role="switch" aria-checked={giftWrap}
-                        style={{ width: "44px", height: "24px", borderRadius: "12px", background: giftWrap ? "var(--color-primary)" : "var(--color-surface-muted)", position: "relative", cursor: "pointer", flexShrink: 0, transition: "background 0.2s" }}
-                      >
-                        <span style={{ position: "absolute", top: "2px", left: giftWrap ? "20px" : "2px", width: "20px", height: "20px", borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
-                      </button>
-                    </div>
-                    {giftWrap && (
-                      <div>
-                        <textarea value={giftMessage} onChange={(e) => setGiftMessage(e.target.value.slice(0, 200))} placeholder="Add a personal message (optional)" rows={3} style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--color-border)", background: "var(--color-surface-muted)", color: "var(--color-ink)", fontSize: "13px", resize: "none", fontFamily: "inherit" }} />
-                        <p style={{ textAlign: "right", fontSize: "12px", color: "var(--color-muted)", marginTop: "4px" }}>{giftMessage.length}/200</p>
-                      </div>
-                    )}
-                  </div>
-
-                  )}
-
-                  {/* CHECKOUT */}
-                  {isCheckoutDisabled ? (
-                    <div className="text-center p-4 border border-error-border bg-error-subtle rounded-xl text-xs font-bold text-error leading-normal">
-                      No payment methods available. Please contact administrator.
-                    </div>
-                  ) : (
-                    <button
-                      onClick={handleCheckoutClick}
-                      disabled={isProcessing}
-                      className="flex items-center justify-center"
-                      style={{
-                        width: "100%",
-                        height: "56px",
-                        background: "var(--color-primary)",
-                        borderRadius: "12px",
-                        boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)",
-                        gap: "8px",
-                        opacity: isProcessing ? 0.7 : 1,
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontWeight: 700,
-                          fontSize: "16px",
-                          color: "var(--color-inverse)",
-                        }}
-                      >
-                        {isProcessing ? "Processing…" : "Proceed to Checkout"}
-                      </span>
-                      {!isProcessing && (
-                        <ArrowRight size={16} style={{ color: "var(--color-inverse)" }} />
-                      )}
-                    </button>
-                  )}
-
-                  <div
-                    className="flex items-center justify-center"
-                    style={{ gap: "8px" }}
-                  >
-                    <Lock size={13} style={{ color: "var(--color-body)" }} />
-                    <span
-                      style={{
-                        fontWeight: 500,
-                        fontSize: "16px",
-                        color: "var(--color-body)",
-                      }}
-                    >
-                      Secure SSL Encrypted Checkout
-                    </span>
-                  </div>
-                </div>
-
-                {/* Task 1.17 — delivery/returns terms reachable from checkout. */}
-                <PolicyLinks />
-
-                {/* Help card */}
-                <div
-                  className="flex flex-col"
-                  style={{
-                    background: "var(--color-surface-muted)",
-                    border: "1px solid color-mix(in srgb, var(--color-border) 20%, transparent)",
-                    borderRadius: "12px",
-                    padding: "24px",
-                    gap: "16px",
-                  }}
-                >
-                  <div className="flex items-center" style={{ gap: "8px" }}>
-                    <Headphones size={15} style={{ color: "var(--color-muted)" }} />
-                    <span
-                      style={{
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        color: "var(--color-muted)",
-                      }}
-                    >
-                      Need help with your order?
-                    </span>
-                  </div>
-                  <p
-                    style={{
-                      fontWeight: 400,
-                      fontSize: "16px",
-                      lineHeight: "26px",
-                      color: "var(--color-muted)",
-                      opacity: 0.8,
-                    }}
-                  >
-                    Our support team is available 24/7 to assist with your
-                    shopping experience.
-                  </p>
-                  <button
-                    onClick={() =>
-                      window.open(
-                        `https://wa.me/919940574522?text=${encodeURIComponent("Hi, I need help with my order.")}`,
-                        "_blank",
-                        "noopener,noreferrer"
-                      )
-                    }
-                    className="flex items-center"
-                    style={{ gap: "8px" }}
-                  >
-                    <span
-                      style={{
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        color: "var(--color-primary)",
-                      }}
-                    >
-                      Chat with an expert
-                    </span>
-                    <ExternalLink size={11} style={{ color: "var(--color-primary)" }} />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION 3 — FREQUENTLY BOUGHT TOGETHER */}
-            <div
-              className="flex flex-col"
-              style={{
-                borderTop: "1px solid var(--color-border)",
-                paddingTop: "40px",
-                gap: "24px",
-              }}
-            >
-              <h2
-                style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}
-              >
-                Frequently Bought Together
-              </h2>
-              <div className="grid grid-cols-4" style={{ gap: "24px" }}>
-                {loadingSuggestions ? (
-                  [...Array(4)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center animate-pulse"
-                      style={{ gap: "16px", padding: "4px 0" }}
-                    >
-                      <div
-                        style={{
-                          width: "64px",
-                          height: "64px",
-                          borderRadius: "8px",
-                          background: "var(--color-surface-muted)",
-                          flexShrink: 0,
-                        }}
-                      />
-                      <div
-                        className="flex flex-col"
-                        style={{ gap: "8px", flex: 1 }}
-                      >
-                        <div
-                          style={{
-                            height: "14px",
-                            width: "70%",
-                            borderRadius: "4px",
-                            background: "var(--color-surface-muted)",
-                          }}
-                        />
-                        <div
-                          style={{
-                            height: "12px",
-                            width: "40%",
-                            borderRadius: "4px",
-                            background: "var(--color-surface-muted)",
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))
-                ) : suggestionList.length === 0 ? (
-                  <p style={{ fontSize: "14px", color: "var(--color-body)" }}>
-                    No suggestions available right now.
-                  </p>
-                ) : (
-                  suggestionList.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => navigate(`/product/${p.id}`)}
-                      className="flex items-center text-left"
-                      style={{ gap: "16px", padding: "4px 0" }}
-                    >
-                      {p.thumbnail || p.image ? (
-                        <img
-                          src={p.thumbnail || p.image}
-                          alt={p.title || p.name}
-                          style={{
-                            width: "64px",
-                            height: "64px",
-                            border: "1px solid var(--color-border)",
-                            borderRadius: "8px",
-                            objectFit: "cover",
-                            flexShrink: 0,
-                          }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: "64px",
-                            height: "64px",
-                            border: "1px solid var(--color-border)",
-                            borderRadius: "8px",
-                            background: "var(--color-surface-muted)",
-                            flexShrink: 0,
-                          }}
-                        />
-                      )}
-                      <div className="flex flex-col" style={{ minWidth: 0 }}>
-                        <span
-                          className="truncate"
-                          style={{
-                            fontWeight: 700,
-                            fontSize: "16px",
-                            color: "var(--color-ink)",
-                          }}
-                        >
-                          {p.title || p.name}
-                        </span>
-                        <span
-                          style={{
-                            fontWeight: 400,
-                            fontSize: "16px",
-                            color: "var(--color-body)",
-                          }}
-                        >
-                          {money(p.price)}
-                        </span>
-                      </div>
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* PROCESSING OVERLAY */}
+      {/* Processing overlay */}
       {isProcessing && (
         <div
           className="fixed inset-0 z-[200] flex items-center justify-center p-6"
-          style={{
-            background: "var(--color-overlay)",
-            backdropFilter: "blur(8px)",
-          }}
+          style={{ background: "var(--color-overlay)", backdropFilter: "blur(8px)" }}
         >
           <div
             className="text-center"
-            style={{
-              background: "var(--color-surface)",
-              borderRadius: "24px",
-              padding: "48px",
-              maxWidth: "360px",
-            }}
+            style={{ background: "var(--color-surface)", borderRadius: "24px", padding: "48px", maxWidth: "360px" }}
           >
-            <div
-              className="flex items-center justify-center"
-              style={{ marginBottom: "20px" }}
-            >
-              <Package
-                size={56}
-                style={{ color: "var(--color-primary)" }}
-                className="animate-bounce"
-              />
+            <div className="flex items-center justify-center" style={{ marginBottom: "20px" }}>
+              <Package size={56} style={{ color: "var(--color-primary)" }} className="animate-bounce" />
             </div>
             <h2 style={{ fontWeight: 800, fontSize: "20px", color: "var(--color-ink)" }}>
               Placing your order…
@@ -2198,9 +1381,505 @@ Thank you.`;
           </div>
         </div>
       )}
-      {paymentModal}
-      {addressModals}
-    </div>
+
+      <div
+        style={{
+          fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+          background: "#EDE8E1",
+          minHeight: "100vh",
+          padding: "88px 24px 48px",
+        }}
+      >
+        <div style={{ maxWidth: "1240px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "32px" }}>
+
+          {/* ── HEADER ── */}
+          <header>
+            <p style={{ fontSize: "12px", fontWeight: 600, color: "#7A8481", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+              {totalItems} item{totalItems !== 1 ? "s" : ""} in your cart
+            </p>
+            <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#1E2524", letterSpacing: "-0.75px", marginTop: "4px" }}>
+              Your Cart
+            </h1>
+          </header>
+
+          {/* ── GUEST BANNER ── */}
+          {user?.is_anonymous && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", background: "rgba(6,78,59,0.08)", border: "1px solid rgba(6,78,59,0.2)", borderRadius: "14px", padding: "14px 24px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                <span style={{ fontWeight: 700, fontSize: "14px", color: "#064E3B" }}>You're shopping as a guest</span>
+                <span style={{ fontSize: "13px", color: "#57534E" }}>Create an account to save your order history, wishlist, and address book.</span>
+              </div>
+              <a href="/signup" style={{ flexShrink: 0, fontWeight: 700, fontSize: "13px", color: "#fff", background: "#064E3B", borderRadius: "9999px", padding: "10px 24px", textDecoration: "none", whiteSpace: "nowrap" }}>Create Account</a>
+            </div>
+          )}
+
+          {/* ── EMPTY STATE ── */}
+          {cartItems.length === 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: "20px", padding: "80px 0" }}>
+              <div style={{ width: "96px", height: "96px", borderRadius: "9999px", background: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
+                <ShoppingBag size={40} style={{ color: "#064E3B" }} />
+              </div>
+              <h2 style={{ fontWeight: 800, fontSize: "24px", color: "#1C1917" }}>Your cart is empty</h2>
+              <p style={{ fontSize: "15px", color: "#78716C" }}>Looks like you haven't added anything yet.</p>
+              <button
+                onClick={() => navigate("/products")}
+                style={{ background: "#064E3B", color: "#fff", fontWeight: 700, fontSize: "15px", padding: "14px 36px", borderRadius: "12px", cursor: "pointer", border: "none" }}
+              >
+                Continue Shopping
+              </button>
+            </div>
+          ) : (
+            /* ── MAIN TWO-COLUMN GRID ── */
+            <main style={{ display: "grid", gridTemplateColumns: "7fr 5fr", gap: "32px", alignItems: "start" }}>
+
+              {/* ═══ LEFT COLUMN ═══ */}
+              <section style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
+                {/* Price-change banner */}
+                {hasAnyPriceChange && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "rgba(234,179,8,0.12)", border: "1px solid rgba(234,179,8,0.35)", borderRadius: "12px", padding: "12px 16px" }}>
+                    <AlertTriangle size={16} style={{ color: "#ca8a04", flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontWeight: 600, fontSize: "13px", color: "#1C1917" }}>
+                        {Object.keys(priceChanges).length === 1 ? "1 item price has changed" : `${Object.keys(priceChanges).length} items have new prices`}
+                      </p>
+                      <p style={{ fontSize: "11px", color: "#78716C" }}>Totals reflect the latest prices.</p>
+                    </div>
+                    <button onClick={handleAcknowledgePriceChanges} style={{ background: "#ca8a04", color: "#fff", fontWeight: 700, fontSize: "12px", padding: "6px 12px", borderRadius: "8px", cursor: "pointer", border: "none" }}>Got it</button>
+                  </div>
+                )}
+
+                {/* Items header row */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#A8A29E" }}>Active Selection</span>
+                  <button
+                    onClick={handleClearCart}
+                    style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 600, color: "#78716C", background: "none", border: "none", cursor: "pointer" }}
+                  >
+                    <Trash2 size={13} /> Clear Cart
+                  </button>
+                </div>
+
+                {/* ── CART ITEMS LIST ── */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {cartItems.map((item) => {
+                    const mrp = Number(item.price || 0);
+                    const disc = isDiscountActive(item) ? Number(item.discount || 0) : 0;
+                    const linePrice = mrp - (mrp * disc) / 100;
+                    const key = String(item.compound_id || item.id);
+                    return (
+                      <article
+                        key={key}
+                        style={{
+                          background: "#FFFFFF",
+                          borderRadius: "16px",
+                          padding: "16px 20px",
+                          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          gap: "16px",
+                          border: item.unavailable ? "1px solid #FCA5A5" : "1px solid transparent",
+                        }}
+                      >
+                        {/* Left: thumbnail + details */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                          {/* Thumbnail */}
+                          <div style={{ position: "relative", width: "80px", height: "80px", borderRadius: "12px", overflow: "hidden", background: "#F5F5F4", flexShrink: 0 }}>
+                            <img
+                              src={item.thumbnail || item.image}
+                              alt={item.title}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                            {item.category && (
+                              <span style={{ position: "absolute", top: "5px", left: "5px", background: "rgba(0,0,0,0.65)", color: "#fff", fontSize: "8px", fontWeight: 800, padding: "2px 5px", borderRadius: "3px", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                                {item.category?.slice(0, 7)}
+                              </span>
+                            )}
+                          </div>
+                          {/* Details */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <span style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", background: "#ECFDF5", color: "#065F46", padding: "2px 7px", borderRadius: "4px", display: "inline-block", width: "fit-content" }}>
+                              {item.category}
+                            </span>
+                            <h2 style={{ fontSize: "14px", fontWeight: 700, color: "#1C1917", lineHeight: 1.35, margin: 0 }}>
+                              {item.title}
+                              {item.variant_name ? <span style={{ fontWeight: 500, color: "#78716C" }}> · {item.variant_name}</span> : null}
+                            </h2>
+                            {item.unavailable && (
+                              <span style={{ fontSize: "11px", fontWeight: 700, color: "#DC2626" }}>⚠ No longer available</span>
+                            )}
+                            {disc > 0 && (
+                              <span style={{ fontSize: "11px", color: "#065F46", fontWeight: 600 }}>{disc}% OFF applied</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Right: price + stepper + actions */}
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px", flexShrink: 0 }}>
+                          {/* Price */}
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: "16px", fontWeight: 800, color: "#1C1917" }}>{money(linePrice * item.quantity)}</div>
+                            {item.quantity > 1 && (
+                              <div style={{ fontSize: "10px", color: "#A8A29E" }}>{money(linePrice)} / unit</div>
+                            )}
+                            {disc > 0 && (
+                              <div style={{ fontSize: "10px", color: "#A8A29E", textDecoration: "line-through" }}>{money(mrp * item.quantity)}</div>
+                            )}
+                          </div>
+                          {/* Stepper + actions */}
+                          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                            {/* Quantity stepper */}
+                            <div style={{ display: "flex", alignItems: "center", background: "#F5F5F4", borderRadius: "8px", padding: "4px 10px", gap: "10px", border: "1px solid #E7E5E4" }}>
+                              <button
+                                onClick={() => handleRemoveCart(key)}
+                                style={{ fontWeight: 800, color: "#1C1917", fontSize: "16px", background: "none", border: "none", cursor: "pointer", lineHeight: 1, padding: "0 2px" }}
+                              >
+                                −
+                              </button>
+                              <span style={{ fontWeight: 700, fontSize: "13px", minWidth: "14px", textAlign: "center", color: "#1C1917" }}>
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() => handleAddCart(item)}
+                                style={{ fontWeight: 800, color: "#1C1917", fontSize: "16px", background: "none", border: "none", cursor: "pointer", lineHeight: 1, padding: "0 2px" }}
+                              >
+                                +
+                              </button>
+                            </div>
+                            {/* Action links */}
+                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                              <button
+                                onClick={() => handleSaveForLater(item)}
+                                disabled={savingId === key}
+                                style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", fontWeight: 600, color: "#78716C", background: "none", border: "none", cursor: "pointer", opacity: savingId === key ? 0.5 : 1 }}
+                              >
+                                <Bookmark size={13} />
+                                {savingId === key ? "Saving…" : "Save"}
+                              </button>
+                              <button
+                                onClick={() => handleDeleteItem(key)}
+                                style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", fontWeight: 600, color: "#BE123C", background: "none", border: "none", cursor: "pointer" }}
+                              >
+                                <Trash2 size={13} /> Remove
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+
+                {/* ── SAVED FOR LATER ── */}
+                {savedItems.length > 0 && (
+                  <section style={{ marginTop: "8px", background: "rgba(255,255,255,0.55)", backdropFilter: "blur(8px)", borderRadius: "16px", padding: "24px", border: "1px solid rgba(255,255,255,0.4)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1C1917", margin: 0 }}>Saved for later</h3>
+                        <span style={{ fontSize: "11px", fontWeight: 600, background: "#E7E5E4", color: "#57534E", padding: "2px 8px", borderRadius: "9999px" }}>{savedItems.length} items</span>
+                      </div>
+                      <span style={{ fontSize: "11px", fontStyle: "italic", color: "#A8A29E" }}>Ready when you are</span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                      {savedItems.map((item) => {
+                        const key = String(item.compound_id || item.id);
+                        const busy = movingId === key || removingId === key;
+                        return (
+                          <div
+                            key={key}
+                            style={{ background: "#FFFFFF", borderRadius: "12px", padding: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", opacity: busy ? 0.55 : 1, border: "1px solid #F5F5F4" }}
+                          >
+                            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                              <div style={{ width: "56px", height: "56px", borderRadius: "8px", overflow: "hidden", background: "#F5F5F4", flexShrink: 0 }}>
+                                {item.image && <img src={item.image} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+                              </div>
+                              <div style={{ minWidth: 0 }}>
+                                <span style={{ fontSize: "9px", fontWeight: 700, color: "#A8A29E", textTransform: "uppercase", letterSpacing: "0.6px" }}>{item.category}</span>
+                                <p style={{ fontSize: "12px", fontWeight: 700, color: "#1C1917", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", margin: "2px 0" }}>{item.title}</p>
+                                <p style={{ fontSize: "12px", fontWeight: 700, color: "#1C1917", margin: 0 }}>{money(item.price)}</p>
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px", paddingTop: "10px", borderTop: "1px solid #F5F5F4", fontSize: "11px" }}>
+                              <button
+                                onClick={() => handleMoveSavedToCart(item)}
+                                disabled={busy}
+                                style={{ fontWeight: 700, color: "#1C1917", display: "flex", alignItems: "center", gap: "4px", background: "none", border: "none", cursor: "pointer" }}
+                              >
+                                🛒 Move to cart
+                              </button>
+                              <button
+                                onClick={() => handleRemoveSaved(item)}
+                                disabled={busy}
+                                style={{ color: "#A8A29E", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </section>
+
+              {/* ═══ RIGHT COLUMN ═══ */}
+              <aside style={{ display: "flex", flexDirection: "column", gap: "16px", position: "sticky", top: "96px" }}>
+
+                {/* Deliver To */}
+                <DeliverToCard onChange={() => setAddressPickerOpen(true)} onAdd={() => setAddressFormOpen(true)} />
+
+                {/* ── ORDER SUMMARY CARD ── */}
+                <div style={{ background: "#FFFFFF", borderRadius: "16px", padding: "24px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", display: "flex", flexDirection: "column", gap: "20px" }}>
+                  {/* Title */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#1C1917", margin: 0 }}>Order Summary</h2>
+                    <span style={{ background: "#F5F5F4", color: "#44403C", fontSize: "12px", padding: "3px 10px", borderRadius: "9999px", fontWeight: 600 }}>{totalItems} items</span>
+                  </div>
+
+                  {/* Breakdown */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "13px", borderBottom: "1px solid #F5F5F4", paddingBottom: "16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", color: "#57534E" }}>
+                      <span>Cart Subtotal</span>
+                      <span style={{ fontWeight: 700, color: "#1C1917" }}>{money(subtotalRounded)}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", color: "#57534E" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span>Shipping</span>
+                        <span style={{ fontSize: "10px", fontFamily: "monospace", background: "#F5F5F4", color: "#78716C", padding: "1px 6px", borderRadius: "4px", fontWeight: 700 }}>
+                          {shippingEstimate === 0 ? "FREE" : "STANDARD"}
+                        </span>
+                      </div>
+                      <span style={{ fontWeight: 700, color: shippingEstimate === 0 ? "#065F46" : "#1C1917" }}>
+                        {shippingEstimate === 0 ? "Free" : money(shippingEstimate)}
+                      </span>
+                    </div>
+                    {promoDiscount > 0 && (
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#065F46" }}>
+                        <span>Promo ({appliedPromo?.code})</span>
+                        <span style={{ fontWeight: 700 }}>−{money(promoDiscount)}</span>
+                      </div>
+                    )}
+                    {giftWrapConfig.giftWrapEnabled && giftWrap && (
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#57534E" }}>
+                        <span>🎁 Gift Wrap</span>
+                        <span style={{ fontWeight: 700, color: giftWrapConfig.giftWrapFree ? "#065F46" : "#1C1917" }}>
+                          {giftWrapConfig.giftWrapFree ? "Free" : money(giftWrapCharge)}
+                        </span>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", justifyContent: "space-between", color: "#57534E" }}>
+                      <span>Taxes</span>
+                      <span style={{ fontSize: "11px", color: "#78716C" }}>Included (GST)</span>
+                    </div>
+                  </div>
+
+                  {/* Voucher input */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <input
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        placeholder="ENTER VOUCHER CODE"
+                        style={{ flex: 1, background: "#FAFAF9", border: "1px solid #D6D3D1", borderRadius: "10px", padding: "9px 12px", fontSize: "11px", fontFamily: "monospace", letterSpacing: "0.08em", outline: "none", color: "#1C1917" }}
+                      />
+                      <button
+                        onClick={handleApplyPromo}
+                        style={{ background: "#1C1917", color: "#fff", fontSize: "12px", fontWeight: 700, padding: "9px 18px", borderRadius: "10px", border: "none", cursor: "pointer", whiteSpace: "nowrap" }}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                    {couponsLoaded && coupons.length > 0 && (
+                      <button
+                        onClick={() => setShowCoupons((v) => !v)}
+                        style={{ fontSize: "12px", color: "#065F46", fontWeight: 700, background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                      >
+                        {showCoupons ? "Hide" : `Available coupons (${coupons.length})`}
+                      </button>
+                    )}
+                    {showCoupons && coupons.map((c) => (
+                      <div key={c.code} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#F5F5F4", borderRadius: "8px", padding: "8px 12px" }}>
+                        <div>
+                          <p style={{ fontWeight: 700, fontSize: "13px", color: "#065F46", margin: 0 }}>{c.code}</p>
+                          <p style={{ fontSize: "11px", color: "#78716C", margin: 0 }}>{describeCoupon(c)}</p>
+                        </div>
+                        {appliedPromo?.code === c.code ? (
+                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#059669" }}>✓ Applied</span>
+                        ) : (
+                          <button onClick={() => handleApplyCouponFromList(c)} style={{ background: "#064E3B", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "4px 10px", borderRadius: "6px", border: "none", cursor: "pointer" }}>Apply</button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Gift wrap toggle */}
+                  {giftWrapConfig.giftWrapEnabled && (
+                    <>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "4px", borderTop: "1px solid #F5F5F4" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <Package size={16} style={{ color: "#78716C" }} />
+                          <div>
+                            <p style={{ fontSize: "12px", fontWeight: 700, color: "#1C1917", margin: 0 }}>Complimentary gift wrap</p>
+                            <p style={{ fontSize: "11px", color: "#78716C", margin: 0 }}>{giftWrapConfig.giftWrapFree ? "Free gift wrapping" : `Add for ${money(giftWrapConfig.giftWrapCost)}`}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setGiftWrap((v) => !v)}
+                          role="switch"
+                          aria-checked={giftWrap}
+                          style={{ width: "38px", height: "22px", borderRadius: "11px", background: giftWrap ? "#065F46" : "#D1D5DB", position: "relative", cursor: "pointer", flexShrink: 0, border: "none", transition: "background 0.2s" }}
+                        >
+                          <span style={{ position: "absolute", top: "3px", left: giftWrap ? "18px" : "3px", width: "16px", height: "16px", borderRadius: "50%", background: "#fff", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+                        </button>
+                      </div>
+                      {giftWrap && (
+                        <textarea
+                          value={giftMessage}
+                          onChange={(e) => setGiftMessage(e.target.value.slice(0, 200))}
+                          placeholder="Add a personal message (optional)"
+                          rows={3}
+                          style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #E7E5E4", background: "#FAFAF9", fontSize: "13px", resize: "none", fontFamily: "inherit", color: "#1C1917", outline: "none", boxSizing: "border-box" }}
+                        />
+                      )}
+                    </>
+                  )}
+
+                  {/* Total Due box */}
+                  <div style={{ background: "rgba(245,245,244,0.8)", borderRadius: "12px", padding: "16px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#78716C" }}>TOTAL DUE</span>
+                      <span style={{ display: "block", fontSize: "11px", color: "#A8A29E", marginTop: "2px" }}>Incl. shipping & taxes</span>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: "28px", fontWeight: 800, color: "#1C1917", letterSpacing: "-0.5px" }}>{money(orderTotal)}</div>
+                      {shippingEstimate === 0 && subtotal > 0 && (
+                        <div style={{ fontSize: "10px", fontFamily: "monospace", fontWeight: 700, color: "#065F46" }}>Free shipping applied ✓</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Checkout button */}
+                  {isCheckoutDisabled ? (
+                    <div style={{ textAlign: "center", padding: "14px", border: "1px solid #FCA5A5", background: "#FEF2F2", borderRadius: "12px", fontSize: "12px", fontWeight: 700, color: "#DC2626", lineHeight: 1.5 }}>
+                      No payment methods available.<br />Please contact administrator.
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleCheckoutClick}
+                      disabled={isCheckoutDisabled || cartItems.length === 0 || isProcessing}
+                      style={{
+                        width: "100%",
+                        background: "#064E3B",
+                        color: "#fff",
+                        height: "46px",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        cursor: (isCheckoutDisabled || isProcessing) ? "not-allowed" : "pointer",
+                        opacity: (isCheckoutDisabled || isProcessing) ? 0.5 : 1,
+                        border: "none",
+                        boxShadow: "0 4px 14px rgba(6,78,59,0.25)",
+                      }}
+                    >
+                      {isProcessing ? "Processing…" : "Proceed to Checkout →"}
+                    </button>
+                  )}
+
+                  {/* SSL note */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#78716C" }}>
+                    <Lock size={13} /> Secure SSL Encrypted Checkout
+                  </div>
+                </div>
+
+                {/* Policy Links */}
+                <PolicyLinks />
+
+                {/* Support card */}
+                <div style={{ background: "rgba(231,229,228,0.5)", borderRadius: "16px", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid #E7E5E4" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ width: "34px", height: "34px", borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.08)", flexShrink: 0 }}>
+                      <Headphones size={16} style={{ color: "#44403C" }} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "12px", fontWeight: 700, color: "#1C1917", margin: 0 }}>Need help with your order?</p>
+                      <p style={{ fontSize: "11px", color: "#78716C", margin: 0 }}>Our team is available 9am – 7pm</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => window.open(`https://wa.me/919940574522?text=${encodeURIComponent("Hi, I need help with my order.")}`, "_blank", "noopener,noreferrer")}
+                    style={{ fontSize: "12px", fontWeight: 700, color: "#064E3B", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
+                  >
+                    Chat <ExternalLink size={11} />
+                  </button>
+                </div>
+              </aside>
+            </main>
+          )}
+
+          {/* ── RECOMMENDATIONS SHELF ── */}
+          {suggestionList.length > 0 && (
+            <section style={{ background: "#FFFFFF", borderRadius: "24px", padding: "32px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid rgba(231,229,228,0.6)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+                <div>
+                  <span style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", color: "#A8A29E", letterSpacing: "0.1em" }}>RECOMMENDATIONS</span>
+                  <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#1C1917", margin: "4px 0 2px" }}>Frequently Bought Together</h2>
+                  <p style={{ fontSize: "12px", color: "#78716C", margin: 0 }}>Complement your order with popular picks.</p>
+                </div>
+              </div>
+              {loadingSuggestions ? (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} style={{ background: "#F5F5F4", borderRadius: "16px", height: "260px", animation: "pulse 1.5s infinite" }} />
+                  ))}
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
+                  {suggestionList.map((p) => {
+                    const mrp = Number(p.price || 0);
+                    const disc = Number(p.discount || 0);
+                    const price = mrp - (mrp * disc) / 100;
+                    return (
+                      <article key={p.id} style={{ background: "#FBFBFA", borderRadius: "16px", padding: "12px", display: "flex", flexDirection: "column", justifyContent: "space-between", border: "1px solid #F5F5F4" }}>
+                        <div>
+                          <div style={{ position: "relative", width: "100%", height: "176px", borderRadius: "12px", overflow: "hidden", background: "#FFFFFF", marginBottom: "12px" }}>
+                            {(p.thumbnail || p.image) && (
+                              <img src={p.thumbnail || p.image} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            )}
+                            {disc > 0 && (
+                              <span style={{ position: "absolute", top: "8px", left: "8px", fontSize: "9px", fontWeight: 700, color: "#1C1917", background: "rgba(255,255,255,0.85)", padding: "2px 8px", borderRadius: "9999px" }}>{disc}% OFF</span>
+                            )}
+                          </div>
+                          <span style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#A8A29E" }}>{p.category}</span>
+                          <h3 style={{ fontSize: "12px", fontWeight: 700, color: "#1C1917", marginTop: "2px", marginBottom: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.title || p.name}</h3>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(231,229,228,0.6)" }}>
+                          <span style={{ fontSize: "14px", fontWeight: 800, color: "#1C1917" }}>{money(price)}</span>
+                          <button
+                            onClick={() => navigate(`/product/${p.id}`)}
+                            style={{ background: "#1C1917", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "6px 14px", borderRadius: "8px", border: "none", cursor: "pointer" }}
+                          >
+                            View
+                          </button>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          )}
+
+        </div>
+      </div>
+    </>
   );
 };
 

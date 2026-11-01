@@ -1,3 +1,5 @@
+import { getResizedUrl } from "./supabaseStorage"
+
 // Maps a `products` row (snake_case) to the camelCase shape used throughout the app.
 export const mapProductRow = (row) => {
   if (!row) return row
@@ -20,7 +22,9 @@ export const mapProductRow = (row) => {
     stock: Number(row.stock) || 0,
     maxStock: row.max_stock,
     image: row.image || "",
-    thumbnail: row.thumbnail || row.image || "",
+    // For Supabase Storage images, serve an optimised thumbnail via Image Transforms.
+    // External/legacy URLs pass through unchanged (getResizedUrl is a safe no-op for them).
+    thumbnail: getResizedUrl(row.thumbnail || row.image || "", { width: 600, quality: 82 }),
     gallery: row.gallery || [],
     rating: Number(row.rating) || 0,
     reviewCount: Number(row.review_count) || 0,

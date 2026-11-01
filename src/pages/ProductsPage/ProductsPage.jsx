@@ -52,6 +52,23 @@ import {
 } from "../../utils/searchHistory";
 
 /* ============================================================
+   DESIGN TOKENS (matching Products.html Pelago palette)
+============================================================ */
+const TEAL = "#114A46";
+const TEAL_DARK = "#0B3633";
+const TEAL_LIGHT = "#DCE8E0";
+const TERRA = "#A84D38";
+const TERRA_DARK = "#8F3E2C";
+const SAND = "#F7F5F0";
+const CANVAS = "#EDE8E1";
+const CHARCOAL = "#1E2524";
+const MUTED = "#7A8481";
+const BORDER = "#E3DDD4";
+const BORDER_SUB = "#EFEBE4";
+const WHITE = "#FFFFFF";
+const FONT = "'Plus Jakarta Sans', system-ui, sans-serif";
+
+/* ============================================================
    DESKTOP DESIGN HELPERS
 ============================================================ */
 const PAGE_SIZE = 8;
@@ -97,21 +114,25 @@ const getStock = (p) => {
 const getMaxStock = (p) =>
     Number(p.maxStock || 0) || Math.max(getStock(p), 100);
 
-const Stars = ({ rating = 0, size = 12 }) => (
-    <span className="flex items-center" style={{ gap: "1px" }}>
-        {[0, 1, 2, 3, 4].map((i) => (
-            <Star
-                key={i}
-                size={size}
-                style={{ color: "var(--color-primary)" }}
-                fill={i < Math.round(rating) ? "var(--color-primary)" : "none"}
-                strokeWidth={1.5}
-            />
-        ))}
-    </span>
-);
+/* ── Stars (amber, matching HTML design) ── */
+const Stars = ({ rating = 0, size = 12 }) => {
+    const full = Math.round(rating);
+    return (
+        <span style={{ display: "flex", alignItems: "center", gap: "1px" }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+                <Star
+                    key={i}
+                    size={size}
+                    style={{ color: "#F59E0B" }}
+                    fill={i < full ? "#F59E0B" : "none"}
+                    strokeWidth={1.5}
+                />
+            ))}
+        </span>
+    );
+};
 
-/* PRODUCT CARD (desktop, scaled to match the reference) */
+/* ── PRODUCT CARD (Pelago HTML design) ── */
 const NewProductCard = ({
     product,
     onAddToCart,
@@ -137,221 +158,288 @@ const NewProductCard = ({
     const isOut = stockInfo.out;
 
     return (
-        <div data-pid={product.id} className="product-card flex flex-col bg-surface border border-[var(--color-border-strong)] rounded-xl overflow-hidden shadow-[0px_4px_12px_rgba(0,0,0,0.05)]">
+        <article
+            data-pid={product.id}
+            className="product-card"
+            style={{
+                background: WHITE,
+                borderRadius: "20px",
+                border: `1px solid ${BORDER}`,
+                padding: "12px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                transition: "box-shadow 0.2s",
+                fontFamily: FONT,
+                cursor: "default",
+            }}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.10)"}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}
+        >
             {/* Image area */}
-            <div
-                className="relative cursor-pointer"
-                style={{ height: "160px", background: "var(--color-surface-muted)" }}
-                onClick={() =>
-                    navigate(`/product/${product.id}`, { state: { product } })
-                }
-            >
-                <img
-                    src={getImage(product)}
-                    alt={name}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                />
-                <span className="absolute top-2.5 left-2.5 bg-[var(--color-ink)] text-inverse uppercase font-bold rounded px-2 py-0.5 text-[9px] tracking-wide">
-                    {product.badge || product.category || "Product"}
-                </span>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleWishlist(product);
-                    }}
-                    aria-label="Toggle wishlist"
-                    className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center bg-surface/70"
+            <div>
+                <div
+                    onClick={() => navigate(`/product/${product.id}`, { state: { product } })}
                     style={{
-                        backdropFilter: "blur(2px)",
-                        WebkitBackdropFilter: "blur(2px)",
+                        position: "relative",
+                        width: "100%",
+                        aspectRatio: "1 / 1",
+                        borderRadius: "14px",
+                        background: SAND,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        overflow: "hidden",
+                        marginBottom: "12px",
+                        border: `1px solid ${BORDER_SUB}`,
+                        cursor: "pointer",
                     }}
                 >
-                    <Heart
-                        size={15}
-                        style={{ color: isWishlisted ? "var(--color-primary)" : "var(--color-body)" }}
-                        fill={isWishlisted ? "var(--color-primary)" : "none"}
+                    <img
+                        src={getImage(product)}
+                        alt={name}
+                        loading="lazy"
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
-                </button>
-            </div>
+                    {/* Category badge */}
+                    <span style={{
+                        position: "absolute", top: "8px", left: "8px",
+                        background: CHARCOAL, color: WHITE,
+                        fontSize: "9px", fontWeight: 700,
+                        padding: "2px 7px", borderRadius: "4px",
+                        letterSpacing: "0.06em", textTransform: "uppercase",
+                    }}>
+                        {product.badge || product.category || "Product"}
+                    </span>
+                    {/* Wishlist heart */}
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onToggleWishlist(product); }}
+                        aria-label="Toggle wishlist"
+                        style={{
+                            position: "absolute", top: "8px", right: "8px",
+                            width: "28px", height: "28px", borderRadius: "50%",
+                            background: "rgba(255,255,255,0.90)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            border: "none", cursor: "pointer",
+                            boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
+                            transition: "color 0.15s",
+                        }}
+                    >
+                        <Heart
+                            size={14}
+                            style={{ color: isWishlisted ? "#EF4444" : MUTED }}
+                            fill={isWishlisted ? "#EF4444" : "none"}
+                        />
+                    </button>
+                </div>
 
-            {/* Body */}
-            <div className="flex flex-col flex-1 p-3">
-                <div className="flex items-center gap-1.5 mb-1.5">
+                {/* Stars */}
+                <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "4px" }}>
                     <Stars rating={product.rating} />
-                    <span className="text-[12px] font-medium text-[var(--color-body)]">
-                        {Number(product.rating || 0).toFixed(1)}
+                    <span style={{ fontSize: "11px", color: MUTED, fontWeight: 500 }}>
+                        ({Number(product.rating || 0).toFixed(1)})
                     </span>
                 </div>
 
-                <h3
-                    className="font-semibold text-[var(--color-ink)]"
-                    style={{
-                        fontSize: "14px",
-                        lineHeight: "19px",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        minHeight: "38px",
-                    }}
-                >
+                {/* Title */}
+                <h4 style={{
+                    fontWeight: 700, fontSize: "14px", color: CHARCOAL,
+                    lineHeight: "1.35", marginBottom: "4px",
+                    display: "-webkit-box", WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical", overflow: "hidden", minHeight: "38px",
+                }}>
                     {name}
-                </h3>
+                </h4>
 
-                <div className="mt-2">
+                {/* Price */}
+                <div style={{ marginBottom: "10px" }}>
                     {discount > 0 ? (
-                        <div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                                {summary.prefix && (
-                                    <span className="text-[11px] font-semibold text-muted">{summary.prefix}</span>
-                                )}
-                                <span className="text-[16px] font-bold text-[var(--color-primary)]">
-                                    ₹{discountedPrice.toFixed(2)}
-                                </span>
-
-                                <span className="text-[13px] text-muted line-through">
-                                    ₹{mrp.toFixed(2)}
-                                </span>
-
-                                <span className="text-[11px] font-semibold text-success">
-                                    {discount}% OFF
-                                </span>
-                            </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                            {summary.prefix && (
+                                <span style={{ fontSize: "11px", fontWeight: 600, color: MUTED }}>{summary.prefix}</span>
+                            )}
+                            <span style={{ fontSize: "14px", fontWeight: 900, color: CHARCOAL }}>
+                                ₹{discountedPrice.toFixed(2)}
+                            </span>
+                            <span style={{ fontSize: "11px", color: MUTED, textDecoration: "line-through" }}>
+                                ₹{mrp.toFixed(2)}
+                            </span>
+                            <span style={{
+                                fontSize: "10px", fontWeight: 800,
+                                background: "#FEE2E2", color: "#B91C1C",
+                                padding: "1px 5px", borderRadius: "4px",
+                            }}>
+                                {discount}% OFF
+                            </span>
                             {product.discountExpiry && (
-                                <div className="text-[10px] text-accent-strong font-medium mt-1">
+                                <div style={{ fontSize: "10px", color: "#D97706", fontWeight: 500, width: "100%" }}>
                                     Ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" })}
                                 </div>
                             )}
                         </div>
                     ) : (
-                        <span className="text-[16px] font-bold text-[var(--color-primary)]">
+                        <span style={{ fontSize: "14px", fontWeight: 900, color: CHARCOAL }}>
                             {summary.prefix && (
-                                <span className="text-[11px] font-semibold text-muted mr-1">{summary.prefix}</span>
+                                <span style={{ fontSize: "11px", fontWeight: 600, color: MUTED, marginRight: "4px" }}>{summary.prefix}</span>
                             )}
                             ₹{mrp.toFixed(2)}
                         </span>
                     )}
                     {summary.note && (
-                        <div className="text-[11px] text-muted mt-1">{summary.note}</div>
+                        <div style={{ fontSize: "11px", color: MUTED, marginTop: "2px" }}>{summary.note}</div>
                     )}
                 </div>
 
-                <div className="flex items-center gap-2 mt-2 mb-3">
-                    <span
-                        className="rounded px-2 py-0.5 text-[11px] font-bold"
-                        style={
-                            isOut || isLow
-                                ? { background: "var(--color-error-subtle)", color: "var(--color-error)" }
-                                : { background: "var(--color-success-subtle)", color: "var(--color-success)" }
-                        }
+                {/* Stock bar */}
+                {showCount && (
+                    <div style={{ marginBottom: "10px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: MUTED, fontWeight: 500, marginBottom: "4px" }}>
+                            <span>Available</span>
+                            <span style={{ color: isLow ? "#B91C1C" : "#065F46", fontWeight: 600 }}>{stock} units</span>
+                        </div>
+                        <div style={{ width: "100%", background: SAND, borderRadius: "999px", height: "6px", overflow: "hidden" }}>
+                            <div style={{
+                                background: isLow ? "#EF4444" : "#059669",
+                                height: "100%", width: `${pct}%`, borderRadius: "999px",
+                            }} />
+                        </div>
+                    </div>
+                )}
+                {!showCount && !isOut && (
+                    <div style={{ marginBottom: "10px" }}>
+                        <span style={{
+                            fontSize: "11px", fontWeight: 700,
+                            background: "#D1FAE5", color: "#065F46",
+                            padding: "2px 8px", borderRadius: "5px",
+                        }}>In Stock</span>
+                    </div>
+                )}
+                {isOut && (
+                    <div style={{ marginBottom: "10px" }}>
+                        <span style={{
+                            fontSize: "11px", fontWeight: 700,
+                            background: "#FEE2E2", color: "#B91C1C",
+                            padding: "2px 8px", borderRadius: "5px",
+                        }}>Out of Stock</span>
+                    </div>
+                )}
+            </div>
+
+            {/* CTA button */}
+            <div style={{ marginTop: "4px" }}>
+                {isOut ? (
+                    <button
+                        disabled
+                        style={{
+                            width: "100%", height: "36px",
+                            background: BORDER, color: MUTED,
+                            borderRadius: "12px", border: "none",
+                            fontSize: "12px", fontWeight: 700, cursor: "not-allowed",
+                            fontFamily: FONT,
+                        }}
                     >
-                        {isOut ? "Out of Stock" : showCount ? `Available: ${stock}` : "In Stock"}
-                    </span>
-                    {showCount && (
-                        <div
-                            className="rounded-full overflow-hidden"
-                            style={{ width: "70px", height: "5px", background: "var(--color-border)" }}
-                        >
-                            <div
-                                className="h-full rounded-full"
-                                style={{
-                                    width: `${pct}%`,
-                                    background: isLow ? "var(--color-error)" : "var(--color-success)",
-                                }}
-                            />
-                        </div>
-                    )}
-                </div>
-
-                <div className="mt-auto">
-                    {isOut ? (
+                        Out of Stock
+                    </button>
+                ) : choose ? (
+                    <button
+                        onClick={() => navigate(`/product/${product.id}`, { state: { product } })}
+                        style={{
+                            width: "100%", height: "36px",
+                            background: TEAL, color: WHITE,
+                            borderRadius: "12px", border: "none",
+                            fontSize: "12px", fontWeight: 700, cursor: "pointer",
+                            fontFamily: FONT, transition: "background 0.15s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = TEAL_DARK}
+                        onMouseLeave={e => e.currentTarget.style.background = TEAL}
+                    >
+                        Choose options
+                    </button>
+                ) : quantity > 0 ? (
+                    <div style={{
+                        width: "100%", height: "36px",
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        border: `1px solid ${TEAL}`, borderRadius: "12px", overflow: "hidden",
+                    }}>
                         <button
-                            disabled
-                            className="w-full flex items-center justify-center gap-2 rounded-lg font-bold text-[13px] cursor-not-allowed"
+                            onClick={() => onDecrement(product)}
                             style={{
-                                height: "40px",
-                                background: "var(--color-border)",
-                                color: "var(--color-muted)",
+                                flex: 1, height: "100%", background: "transparent", border: "none",
+                                fontSize: "18px", fontWeight: 700, color: TEAL, cursor: "pointer",
+                                fontFamily: FONT,
                             }}
-                        >
-                            Out of Stock
-                        </button>
-                    ) : choose ? (
-                        <button
-                            onClick={() => navigate(`/product/${product.id}`, { state: { product } })}
-                            className="w-full flex items-center justify-center gap-2 rounded-lg font-bold text-[13px]"
-                            style={{
-                                height: "40px",
-                                background: "var(--color-primary)",
-                                color: "var(--color-inverse)",
-                            }}
-                        >
-                            Choose options
-                        </button>
-                    ) : quantity > 0 ? (
-                        <div
-                            className="w-full flex items-center justify-between rounded-lg overflow-hidden border border-[var(--color-primary)]"
-                            style={{ height: "40px" }}
-                        >
-                            <button
-                                onClick={() => onDecrement(product)}
-                                className="h-full flex-1 font-bold text-[18px] text-[var(--color-accent-strong)]"
-                            >
-                                −
-                            </button>
-                            <span className="font-bold text-[14px] text-[var(--color-ink)] min-w-[24px] text-center">
-                                {quantity}
-                            </span>
-                            <button
-                                onClick={() => onAddToCart(product)}
-                                disabled={quantity >= stock}
-                                className="h-full flex-1 font-bold text-[18px]"
-                                style={{ color: quantity >= stock ? "var(--color-disabled-fg)" : "var(--color-accent-strong)" }}
-                            >
-                                +
-                            </button>
-                        </div>
-                    ) : (
+                        >−</button>
+                        <span style={{ fontWeight: 700, fontSize: "14px", color: CHARCOAL, minWidth: "24px", textAlign: "center" }}>
+                            {quantity}
+                        </span>
                         <button
                             onClick={() => onAddToCart(product)}
-                            className="w-full flex items-center justify-center gap-2 rounded-lg font-bold text-[13px]"
+                            disabled={quantity >= stock}
                             style={{
-                                height: "40px",
-                                background: "var(--color-primary)",
-                                color: "var(--color-inverse)",
+                                flex: 1, height: "100%", background: "transparent", border: "none",
+                                fontSize: "18px", fontWeight: 700,
+                                color: quantity >= stock ? MUTED : TEAL,
+                                cursor: quantity >= stock ? "not-allowed" : "pointer",
+                                fontFamily: FONT,
                             }}
-                        >
-                            <ShoppingCart size={15} />
-                            Add to Cart
-                        </button>
-                    )}
-                </div>
+                        >+</button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => onAddToCart(product)}
+                        style={{
+                            width: "100%", height: "36px",
+                            background: TEAL, color: WHITE,
+                            borderRadius: "12px", border: "none",
+                            fontSize: "12px", fontWeight: 700, cursor: "pointer",
+                            display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+                            fontFamily: FONT, transition: "background 0.15s",
+                            boxShadow: "0 1px 4px rgba(0,0,0,0.10)",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = TEAL_DARK}
+                        onMouseLeave={e => e.currentTarget.style.background = TEAL}
+                    >
+                        <ShoppingCart size={13} />
+                        Add to Cart
+                    </button>
+                )}
             </div>
-        </div>
+        </article>
     );
 };
 
+/* ── Filter sidebar helpers ── */
 const SectionLabel = ({ children }) => (
     <p
-        className="uppercase font-bold text-[var(--color-ink)] mb-2"
-        style={{ letterSpacing: "0.7px", fontSize: "11px" }}
+        style={{
+            textTransform: "uppercase", fontWeight: 700,
+            color: MUTED, letterSpacing: "0.08em",
+            fontSize: "11px", marginBottom: "8px",
+        }}
     >
         {children}
     </p>
 );
 
 const CheckRow = ({ checked, onChange, children, count }) => (
-    <label className="flex items-center gap-2 py-1 cursor-pointer select-none">
-        <input
-            type="checkbox"
-            checked={checked}
-            onChange={onChange}
-            className="w-4 h-4 rounded-[4px] border border-[var(--color-border-strong)] bg-surface accent-[var(--color-ink)] cursor-pointer"
-        />
-        <span className="flex-1 text-[13px] text-[var(--color-body)]">{children}</span>
+    <label style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        cursor: "pointer", userSelect: "none", padding: "4px 0",
+    }}>
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+                type="checkbox"
+                checked={checked}
+                onChange={onChange}
+                style={{
+                    width: "14px", height: "14px",
+                    borderRadius: "4px", accentColor: TEAL, cursor: "pointer",
+                }}
+            />
+            <span style={{ fontSize: "12px", fontWeight: 500, color: CHARCOAL }}>{children}</span>
+        </span>
         {count !== undefined && (
-            <span className="text-[12px] text-[var(--color-body)] opacity-60">{count}</span>
+            <span style={{ fontSize: "11px", color: MUTED }}>{count}</span>
         )}
     </label>
 );
@@ -1270,389 +1358,351 @@ const ProductsPage = () => {
     }
 
     /* ============================================================
-         DESKTOP / WEB LAYOUT (new design — scaled to match html.png)
+         DESKTOP / WEB LAYOUT — Pelago HTML design
       ============================================================ */
     return (
         <div
-            className="min-h-screen flex"
-            style={{ background: "var(--color-background)", fontFamily: "Inter, sans-serif" }}
+            style={{
+                minHeight: "100vh",
+                background: CANVAS,
+                backgroundImage: "radial-gradient(rgba(20,40,35,0.02) 1px, transparent 0)",
+                backgroundSize: "24px 24px",
+                fontFamily: FONT,
+                display: "flex",
+                flexDirection: "column",
+            }}
         >
-            {/* ===================== SIDEBAR ===================== */}
-            <aside
-                ref={sidebarRef}
-                className="hidden lg:flex flex-col flex-shrink-0 sticky top-[88px] self-start overflow-y-auto no-scrollbar"
+            {/* ── Category pill bar (full-width, above everything) ── */}
+            <div
+                ref={chipsRef}
                 style={{
-                    width: "256px",
-                    height: "calc(100vh - 88px)",
-                    background: "var(--color-surface-muted)",
-                    borderRight: "1px solid var(--color-border)",
-                    padding: "16px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    overflowX: "auto",
+                    padding: "16px 24px 0",
+                    scrollbarWidth: "none",
                 }}
             >
-                {/* Top section */}
-                <h2 className="font-black text-[var(--color-ink)]" style={{ fontSize: "18px" }}>
-                    Categories
-                </h2>
-                <p
-                    className="font-semibold text-[var(--color-body)] opacity-70 mb-4"
-                    style={{ fontSize: "13px" }}
+                {/* All */}
+                <button
+                    onClick={() => setActiveChip("all")}
+                    className="cat-chip"
+                    style={{
+                        flexShrink: 0,
+                        padding: "7px 16px",
+                        borderRadius: "9999px",
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        border: "none",
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        transition: "background 0.15s",
+                        ...(activeChip === "all"
+                            ? { background: CHARCOAL, color: WHITE, boxShadow: "0 1px 4px rgba(0,0,0,0.15)" }
+                            : { background: WHITE, color: CHARCOAL, border: `1px solid ${BORDER}` }),
+                    }}
                 >
-                    Browse by department
-                </p>
+                    All Categories <span style={{ opacity: 0.7, fontWeight: 400 }}>{totalProductCount}</span>
+                </button>
+                {categories.filter(Boolean).map((cat) => (
+                    <button
+                        key={cat}
+                        onClick={() => setActiveChip(cat === activeChip ? "all" : cat)}
+                        className="cat-chip"
+                        style={{
+                            flexShrink: 0,
+                            padding: "7px 14px",
+                            borderRadius: "9999px",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            border: "none",
+                            cursor: "pointer",
+                            whiteSpace: "nowrap",
+                            transition: "background 0.15s",
+                            ...(activeChip === cat
+                                ? { background: CHARCOAL, color: WHITE, boxShadow: "0 1px 4px rgba(0,0,0,0.15)" }
+                                : { background: WHITE, color: CHARCOAL, border: `1px solid ${BORDER}` }),
+                        }}
+                    >
+                        {toTitleCase(cat)}{" "}
+                        <span style={{ color: MUTED, fontWeight: 400 }}>{categoryCounts[cat] || 0}</span>
+                    </button>
+                ))}
+            </div>
 
-                {/* Search filter */}
-                <div className="relative mb-5">
-                    <Filter
-                        size={15}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                        style={{ color: "var(--color-muted)" }}
-                    />
-                    <input
-                        type="text"
-                        value={filterSearch}
-                        onChange={(e) => setFilterSearch(e.target.value)}
-                        placeholder="Search Filter..."
-                        className="w-full outline-none bg-surface border border-[var(--color-border-strong)] rounded-lg text-[13px] text-[var(--color-ink)]"
-                        style={{ padding: "8px 12px 9px 32px" }}
-                    />
-                </div>
+            {/* ── Main layout: sidebar + content ── */}
+            <div style={{ display: "flex", flex: 1, gap: "24px", padding: "16px 24px 32px", alignItems: "flex-start" }}>
 
-                {/* DEPARTMENT */}
-                <div className="mb-5">
-                    <SectionLabel>Department</SectionLabel>
-                    {displayedDepartments.length ? (
-                        displayedDepartments.map((cat) => (
-                            <CheckRow
-                                key={cat}
-                                checked={selectedDepartments.includes(cat)}
-                                onChange={() => toggleDepartment(cat)}
-                                count={categoryCounts[cat] || 0}
-                            >
-                                {toTitleCase(cat)}
-                            </CheckRow>
-                        ))
-                    ) : (
-                        <p className="text-[12px] text-[var(--color-body)] opacity-60">
-                            No departments
-                        </p>
-                    )}
-                </div>
-
-                {/* PRICE RANGE */}
-                <div className="mb-5">
-                    <SectionLabel>Price Range</SectionLabel>
-                    <input
-                        type="range"
-                        min={0}
-                        max={5000}
-                        value={priceMax === "" ? 5000 : Number(priceMax)}
-                        onChange={(e) => setPriceMax(e.target.value)}
-                        className="w-full mb-3 accent-[var(--color-ink)]"
-                        style={{ height: "4px" }}
-                    />
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="number"
-                            value={priceMin}
-                            onChange={(e) => setPriceMin(e.target.value)}
-                            placeholder="Min"
-                            className="outline-none bg-surface border border-[var(--color-border-strong)] rounded text-[13px] text-[var(--color-ink)] px-2 py-1.5"
-                            style={{ width: "103.5px" }}
-                        />
-                        <input
-                            type="number"
-                            value={priceMax}
-                            onChange={(e) => setPriceMax(e.target.value)}
-                            placeholder="Max"
-                            className="outline-none bg-surface border border-[var(--color-border-strong)] rounded text-[13px] text-[var(--color-ink)] px-2 py-1.5"
-                            style={{ width: "103.5px" }}
-                        />
-                    </div>
-                </div>
-
-                {/* CUSTOMER RATING */}
-                <div className="mb-5">
-                    <SectionLabel>Customer Rating</SectionLabel>
-                    {[4, 3].map((t) => (
-                        <CheckRow
-                            key={t}
-                            checked={ratingThresholds.includes(t)}
-                            onChange={() => toggleRating(t)}
+                {/* ===================== LEFT FILTER SIDEBAR ===================== */}
+                <aside
+                    ref={sidebarRef}
+                    className="hidden lg:flex"
+                    style={{
+                        flexDirection: "column",
+                        flexShrink: 0,
+                        width: "240px",
+                        background: WHITE,
+                        borderRadius: "24px",
+                        border: `1px solid ${BORDER}`,
+                        padding: "20px",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                        position: "sticky",
+                        top: "88px",
+                        maxHeight: "calc(100vh - 108px)",
+                        overflowY: "auto",
+                        gap: "0",
+                        scrollbarWidth: "none",
+                    }}
+                >
+                    {/* Header */}
+                    <div style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        paddingBottom: "12px", borderBottom: `1px solid ${BORDER}`, marginBottom: "16px",
+                    }}>
+                        <h3 style={{ fontWeight: 700, fontSize: "14px", color: CHARCOAL }}>Categories &amp; Filter</h3>
+                        <button
+                            onClick={clearAllFilters}
+                            style={{ fontSize: "12px", fontWeight: 600, color: TEAL, background: "none", border: "none", cursor: "pointer" }}
                         >
-                            <span className="flex items-center gap-1">
-                                {t}
-                                <Star
-                                    size={13}
-                                    style={{ color: "var(--color-primary)" }}
-                                    fill="var(--color-primary)"
-                                    strokeWidth={0}
-                                />
-                                &amp; Above
+                            Reset all
+                        </button>
+                    </div>
+
+                    {/* Search catalog */}
+                    <div style={{ marginBottom: "20px" }}>
+                        <SectionLabel>Search Catalog</SectionLabel>
+                        <div style={{ position: "relative" }}>
+                            <input
+                                type="text"
+                                value={filterSearch}
+                                onChange={(e) => setFilterSearch(e.target.value)}
+                                placeholder="Search products by name..."
+                                style={{
+                                    width: "100%", boxSizing: "border-box",
+                                    padding: "8px 12px 8px 32px",
+                                    borderRadius: "12px",
+                                    border: `1px solid ${BORDER}`,
+                                    fontSize: "12px", color: CHARCOAL,
+                                    background: `${SAND}66`,
+                                    outline: "none", fontFamily: FONT,
+                                }}
+                                onFocus={e => { e.target.style.background = WHITE; e.target.style.borderColor = TEAL; }}
+                                onBlur={e => { e.target.style.background = `${SAND}66`; e.target.style.borderColor = BORDER; }}
+                            />
+                            <SearchIcon size={14} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: MUTED, pointerEvents: "none" }} />
+                        </div>
+                    </div>
+
+                    {/* Department */}
+                    <div style={{ marginBottom: "20px" }}>
+                        <SectionLabel>Department</SectionLabel>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                            {displayedDepartments.length ? (
+                                displayedDepartments.map((cat) => (
+                                    <CheckRow
+                                        key={cat}
+                                        checked={selectedDepartments.includes(cat)}
+                                        onChange={() => toggleDepartment(cat)}
+                                        count={categoryCounts[cat] || 0}
+                                    >
+                                        {toTitleCase(cat)}
+                                    </CheckRow>
+                                ))
+                            ) : (
+                                <p style={{ fontSize: "12px", color: MUTED }}>No departments</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Price Range */}
+                    <div style={{ marginBottom: "20px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                            <SectionLabel>Price Range</SectionLabel>
+                            <span style={{ fontSize: "11px", fontWeight: 700, color: CHARCOAL }}>
+                                ₹{priceMin || 0} – ₹{priceMax || maxPriceValue}
                             </span>
-                        </CheckRow>
-                    ))}
-                </div>
+                        </div>
+                        <input
+                            type="range"
+                            min={0}
+                            max={5000}
+                            value={priceMax === "" ? 5000 : Number(priceMax)}
+                            onChange={(e) => setPriceMax(e.target.value)}
+                            style={{ width: "100%", marginBottom: "8px", accentColor: TEAL, height: "6px", background: SAND, borderRadius: "4px", cursor: "pointer" }}
+                        />
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <input
+                                type="number"
+                                value={priceMin}
+                                onChange={(e) => setPriceMin(e.target.value)}
+                                placeholder="Min"
+                                style={{
+                                    width: "50%", padding: "6px 8px", borderRadius: "10px",
+                                    border: `1px solid ${BORDER}`, fontSize: "12px", color: CHARCOAL,
+                                    background: `${SAND}55`, outline: "none", fontFamily: FONT,
+                                }}
+                            />
+                            <span style={{ fontSize: "11px", color: MUTED }}>—</span>
+                            <input
+                                type="number"
+                                value={priceMax}
+                                onChange={(e) => setPriceMax(e.target.value)}
+                                placeholder="Max"
+                                style={{
+                                    width: "50%", padding: "6px 8px", borderRadius: "10px",
+                                    border: `1px solid ${BORDER}`, fontSize: "12px", color: CHARCOAL,
+                                    background: `${SAND}55`, outline: "none", fontFamily: FONT,
+                                }}
+                            />
+                        </div>
+                    </div>
 
-                {/* AVAILABILITY */}
-                <div className="mb-5">
-                    <SectionLabel>Availability</SectionLabel>
-                    <CheckRow
-                        checked={availability.includes("inStock")}
-                        onChange={() => toggleAvailability("inStock")}
-                    >
-                        In Stock
-                    </CheckRow>
-                    <CheckRow
-                        checked={availability.includes("lowStock")}
-                        onChange={() => toggleAvailability("lowStock")}
-                    >
-                        Low Stock
-                    </CheckRow>
-                </div>
+                    {/* Customer Rating */}
+                    <div style={{ marginBottom: "20px" }}>
+                        <SectionLabel>Customer Rating</SectionLabel>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                            {[4, 3].map((t) => (
+                                <CheckRow
+                                    key={t}
+                                    checked={ratingThresholds.includes(t)}
+                                    onChange={() => toggleRating(t)}
+                                >
+                                    <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                                        <span style={{ color: "#F59E0B", fontWeight: 700 }}>{"★".repeat(t)}{"☆".repeat(5 - t)}</span>
+                                        <span style={{ fontSize: "11px" }}>{t}★ &amp; Above</span>
+                                    </span>
+                                </CheckRow>
+                            ))}
+                        </div>
+                    </div>
 
-                {/* Bottom buttons */}
-                <div className="mt-auto pt-4 space-y-2">
+                    {/* Availability */}
+                    <div style={{ marginBottom: "20px" }}>
+                        <SectionLabel>Availability</SectionLabel>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <CheckRow checked={availability.includes("inStock")} onChange={() => toggleAvailability("inStock")}>
+                                In Stock
+                            </CheckRow>
+                            <CheckRow checked={availability.includes("lowStock")} onChange={() => toggleAvailability("lowStock")}>
+                                Low Stock
+                            </CheckRow>
+                        </div>
+                    </div>
+
+                    {/* Apply button */}
                     <button
                         onClick={applyFilters}
-                        className="w-full rounded-lg font-semibold text-inverse text-[14px]"
-                        style={{ background: "var(--color-ink)", height: "38px" }}
+                        style={{
+                            width: "100%", padding: "10px", borderRadius: "12px",
+                            background: TEAL, color: WHITE, border: "none",
+                            fontSize: "12px", fontWeight: 700, cursor: "pointer",
+                            fontFamily: FONT, marginTop: "4px", transition: "background 0.15s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = TEAL_DARK}
+                        onMouseLeave={e => e.currentTarget.style.background = TEAL}
                     >
                         Apply Filters
                     </button>
-                    <button
-                        onClick={clearAllFilters}
-                        className="w-full flex items-center justify-center gap-2 font-semibold text-[var(--color-body)] text-[14px]"
-                        style={{ height: "38px" }}
-                    >
-                        <X size={15} />
-                        Clear All Filters
-                    </button>
-                </div>
-            </aside>
+                </aside>
 
-            {/* ===================== MAIN ===================== */}
-            <main className="flex-1 min-w-0 px-5 lg:px-8 py-6">
-                {/* Summary section */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-                    <div>
-                        <h1
-                            className="font-bold text-[var(--color-ink)]"
-                            style={{ fontSize: "26px" }}
-                        >
-                            Discover Everything
-                        </h1>
-                        <p className="text-[var(--color-body)]" style={{ fontSize: "14px" }}>
-                            Explore our curated collection of luxury and essentials.
-                        </p>
-                    </div>
-                    {/* Dark stats card */}
-                    <div
-                        className="flex items-center gap-5 rounded-xl text-inverse flex-shrink-0"
-                        style={{ background: "var(--color-ink)", padding: "12px 24px" }}
-                    >
-                        <div>
-                            <div className="font-black" style={{ fontSize: "26px" }}>
-                                {totalProductCount}
-                            </div>
-                            <div
-                                className="uppercase opacity-80"
-                                style={{ fontSize: "11px", letterSpacing: "1.2px" }}
-                            >
-                                Products Available
-                            </div>
-                        </div>
-                        <div className="w-px self-stretch bg-surface opacity-20" />
-                        <Store size={24} className="text-inverse opacity-40" />
-                    </div>
-                </div>
+                {/* ===================== MAIN CONTENT ===================== */}
+                <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "24px" }}>
 
-                {/* Category chips */}
-                <div
-                    ref={chipsRef}
-                    className="flex items-center gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar"
-                >
-                    <button
-                        onClick={() => setActiveChip("all")}
-                        className="cat-chip flex-shrink-0 rounded-full font-semibold px-3 py-1.5 text-[13px]"
-                        style={
-                            activeChip === "all"
-                                ? { background: "var(--color-primary)", color: "var(--color-inverse)" }
-                                : {
-                                    background: "var(--color-border)",
-                                    border: "1px solid var(--color-border-strong)",
-                                    color: "var(--color-body)",
-                                }
-                        }
-                    >
-                        All Categories
-                    </button>
-                    {categories.filter(Boolean).map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setActiveChip(cat)}
-                            className="cat-chip flex-shrink-0 rounded-full font-semibold px-3 py-1.5 text-[13px] whitespace-nowrap"
-                            style={
-                                activeChip === cat
-                                    ? { background: "var(--color-primary)", color: "var(--color-inverse)" }
-                                    : {
-                                        background: "var(--color-border)",
-                                        border: "1px solid var(--color-border-strong)",
-                                        color: "var(--color-body)",
-                                    }
-                            }
-                        >
-                            {toTitleCase(cat)}{" "}
-                            <span className="opacity-60">{categoryCounts[cat] || 0}</span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Control bar */}
-                <div className="flex flex-col md:flex-row gap-3 mb-6">
-                    <div className="relative flex-1">
-                        <SearchIcon
-                            size={17}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-                            style={{ color: "var(--color-muted)" }}
-                        />
-                        <input
-                            type="text"
-                            value={deskSearch}
-                            onChange={(e) => setDeskSearch(e.target.value)}
-                            onFocus={() => setActiveSearchField("desktop")}
-                            onBlur={() => setActiveSearchField(null)}
-                            onKeyDown={(e) => e.key === "Enter" && commitSearch(deskSearch)}
-                            placeholder="Search products by name..."
-                            className="w-full outline-none bg-surface border border-[var(--color-border-strong)] rounded-xl text-[14px] text-[var(--color-ink)]"
-                            style={{ height: "46px", padding: "12px 16px 12px 44px" }}
-                        />
-                        {/* Task 2.2 — autocomplete dropdown */}
-                        {activeSearchField === "desktop" && (
-                            <SearchSuggestions query={deskSearch} {...suggestionProps} />
-                        )}
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-[13px] text-[var(--color-body)] font-medium">
-                            Sort By:
+                    {/* Page header */}
+                    <header style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <span style={{ fontSize: "12px", fontWeight: 600, color: MUTED }}>
+                            Discover Everything &amp; Catalog
                         </span>
-                        <select
-                            value={deskSort}
-                            onChange={(e) => setDeskSort(e.target.value)}
-                            className="outline-none bg-surface border border-[var(--color-border-strong)] rounded-xl text-[14px] text-[var(--color-ink)] px-3"
-                            style={{ height: "46px" }}
-                        >
-                            {SORT_OPTIONS.map((o) => (
-                                <option key={o.value} value={o.value}>
-                                    {o.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+                        <h2 style={{ fontSize: "28px", fontWeight: 800, color: CHARCOAL, letterSpacing: "-0.5px", margin: 0 }}>
+                            Discover Everything
+                        </h2>
+                    </header>
 
-                {/* Recently viewed */}
-                {!loading && recentlyViewedProducts.length > 0 && (
-                    <div className="mb-10">
-                        <div
-                            className="flex items-center justify-between pb-3 mb-5"
-                            style={{ borderBottom: "1px solid var(--color-border)" }}
-                        >
-                            <h2
-                                className="font-bold text-[var(--color-ink)]"
-                                style={{ fontSize: "19px" }}
+                    {/* Sort + count bar */}
+                    <div style={{
+                        background: WHITE,
+                        borderRadius: "16px",
+                        border: `1px solid ${BORDER}`,
+                        padding: "12px 14px",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "12px",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                    }}>
+                        {/* Left: search */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, minWidth: "200px" }}>
+                            <div style={{ position: "relative", flex: 1, maxWidth: "340px" }}>
+                                <SearchIcon size={15} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: MUTED, pointerEvents: "none" }} />
+                                <input
+                                    type="text"
+                                    value={deskSearch}
+                                    onChange={(e) => setDeskSearch(e.target.value)}
+                                    onFocus={() => setActiveSearchField("desktop")}
+                                    onBlur={() => setActiveSearchField(null)}
+                                    onKeyDown={(e) => e.key === "Enter" && commitSearch(deskSearch)}
+                                    placeholder="Search products by name..."
+                                    style={{
+                                        width: "100%", boxSizing: "border-box",
+                                        padding: "8px 12px 8px 34px",
+                                        borderRadius: "12px",
+                                        border: `1px solid ${BORDER}`,
+                                        fontSize: "12px", color: CHARCOAL,
+                                        background: `${SAND}44`,
+                                        outline: "none", fontFamily: FONT,
+                                    }}
+                                    onFocusCapture={e => { e.target.style.background = WHITE; e.target.style.borderColor = TEAL; }}
+                                    onBlurCapture={e => { e.target.style.background = `${SAND}44`; e.target.style.borderColor = BORDER; }}
+                                />
+                                {activeSearchField === "desktop" && (
+                                    <SearchSuggestions query={deskSearch} {...suggestionProps} />
+                                )}
+                            </div>
+                            <span style={{ fontSize: "12px", fontWeight: 600, color: MUTED, whiteSpace: "nowrap" }}>Showing:</span>
+                            <span style={{ fontSize: "12px", fontWeight: 700, color: CHARCOAL, whiteSpace: "nowrap" }}>
+                                {desktopFiltered.length} products in catalog
+                            </span>
+                        </div>
+                        {/* Right: sort */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span style={{ fontSize: "12px", color: MUTED }}>Sort by:</span>
+                            <select
+                                value={deskSort}
+                                onChange={(e) => setDeskSort(e.target.value)}
+                                style={{
+                                    padding: "6px 28px 6px 10px",
+                                    borderRadius: "12px",
+                                    border: `1px solid ${BORDER}`,
+                                    fontSize: "12px", fontWeight: 500, color: CHARCOAL,
+                                    background: `${SAND}33`,
+                                    outline: "none", cursor: "pointer", fontFamily: FONT,
+                                }}
                             >
-                                Recently Viewed
-                            </h2>
-                        </div>
-                        <div
-                            className="flex no-scrollbar"
-                            style={{ gap: "20px", overflowX: "auto" }}
-                        >
-                            {recentlyViewedProducts.map((product) => (
-                                <div key={product.id} style={{ width: "220px", flexShrink: 0 }}>
-                                    <NewProductCard
-                                        product={product}
-                                        onAddToCart={handleAddToCart}
-                                        onDecrement={handleDecrement}
-                                        onToggleWishlist={handleToggleWishlist}
-                                        isWishlisted={isWishlisted(product.id)}
-                                        quantity={cartQty(product.id)}
-                                    />
-                                </div>
-                            ))}
+                                {SORT_OPTIONS.map((o) => (
+                                    <option key={o.value} value={o.value}>{o.label}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
-                )}
 
-                {/* Product sections */}
-                <div ref={gridRef}>
-                    {loading ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5" aria-busy="true">
-                            {[...Array(8)].map((_, i) => (
-                                <NewProductCardSkeleton key={i} />
-                            ))}
-                        </div>
-                    ) : Object.keys(desktopGrouped).length === 0 ? (
-                        <div className="h-[40vh] flex flex-col items-center justify-center gap-4">
-                            <p className="text-[var(--color-body)] opacity-70 text-[14px]">
-                                No products match your filters.
-                            </p>
-                            <button
-                                onClick={clearAllFilters}
-                                className="text-[var(--color-accent-strong)] font-bold text-[13px]"
-                            >
-                                Clear all filters
-                            </button>
-                        </div>
-                    ) : (
-                        Object.keys(desktopGrouped).map((category) => (
-                            <section key={category} className="mb-10">
-                                {/* Category header */}
-                                <div
-                                    className="flex items-center justify-between pb-3 mb-5"
-                                    style={{ borderBottom: "1px solid var(--color-border)" }}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <span
-                                            className="flex items-center justify-center rounded-full"
-                                            style={{
-                                                width: "34px",
-                                                height: "34px",
-                                                background: "color-mix(in srgb, var(--color-ink) 10%, transparent)",
-                                            }}
-                                        >
-                                            <LayoutGrid size={17} style={{ color: "var(--color-ink)" }} />
-                                        </span>
-                                        <h2
-                                            className="font-bold text-[var(--color-ink)]"
-                                            style={{ fontSize: "19px" }}
-                                        >
-                                            {toTitleCase(category)}
-                                        </h2>
-                                        <span
-                                            className="text-[var(--color-body)] opacity-60"
-                                            style={{ fontSize: "14px" }}
-                                        >
-                                            (
-                                            {categoryCounts[category] ||
-                                                desktopGrouped[category].length}{" "}
-                                            Products)
-                                        </span>
-                                    </div>
-                                    <button
-                                        onClick={() => setActiveChip(category)}
-                                        className="flex items-center gap-1 font-bold text-[13px]"
-                                        style={{ color: "var(--color-accent-strong)" }}
-                                    >
-                                        View All <ChevronRight size={15} />
-                                    </button>
-                                </div>
-
-                                {/* Grid */}
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                                    {desktopGrouped[category].map((product) => (
+                    {/* Recently viewed */}
+                    {!loading && recentlyViewedProducts.length > 0 && (
+                        <div>
+                            <div style={{
+                                display: "flex", alignItems: "center", justifyContent: "space-between",
+                                paddingBottom: "12px", marginBottom: "16px",
+                                borderBottom: `1px solid ${BORDER}`,
+                            }}>
+                                <h2 style={{ fontWeight: 700, fontSize: "18px", color: CHARCOAL, margin: 0 }}>
+                                    Recently Viewed
+                                </h2>
+                            </div>
+                            <div style={{ display: "flex", gap: "16px", overflowX: "auto", scrollbarWidth: "none" }}>
+                                {recentlyViewedProducts.map((product) => (
+                                    <div key={product.id} style={{ width: "200px", flexShrink: 0 }}>
                                         <NewProductCard
-                                            key={product.id}
                                             product={product}
                                             onAddToCart={handleAddToCart}
                                             onDecrement={handleDecrement}
@@ -1660,15 +1710,93 @@ const ProductsPage = () => {
                                             isWishlisted={isWishlisted(product.id)}
                                             quantity={cartQty(product.id)}
                                         />
-                                    ))}
-                                </div>
-                            </section>
-                        ))
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     )}
-                </div>
 
+                    {/* Product sections */}
+                    <div ref={gridRef}>
+                        {loading ? (
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }} aria-busy="true">
+                                {[...Array(8)].map((_, i) => (
+                                    <NewProductCardSkeleton key={i} />
+                                ))}
+                            </div>
+                        ) : Object.keys(desktopGrouped).length === 0 ? (
+                            <div style={{ minHeight: "40vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "16px" }}>
+                                <p style={{ color: MUTED, fontSize: "14px" }}>No products match your filters.</p>
+                                <button
+                                    onClick={clearAllFilters}
+                                    style={{ color: TEAL, fontWeight: 700, fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}
+                                >
+                                    Clear all filters
+                                </button>
+                            </div>
+                        ) : (
+                            Object.keys(desktopGrouped).map((category, idx) => {
+                                // Cycle through dot colours matching the HTML design
+                                const dotColors = [TEAL, "#EF4444", "#D97706", "#6366F1", "#10B981", "#F59E0B", "#8B5CF6"];
+                                const dotColor = dotColors[idx % dotColors.length];
+                                return (
+                                    <section key={category} style={{ marginBottom: "40px" }}>
+                                        {/* Section header */}
+                                        <div style={{
+                                            display: "flex", alignItems: "center",
+                                            justifyContent: "space-between", marginBottom: "16px",
+                                        }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                                <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: dotColor, flexShrink: 0 }} />
+                                                <h3 style={{ fontSize: "18px", fontWeight: 700, color: CHARCOAL, margin: 0 }}>
+                                                    {toTitleCase(category)}
+                                                </h3>
+                                                <span style={{
+                                                    fontSize: "11px", color: MUTED, fontWeight: 500,
+                                                    background: WHITE, padding: "2px 8px",
+                                                    borderRadius: "6px", border: `1px solid ${BORDER}`,
+                                                }}>
+                                                    {categoryCounts[category] || desktopGrouped[category].length} Products
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() => setActiveChip(category)}
+                                                style={{
+                                                    display: "flex", alignItems: "center", gap: "4px",
+                                                    fontSize: "12px", fontWeight: 700, color: TEAL,
+                                                    background: "none", border: "none", cursor: "pointer",
+                                                    textDecoration: "none",
+                                                }}
+                                            >
+                                                View All <span aria-hidden="true">→</span>
+                                            </button>
+                                        </div>
 
-            </main>
+                                        {/* Product grid */}
+                                        <div style={{
+                                            display: "grid",
+                                            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                                            gap: "16px",
+                                        }}>
+                                            {desktopGrouped[category].map((product) => (
+                                                <NewProductCard
+                                                    key={product.id}
+                                                    product={product}
+                                                    onAddToCart={handleAddToCart}
+                                                    onDecrement={handleDecrement}
+                                                    onToggleWishlist={handleToggleWishlist}
+                                                    isWishlisted={isWishlisted(product.id)}
+                                                    quantity={cartQty(product.id)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </section>
+                                );
+                            })
+                        )}
+                    </div>
+                </main>
+            </div>
         </div>
     );
 };

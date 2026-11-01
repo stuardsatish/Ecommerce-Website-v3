@@ -13,6 +13,8 @@ import { listPriceSummary, listStockSummary, needsOptionChoice } from "./purchas
 
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
+const PLACEHOLDER = "/placeholder-product.svg";
+
 export const ProductCard = ({ product, variant = "desktop" }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -208,6 +210,7 @@ export const ProductCard = ({ product, variant = "desktop" }) => {
                             loading="lazy"
                             className="w-full h-full"
                             style={{ objectFit: "cover", borderRadius: "8px" }}
+                            onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER; }}
                         />
                         {" "}
                     </div>
@@ -476,6 +479,7 @@ export const ProductCard = ({ product, variant = "desktop" }) => {
                             alt={product.title}
                             loading="lazy"
                             className="h-full w-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
+                            onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER; }}
                         />
                         {" "}
                     </div>

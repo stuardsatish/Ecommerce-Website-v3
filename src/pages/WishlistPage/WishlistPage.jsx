@@ -168,7 +168,7 @@ const WishlistPage = () => {
   }
 
   /* ============================================================
-     MOBILE LAYOUT (≤640px) — shares all Redux state/handlers.
+     MOBILE LAYOUT (≤1024px) — shares all Redux state/handlers.
   ============================================================ */
   if (isMobile) {
     return (
@@ -190,14 +190,12 @@ const WishlistPage = () => {
                 style={{ borderRadius: "12px", boxShadow: "0px 4px 20px rgba(26,43,60,0.05)" }}
                 aria-hidden="true"
               >
-                {/* Image area */}
                 <div style={{ background: "var(--color-surface-muted)", padding: "8px" }}>
                   <div
                     className="w-full aspect-square animate-pulse"
                     style={{ background: "var(--color-border)", borderRadius: "8px" }}
                   />
                 </div>
-                {/* Body */}
                 <div className="flex flex-col flex-1" style={{ padding: "12px" }}>
                   <Skeleton className="h-3 w-1/2 mb-2" />
                   <Skeleton className="h-3.5 w-full mb-1" />
@@ -256,65 +254,100 @@ const WishlistPage = () => {
     )
   }
 
+  /* ============================================================
+     DESKTOP LAYOUT (lg+) — Pelago / Fernhill artisanal redesign
+  ============================================================ */
   return (
-    <div className="hidden lg:block" style={{ background: "var(--color-surface-muted)", minHeight: "100vh", fontFamily: "Inter, sans-serif", color: "var(--color-ink)" }}>
-      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "48px 64px 80px" }}>
+    <div
+      style={{
+        fontFamily: "'Plus Jakarta Sans', Inter, sans-serif",
+        background: "#F5F1EB",
+        minHeight: "100vh",
+        color: "#1C1917",
+      }}
+    >
+      <main style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "88px 32px 64px", display: "flex", flexDirection: "column", gap: "40px" }}>
 
-        {/* SECTION 1 — HEADER */}
-        <div className="flex" style={{ justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div className="flex flex-col" style={{ gap: "8px" }}>
-            <div className="flex items-center" style={{ gap: "8px" }}>
-              <button onClick={() => navigate("/")} style={{ fontWeight: 500, fontSize: "12px", color: "var(--color-body)" }}>Home</button>
-              <ChevronRight size={12} style={{ color: "var(--color-body)" }} />
-              <span style={{ fontWeight: 500, fontSize: "12px", color: "var(--color-ink)" }}>Wishlist</span>
+        {/* ── HEADER ── */}
+        <header style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", height: "16px" }}>
+            <button onClick={() => navigate("/")} style={{ color: "#78716C", background: "none", border: "none", cursor: "pointer", padding: 0 }}>Home</button>
+            <span style={{ color: "#A8A29E" }}>/</span>
+            <button onClick={() => navigate("/products")} style={{ color: "#78716C", background: "none", border: "none", cursor: "pointer", padding: 0 }}>Products</button>
+            <span style={{ color: "#A8A29E" }}>/</span>
+            <span style={{ color: "#1C1917", fontWeight: 500 }}>My Wishlist</span>
+          </nav>
+
+          {/* Title + Action Buttons row */}
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+            <div>
+              <p style={{ fontSize: "12px", fontWeight: 600, color: "#7A8481", marginBottom: "4px" }}>
+                You have {wishlistItems.length} item{wishlistItems.length !== 1 ? "s" : ""} saved in your wishlist.
+              </p>
+              <h1 style={{ fontSize: "30px", fontWeight: 800, lineHeight: "36px", letterSpacing: "-0.75px", color: "#1E2524", margin: 0 }}>
+                My Wishlist
+              </h1>
             </div>
-            <h1 style={{ fontWeight: 700, fontSize: "48px", letterSpacing: "-0.96px", color: "var(--color-primary)", paddingTop: "8px" }}>My Wishlist</h1>
-            <p style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>
-              You have <strong className="font-bold">{wishlistItems.length}</strong> {wishlistItems.length === 1 ? "item" : "items"} saved for later.
-            </p>
-          </div>
 
-          {wishlistItems.length > 0 && (
-            <div className="flex" style={{ gap: "24px", alignItems: "flex-start" }}>
-              <button onClick={handleShare} className="flex items-center" style={{ padding: "12px 24px", gap: "8px", background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "8px" }}>
-                <Share2 size={16} style={{ color: "var(--color-body)" }} />
-                <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>Share Wishlist</span>
-              </button>
-              <button onClick={handleMoveAll} className="flex items-center" style={{ padding: "13px 24px", gap: "8px", background: "var(--color-primary)", borderRadius: "8px", boxShadow: "0px 10px 15px -3px color-mix(in srgb, var(--color-accent) 20%, transparent)" }}>
-                <ShoppingCart size={16} style={{ color: "var(--color-inverse)" }} />
-                <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-inverse)" }}>Move All to Cart</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* SECTION 2 — WISHLIST GRID */}
-        <div style={{ marginTop: "40px" }}>
-          {wishlistItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-center" style={{ gap: "16px", padding: "80px 0" }}>
-              <div className="flex items-center justify-center" style={{ width: "96px", height: "96px", borderRadius: "9999px", background: "var(--color-surface-muted)" }}>
-                <ShoppingBag size={40} style={{ color: "var(--color-primary)" }} />
+            {wishlistItems.length > 0 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                {/* Share Wishlist */}
+                <button
+                  onClick={handleShare}
+                  style={{ height: "40px", padding: "0 16px", borderRadius: "12px", border: "1px solid #E7E2DA", background: "#fff", display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", fontWeight: 600, color: "#1C1917", cursor: "pointer" }}
+                >
+                  <Share2 size={16} style={{ color: "#1C1917" }} />
+                  <span>Share Wishlist</span>
+                </button>
+                {/* Move All to Cart */}
+                <button
+                  onClick={handleMoveAll}
+                  style={{ height: "40px", padding: "0 20px", borderRadius: "12px", background: "#064E3B", display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", fontWeight: 600, color: "#fff", cursor: "pointer", border: "none", boxShadow: "0 1px 4px rgba(6,78,59,0.18)" }}
+                >
+                  <ShoppingCart size={16} />
+                  <span>Move All to Cart</span>
+                </button>
               </div>
-              <h2 style={{ fontWeight: 700, fontSize: "22px", color: "var(--color-ink)" }}>Your wishlist is empty</h2>
-              <p style={{ fontSize: "16px", color: "var(--color-body)" }}>Save items you love to find them here later.</p>
-              <button onClick={() => navigate("/products")} style={{ background: "var(--color-primary)", color: "var(--color-inverse)", fontWeight: 700, fontSize: "16px", padding: "14px 32px", borderRadius: "8px" }}>Explore Products</button>
+            )}
+          </div>
+        </header>
+
+        {/* ── WISHLIST CARDS GRID ── */}
+        <section aria-label="Wishlist Items" style={{ width: "100%" }}>
+          {wishlistItems.length === 0 ? (
+            /* Empty state */
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: "20px", padding: "80px 0" }}>
+              <div style={{ width: "96px", height: "96px", borderRadius: "9999px", background: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
+                <ShoppingBag size={40} style={{ color: "#064E3B" }} />
+              </div>
+              <h2 style={{ fontWeight: 800, fontSize: "22px", color: "#1C1917", margin: 0 }}>Your wishlist is empty</h2>
+              <p style={{ fontSize: "15px", color: "#78716C", margin: 0 }}>Save items you love to find them here later.</p>
+              <button
+                onClick={() => navigate("/products")}
+                style={{ background: "#064E3B", color: "#fff", fontWeight: 700, fontSize: "15px", padding: "14px 36px", borderRadius: "12px", cursor: "pointer", border: "none" }}
+              >
+                Explore Products
+              </button>
             </div>
           ) : loadingProducts ? (
-            <div className="grid grid-cols-4" style={{ gap: "24px" }}>
+            /* Skeleton grid */
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px" }}>
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="animate-pulse" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "8px" }}>
-                  <div style={{ height: "340px", background: "var(--color-border)", borderRadius: "8px 8px 0 0" }} />
-                  <div style={{ padding: "24px" }}>
-                    <div style={{ height: "12px", width: "50%", background: "var(--color-border)", borderRadius: "4px", marginBottom: "10px" }} />
-                    <div style={{ height: "14px", width: "80%", background: "var(--color-border)", borderRadius: "4px", marginBottom: "14px" }} />
-                    <div style={{ height: "18px", width: "40%", background: "var(--color-border)", borderRadius: "4px", marginBottom: "14px" }} />
-                    <div style={{ height: "48px", background: "var(--color-border)", borderRadius: "4px" }} />
+                <div key={i} style={{ background: "#fff", border: "1px solid #E7E2DA", borderRadius: "16px", overflow: "hidden", height: "442px" }}>
+                  <div style={{ height: "240px", background: "#ECEAE6", animation: "pulse 1.5s infinite" }} />
+                  <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div style={{ height: "10px", width: "50%", background: "#E7E2DA", borderRadius: "4px" }} />
+                    <div style={{ height: "14px", width: "80%", background: "#E7E2DA", borderRadius: "4px" }} />
+                    <div style={{ height: "20px", width: "40%", background: "#E7E2DA", borderRadius: "4px" }} />
+                    <div style={{ height: "44px", background: "#E7E2DA", borderRadius: "12px", marginTop: "12px" }} />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-4" style={{ gap: "24px" }}>
+            /* Main wishlist grid */
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px" }}>
               {wishlistItems.map((item) => {
                 const pid = pidOf(item)
                 const info = stockInfo(pid)
@@ -323,95 +356,191 @@ const WishlistPage = () => {
                 const img = liveImageOf(item)
                 const notified = alertedIds.includes(String(pid))
                 return (
-                  <div key={pid} className="group flex flex-col" style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "8px", isolation: "isolate" }}>
-                    {/* IMAGE AREA */}
-                    <div className="relative" style={{ height: "340px", background: "var(--color-border)", overflow: "hidden", borderRadius: "8px 8px 0 0" }}>
-                      {img && (
-                        <img src={img} alt={item.title} onClick={() => navigate(`/product/${pid}`)} className="cursor-pointer" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <article
+                    key={pid}
+                    style={{ background: "#fff", border: "1px solid #E7E2DA", borderRadius: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.05)", height: "442px" }}
+                  >
+                    {/* Image / graphic area */}
+                    <div
+                      style={{ height: "240px", background: "#ECEAE6", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", overflow: "hidden", cursor: "pointer" }}
+                      onClick={() => navigate(`/product/${pid}`)}
+                    >
+                      {/* Remove / heart button */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleRemove(pid) }}
+                        aria-label="Remove from wishlist"
+                        style={{ position: "absolute", top: "14px", right: "14px", width: "32px", height: "32px", borderRadius: "9999px", background: "rgba(255,255,255,0.92)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.12)", border: "none", cursor: "pointer", zIndex: 2 }}
+                      >
+                        {/* Filled heart icon — red */}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#EF4444">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                      </button>
+
+                      {/* Stock pill */}
+                      {out ? (
+                        <span style={{ position: "absolute", bottom: "12px", left: "12px", background: "#FEE2E2", color: "#DC2626", fontSize: "10px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 8px", borderRadius: "4px" }}>
+                          OUT OF STOCK
+                        </span>
+                      ) : info.status === "LOW" ? (
+                        <span style={{ position: "absolute", bottom: "12px", left: "12px", background: "#FEF3C7", color: "#B45309", fontSize: "10px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 8px", borderRadius: "4px" }}>
+                          ONLY {info.left} LEFT
+                        </span>
+                      ) : (
+                        <span style={{ position: "absolute", bottom: "12px", left: "12px", background: "#E7F8ED", color: "#1E7E34", fontSize: "10px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 8px", borderRadius: "4px" }}>
+                          IN STOCK
+                        </span>
                       )}
+
+                      {/* Product image */}
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={item.title}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }}
+                        />
+                      ) : (
+                        <div style={{ width: "80px", height: "80px", borderRadius: "12px", background: "#D6D3D1" }} />
+                      )}
+
+                      {/* Out-of-stock overlay */}
                       {out && (
-                        <div className="absolute inset-0 flex items-center justify-center" style={{ background: "var(--color-overlay)" }}>
-                          <span style={{ background: "var(--color-surface)", borderRadius: "12px", padding: "8px 16px", fontWeight: 700, fontSize: "12px", letterSpacing: "1.2px", textTransform: "uppercase", color: "var(--color-ink)", boxShadow: "0px 4px 12px rgba(0,0,0,0.15)" }}>Out of Stock</span>
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span style={{ background: "#fff", borderRadius: "8px", padding: "6px 14px", fontWeight: 700, fontSize: "11px", letterSpacing: "1px", textTransform: "uppercase", color: "#1C1917" }}>
+                            Out of Stock
+                          </span>
                         </div>
                       )}
-                      {!out && info.status === "IN" && (
-                        <span className="absolute" style={{ left: "12px", bottom: "12px", background: "var(--color-success-subtle)", borderRadius: "2px", padding: "2.5px 8px", fontWeight: 700, fontSize: "10px", textTransform: "uppercase", color: "var(--color-success)" }}>In Stock</span>
-                      )}
-                      {!out && info.status === "LOW" && (
-                        <span className="absolute" style={{ left: "12px", bottom: "12px", background: "var(--color-accent-subtle)", borderRadius: "2px", padding: "2.5px 8px", fontWeight: 700, fontSize: "10px", textTransform: "uppercase", color: "var(--color-accent-strong)" }}>Only {info.left} Left</span>
-                      )}
-                      <button onClick={() => handleRemove(pid)} aria-label="Remove from wishlist" className="absolute opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity" style={{ top: "13px", right: "13px", width: "28px", height: "34px", background: "color-mix(in srgb, var(--color-surface) 90%, transparent)", backdropFilter: "blur(4px)", borderRadius: "12px" }}>
-                        <X size={12} style={{ color: "var(--color-error)" }} />
-                      </button>
                     </div>
 
-                    {/* BODY */}
-                    <div className="flex flex-col" style={{ padding: "24px", gap: "8px" }}>
-                      <span style={{ fontWeight: 400, fontSize: "16px", letterSpacing: "1.6px", textTransform: "uppercase", color: "var(--color-muted)" }}>{item.brand || item.category || "PRODUCT"}</span>
-                      <span className="line-clamp-1" style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}>{item.title}</span>
-                      <div className="flex items-center" style={{ gap: "8px" }}>
-                        <span style={{ fontWeight: 700, fontSize: "18px", color: "var(--color-primary)" }}>{money(item.price)}</span>
-                        {mrp > Number(item.price) && (
-                          <span style={{ fontWeight: 400, fontSize: "14px", color: "var(--color-body)", textDecoration: "line-through" }}>{money(mrp)}</span>
-                        )}
+                    {/* Product info + action */}
+                    <div style={{ padding: "20px", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                      <div>
+                        <span style={{ display: "block", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "#A8A29E", letterSpacing: "0.07em", marginBottom: "4px" }}>
+                          {item.brand || item.category || "PRODUCT"}
+                        </span>
+                        <h2
+                          style={{ fontSize: "15px", fontWeight: 600, color: "#1C1917", margin: "0 0 8px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: "pointer" }}
+                          onClick={() => navigate(`/product/${pid}`)}
+                        >
+                          {item.title}
+                        </h2>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <p style={{ fontSize: "20px", fontWeight: 600, color: "#1C1917", margin: 0 }}>{money(item.price)}</p>
+                          {mrp > Number(item.price) && (
+                            <p style={{ fontSize: "13px", color: "#A8A29E", textDecoration: "line-through", margin: 0 }}>{money(mrp)}</p>
+                          )}
+                        </div>
                       </div>
+
                       {out ? (
-                        <button onClick={() => handleNotify(pid)} disabled={notified} className="w-full flex items-center justify-center" style={{ height: "48px", padding: "12px 0", borderRadius: "4px", gap: "8px", background: "var(--color-border-strong)", opacity: notified ? 0.7 : 1 }}>
-                          <Bell size={15} style={{ color: "var(--color-body)" }} />
-                          <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-body)" }}>{notified ? "Notified" : "Notify Me"}</span>
+                        <button
+                          onClick={() => handleNotify(pid)}
+                          disabled={notified}
+                          style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", background: notified ? "#E7E2DA" : "#F5F1EB", border: "1px solid #E7E2DA", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "12px", fontWeight: 600, color: "#57534E", cursor: notified ? "default" : "pointer", opacity: notified ? 0.8 : 1, marginTop: "12px" }}
+                        >
+                          <Bell size={14} />
+                          {notified ? "Notified ✓" : "Notify Me"}
                         </button>
                       ) : (
-                        <button onClick={() => handleAddToCart(item)} className="w-full flex items-center justify-center" style={{ height: "48px", padding: "12px 0", borderRadius: "4px", gap: "8px", background: "var(--color-primary)" }}>
-                          <ShoppingCart size={15} style={{ color: "var(--color-inverse)" }} />
-                          <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-inverse)" }}>Add to Cart</span>
+                        <button
+                          onClick={() => handleAddToCart(item)}
+                          style={{ width: "100%", padding: "12px 16px", borderRadius: "12px", background: "#064E3B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "12px", fontWeight: 600, color: "#fff", cursor: "pointer", marginTop: "12px" }}
+                        >
+                          <ShoppingCart size={14} />
+                          <span>Add to Cart</span>
                         </button>
                       )}
                     </div>
-                  </div>
+                  </article>
                 )
               })}
             </div>
           )}
-        </div>
+        </section>
 
-        {/* SECTION 3 — RECOMMENDATIONS */}
+        {/* ── DIVIDER ── */}
+        {wishlistItems.length > 0 && <div style={{ borderTop: "1px solid #E7E2DA", width: "100%" }} />}
+
+        {/* ── RECOMMENDED FOR YOU ── */}
         {wishlistItems.length > 0 && (
-          <div className="flex flex-col" style={{ borderTop: "1px solid var(--color-border)", paddingTop: "64px", marginTop: "64px", gap: "40px" }}>
-            <div className="flex" style={{ justifyContent: "space-between", alignItems: "center" }}>
-              <h2 style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}>Recommended For You</h2>
-              <button onClick={() => navigate("/products")} className="flex items-center" style={{ gap: "6px" }}>
-                <span style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-primary)" }}>View Catalog</span>
-                <ArrowRight size={12} style={{ color: "var(--color-primary)" }} />
+          <section aria-labelledby="recommended-heading" style={{ display: "flex", flexDirection: "column", gap: "20px", width: "100%" }}>
+            {/* Section header */}
+            <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between", gap: "8px", flexWrap: "wrap" }}>
+              <div>
+                <h2 id="recommended-heading" style={{ fontSize: "22px", fontWeight: 600, color: "#1C1917", margin: "0 0 2px" }}>Recommended For You</h2>
+                <p style={{ fontSize: "12px", color: "#78716C", margin: 0 }}>Complement your wishlist with artisanal picks.</p>
+              </div>
+              <button
+                onClick={() => navigate("/products")}
+                style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", fontWeight: 600, color: "#143B33", background: "none", border: "none", cursor: "pointer" }}
+              >
+                View Catalog <ArrowRight size={14} />
               </button>
             </div>
-            <div className="flex" style={{ gap: "24px", overflowX: "auto" }}>
-              {loadingRec ? (
-                [...Array(4)].map((_, i) => (
-                  <div key={i} className="animate-pulse" style={{ minWidth: "280px", width: "280px", padding: "12px", background: "color-mix(in srgb, var(--color-surface-muted) 50%, transparent)", borderRadius: "8px" }}>
-                    <div style={{ width: "100%", height: "254px", background: "var(--color-border)", borderRadius: "4px", marginBottom: "10px" }} />
-                    <div style={{ height: "14px", width: "70%", background: "var(--color-border)", borderRadius: "4px", marginBottom: "8px" }} />
-                    <div style={{ height: "14px", width: "40%", background: "var(--color-border)", borderRadius: "4px" }} />
+
+            {/* 4-col mini card grid */}
+            {loadingRec ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} style={{ background: "#fff", border: "1px solid #E7E2DA", borderRadius: "16px", padding: "16px", height: "280px", animation: "pulse 1.5s infinite" }}>
+                    <div style={{ height: "144px", background: "#F8F6F2", borderRadius: "12px", marginBottom: "16px" }} />
+                    <div style={{ height: "10px", width: "50%", background: "#E7E2DA", borderRadius: "4px", marginBottom: "6px" }} />
+                    <div style={{ height: "14px", width: "80%", background: "#E7E2DA", borderRadius: "4px" }} />
                   </div>
-                ))
-              ) : recommended.length === 0 ? (
-                <p style={{ fontSize: "14px", color: "var(--color-body)" }}>No recommendations right now.</p>
-              ) : (
-                recommended.map((p) => (
-                  <button key={p.id} onClick={() => navigate(`/product/${p.id}`)} className="flex flex-col text-left" style={{ minWidth: "280px", width: "280px", padding: "12px", gap: "4px", background: "color-mix(in srgb, var(--color-surface-muted) 50%, transparent)", borderRadius: "8px" }}>
-                    {(p.thumbnail || p.image) ? (
-                      <img src={p.thumbnail || p.image} alt={p.title || p.name} style={{ width: "100%", height: "254px", objectFit: "cover", borderRadius: "4px" }} />
-                    ) : (
-                      <div style={{ width: "100%", height: "254px", background: "var(--color-border)", borderRadius: "4px" }} />
-                    )}
-                    <span className="line-clamp-1" style={{ fontWeight: 400, fontSize: "16px", color: "var(--color-ink)" }}>{p.title || p.name}</span>
-                    <span style={{ fontWeight: 700, fontSize: "16px", color: "var(--color-primary)" }}>{money(p.price)}</span>
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
+                ))}
+              </div>
+            ) : recommended.length === 0 ? (
+              <p style={{ fontSize: "14px", color: "#78716C" }}>No recommendations right now.</p>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
+                {recommended.map((p) => {
+                  const disc = Number(p.discount || 0)
+                  const mrp = Number(p.price || 0)
+                  const price = mrp - (mrp * disc) / 100
+                  return (
+                    <article
+                      key={p.id}
+                      style={{ background: "#fff", border: "1px solid #E7E2DA", borderRadius: "16px", padding: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+                    >
+                      {/* Illustration / image box */}
+                      <div
+                        style={{ height: "144px", background: "#F8F6F2", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px", overflow: "hidden", cursor: "pointer" }}
+                        onClick={() => navigate(`/product/${p.id}`)}
+                      >
+                        {(p.thumbnail || p.image) ? (
+                          <img src={p.thumbnail || p.image} alt={p.title || p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        ) : (
+                          <div style={{ width: "48px", height: "48px", borderRadius: "8px", background: "#E7E2DA" }} />
+                        )}
+                      </div>
+                      {/* Info */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <span style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "#A8A29E" }}>{p.category}</span>
+                        <h3
+                          style={{ fontSize: "13px", fontWeight: 600, color: "#1C1917", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", cursor: "pointer" }}
+                          onClick={() => navigate(`/product/${p.id}`)}
+                        >
+                          {p.title || p.name}
+                        </h3>
+                        <p style={{ fontSize: "15px", fontWeight: 600, color: "#1C1917", margin: 0 }}>{money(price)}</p>
+                      </div>
+                      {/* Add to cart button */}
+                      <button
+                        onClick={() => navigate(`/product/${p.id}`)}
+                        style={{ marginTop: "12px", width: "100%", padding: "6px 12px", background: "#FAF8F5", border: "1px solid #E7E2DA", borderRadius: "8px", fontSize: "12px", fontWeight: 600, color: "#1C1917", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", cursor: "pointer" }}
+                      >
+                        <span>+ View Product</span>
+                      </button>
+                    </article>
+                  )
+                })}
+              </div>
+            )}
+          </section>
         )}
-      </div>
+
+      </main>
     </div>
   )
 }
