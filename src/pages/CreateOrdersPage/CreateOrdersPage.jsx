@@ -4,13 +4,14 @@ import { useDispatch, useSelector } from "react-redux"
 import { callFunction } from "../../utils/edgeFunctions"
 import { supabase } from "../../context/SupabaseConfig"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import { clearCart } from "../../context/CartSlice"
 import { broadcastAuth } from "../../utils/sessionUtils"
 import {
   Loader2, CheckCircle2, AlertCircle
 } from "lucide-react"
 
-/* ── Pelago Design Tokens ─────────────────────────────────────────── */
+/* ── SG Ecommerce Design Tokens ─────────────────────────────────────────── */
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
@@ -170,7 +171,7 @@ const CreateOrdersPage = () => {
 
   /* ── Load real today metrics from Supabase ── */
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       try {
         const { data: rows } = await supabase
           .from("orders")
@@ -218,9 +219,9 @@ const CreateOrdersPage = () => {
             `Price mismatch:\n\nPasted total: ${money(
               data.pastedTotal
             )}\nCatalog total: ${money(data.serverTotal)}\n\n` +
-              `Create the order at the pasted (negotiated) price of ${money(
-                data.pastedTotal
-              )}?`
+            `Create the order at the pasted (negotiated) price of ${money(
+              data.pastedTotal
+            )}?`
           )
           if (ok) return handleSubmit(true)
           setResult({
@@ -280,11 +281,11 @@ const CreateOrdersPage = () => {
     Number(preview?.totalAmount) > 0
       ? Number(preview.totalAmount)
       : itemsList.reduce(
-          (s, i) => s + Number(i.price || 0) * Number(i.quantity || 1),
-          0
-        ) +
-        Number(preview?.shipping || 0) -
-        Number(preview?.promoDiscount || 0)
+        (s, i) => s + Number(i.price || 0) * Number(i.quantity || 1),
+        0
+      ) +
+      Number(preview?.shipping || 0) -
+      Number(preview?.promoDiscount || 0)
 
   return (
     <main
@@ -357,25 +358,12 @@ const CreateOrdersPage = () => {
             </svg>
           </button>
 
-          {/* Notifications Bell with Red Dot */}
-          <button
-            onClick={() => toast.info("No unread notifications.")}
+          {/* Notifications Bell */}
+          <NotificationBell
+            size={16}
             className="w-8 h-8 rounded-full bg-white border border-stone-200 flex items-center justify-center text-gray-600 hover:text-gray-900 shadow-sm relative transition cursor-pointer"
-            title="Notifications"
-            type="button"
-          >
-            <svg
-              className="w-4 h-4 fill-none stroke-current stroke-2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              ></path>
-            </svg>
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#E05844] rounded-full border border-white"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
         </div>
       </header>
       {/* ── END: PageHeader ── */}
@@ -383,11 +371,10 @@ const CreateOrdersPage = () => {
       {/* ── Result Feedback Banner (if any) ── */}
       {result && (
         <div
-          className={`mb-5 p-4 rounded-2xl border flex items-center justify-between gap-3 ${
-            result.success
-              ? "bg-[#DDF0EB] border-[#A7D7C5] text-[#0F6848]"
-              : "bg-[#FEE2E2] border-[#F8B4B4] text-[#991B1B]"
-          }`}
+          className={`mb-5 p-4 rounded-2xl border flex items-center justify-between gap-3 ${result.success
+            ? "bg-[#DDF0EB] border-[#A7D7C5] text-[#0F6848]"
+            : "bg-[#FEE2E2] border-[#F8B4B4] text-[#991B1B]"
+            }`}
         >
           <div className="flex items-center gap-3">
             {result.success ? (
@@ -688,11 +675,10 @@ const CreateOrdersPage = () => {
             >
               <button
                 onClick={() => setPaymentStatus("pending")}
-                className={`flex-1 bg-[#CF6D63] hover:bg-[#ba5e54] text-white py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer ${
-                  paymentStatus === "pending"
-                    ? "ring-2 ring-offset-1 ring-[#CF6D63]"
-                    : "opacity-90 hover:opacity-100"
-                }`}
+                className={`flex-1 bg-[#CF6D63] hover:bg-[#ba5e54] text-white py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer ${paymentStatus === "pending"
+                  ? "ring-2 ring-offset-1 ring-[#CF6D63]"
+                  : "opacity-90 hover:opacity-100"
+                  }`}
                 type="button"
               >
                 <svg
@@ -710,11 +696,10 @@ const CreateOrdersPage = () => {
 
               <button
                 onClick={() => setPaymentStatus("paid")}
-                className={`flex-1 bg-[#104945] hover:bg-[#0b3532] text-white py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer ${
-                  paymentStatus === "paid"
-                    ? "ring-2 ring-offset-1 ring-[#104945]"
-                    : "opacity-90 hover:opacity-100"
-                }`}
+                className={`flex-1 bg-[#104945] hover:bg-[#0b3532] text-white py-2.5 rounded-xl text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition cursor-pointer ${paymentStatus === "paid"
+                  ? "ring-2 ring-offset-1 ring-[#104945]"
+                  : "opacity-90 hover:opacity-100"
+                  }`}
                 type="button"
               >
                 <svg

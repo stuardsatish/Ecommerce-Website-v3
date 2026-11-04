@@ -703,7 +703,7 @@ const AdminOrdersPage = () => {
       {/* Main content */}
       <div style={{ padding: isMobile ? "16px 0 48px" : "20px 0 48px", display: "flex", flexDirection: "column" }}>
 
-        {/* KPI cards — Pelago style: white, rounded-2xl, teal accent */}
+        {/* KPI cards — SG Ecommerce style: white, rounded-2xl, teal accent */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px,1fr))", gap: "12px", padding: `0 ${sidePad}`, marginBottom: isMobile ? "20px" : "28px" }}>
           {[
             { label: "Total Orders",          value: loading ? "…" : total,          badge: "+12.4%",        badgeBg: "#E5F6EE", badgeColor: "#0F6848" },

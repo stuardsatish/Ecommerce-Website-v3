@@ -54,7 +54,7 @@ const NotificationsPage = () => {
 
   return (
     <div style={{ background: "var(--color-background)", minHeight: "100vh", fontFamily: INTER, color: "var(--color-ink)" }}>
-      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "96px 24px 80px" }}>
+      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "36px 24px 80px" }}>
         <button onClick={() => navigate(-1)} className="flex items-center" style={{ gap: "8px", color: "var(--color-body)", marginBottom: "20px" }}>
           <ArrowLeft size={16} /> <span style={{ fontWeight: 600, fontSize: "14px" }}>Back</span>
         </button>

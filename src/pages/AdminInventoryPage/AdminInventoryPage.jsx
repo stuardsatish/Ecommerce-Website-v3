@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import {
   Boxes,
   Package,
@@ -36,7 +37,7 @@ import {
 import { formatMoney } from "../../features/returns/refundModel"
 import { supabase } from "../../context/SupabaseConfig"
 
-/* ── Pelago Typography & Design Tokens ────────────────────────────── */
+/* ── SG Ecommerce Typography & Design Tokens ────────────────────────────── */
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
@@ -385,7 +386,7 @@ function LedgerTab({ onOpenAdjustModal }) {
 
     const link = document.createElement("a")
     link.setAttribute("href", csvContent)
-    link.setAttribute("download", `pelago-inventory-ledger-${new Date().toISOString().slice(0, 10)}.csv`)
+    link.setAttribute("download", `SG Ecommerce-inventory-ledger-${new Date().toISOString().slice(0, 10)}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -1129,15 +1130,11 @@ const AdminInventoryPage = () => {
           </button>
 
           {/* Notification Bell */}
-          <button
-            onClick={() => toast.info("No unread alerts.")}
-            className="p-2 rounded-full bg-white border border-[#E0D8CC] text-[#635D54] hover:bg-[#F5F1EB] relative transition shadow-2xs cursor-pointer"
-            title="Notifications"
-            type="button"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#A8523A] rounded-full border-2 border-white"></span>
-          </button>
+          <NotificationBell
+            size={16}
+            className="p-2 rounded-full bg-white border border-[#E0D8CC] text-[#635D54] hover:bg-[#F5F1EB] relative transition shadow-2xs cursor-pointer flex items-center justify-center"
+            badgeClassName="absolute -top-1 -right-1"
+          />
 
           {/* CTA Buttons */}
           <button
@@ -1151,7 +1148,7 @@ const AdminInventoryPage = () => {
                 )
               const link = document.createElement("a")
               link.setAttribute("href", csvContent)
-              link.setAttribute("download", `pelago-inventory-${Date.now()}.csv`)
+              link.setAttribute("download", `SG Ecommerce-inventory-${Date.now()}.csv`)
               link.click()
               toast.success("Exported CSV successfully.")
             }}

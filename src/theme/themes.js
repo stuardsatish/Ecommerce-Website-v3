@@ -45,6 +45,8 @@ export const TOKENS = [
   ["primary", "Primary brand accent: buttons, prices, active state, links"],
   ["primary-hover", "Primary hover / pressed"],
   ["primary-fg", "Text/icon rendered ON a primary-colored surface"],
+  ["primary-subtle", "Faint primary tint for backgrounds/pills"],
+  ["primary-bg", "Primary background tint (e.g. #E8F3F1)"],
   ["accent", "Secondary accent: ratings, badges, focus rings, selected"],
   ["accent-strong", "Darker accent, mainly for accent-colored text"],
   ["accent-subtle", "Faint accent tint for backgrounds/pills"],
@@ -124,11 +126,13 @@ export const TOKEN_NAMES = TOKENS.map(([name]) => name);
  * check in ThemeContext warns if a token is missing.
  */
 export const themes = {
-  /* ══ DEFAULT — the app's current identity: warm red-brown "#A43B31" ══════ */
+  /* ══ DEFAULT — SG Ecommerce identity: teal "#104945" ══════ */
   default: {
     light: {
-      "primary": "#A43B31",
-      "primary-hover": "#8A322A",
+      "primary": "#104945",
+      "primary-hover": "#0c3936",
+      "primary-subtle": "#E8F3F1",
+      "primary-bg": "#E8F3F1",
       "primary-fg": "#FFFFFF",
       "accent": "#F59E0B",
       "accent-strong": "#B45309",
@@ -175,7 +179,7 @@ export const themes = {
       "info-subtle": "#DBEAFE",
       "info-border": "#BFDBFE",
 
-      "chart-1": "#A43B31",
+      "chart-1": "#104945",
       "chart-2": "#F59E0B",
       "chart-3": "#2563EB",
       "chart-4": "#16A34A",
@@ -190,9 +194,11 @@ export const themes = {
       "chart-axis": "#74777D",
     },
     dark: {
-      "primary": "#D46A5E",
-      "primary-hover": "#E27B6F",
-      "primary-fg": "#2A0C08",
+      "primary": "#2DD4BF",
+      "primary-hover": "#5EEAD4",
+      "primary-subtle": "#0F2E2B",
+      "primary-bg": "#0F2E2B",
+      "primary-fg": "#04231A",
       "accent": "#FBBF24",
       "accent-strong": "#FCD34D",
       "accent-subtle": "#3A2E00",
@@ -238,7 +244,7 @@ export const themes = {
       "info-subtle": "#10233F",
       "info-border": "#1E40AF",
 
-      "chart-1": "#E06A5E",
+      "chart-1": "#2DD4BF",
       "chart-2": "#FBBF24",
       "chart-3": "#60A5FA",
       "chart-4": "#4ADE80",
@@ -259,6 +265,8 @@ export const themes = {
     light: {
       "primary": "#047857",
       "primary-hover": "#065F46",
+      "primary-subtle": "#E6F4EA",
+      "primary-bg": "#E6F4EA",
       "primary-fg": "#FFFFFF",
       "accent": "#6366F1",
       "accent-strong": "#4338CA",
@@ -322,6 +330,8 @@ export const themes = {
     dark: {
       "primary": "#34D399",
       "primary-hover": "#6EE7B7",
+      "primary-subtle": "#0E2A1F",
+      "primary-bg": "#0E2A1F",
       "primary-fg": "#04231A",
       "accent": "#A5B4FC",
       "accent-strong": "#C7D2FE",
@@ -389,6 +399,8 @@ export const themes = {
     light: {
       "primary": "#4F46E5",
       "primary-hover": "#4338CA",
+      "primary-subtle": "#EEF2FF",
+      "primary-bg": "#EEF2FF",
       "primary-fg": "#FFFFFF",
       "accent": "#EC4899",
       "accent-strong": "#BE185D",
@@ -452,6 +464,8 @@ export const themes = {
     dark: {
       "primary": "#818CF8",
       "primary-hover": "#A5B4FC",
+      "primary-subtle": "#1E1B4B",
+      "primary-bg": "#1E1B4B",
       "primary-fg": "#0B1020",
       "accent": "#F472B6",
       "accent-strong": "#F9A8D4",

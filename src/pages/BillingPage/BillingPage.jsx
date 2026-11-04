@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { supabase } from "../../context/SupabaseConfig"
 import { callFunction } from "../../utils/edgeFunctions"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import generateInvoice from "../../utils/generateInvoice"
 import useIsMobile from "../../hooks/useIsMobile"
 import { mapProductRows } from "../../utils/supabaseProducts"
@@ -18,7 +19,7 @@ import {
   RotateCcw, Printer, Tag, ChevronDown, ChevronUp, Moon, Bell, Check,
 } from "lucide-react"
 
-/* ── Pelago Design Tokens ─────────────────────────────────────────── */
+/* ── SG Ecommerce Design Tokens ─────────────────────────────────────────── */
 const FONT = "'Inter', 'Plus Jakarta Sans', sans-serif"
 const MONO = "'Space Grotesk', 'JetBrains Mono', monospace"
 
@@ -533,16 +534,12 @@ const BillingPage = () => {
             <Moon className="w-4 h-4" />
           </button>
 
-          {/* Notification bell with badge */}
-          <button
-            onClick={() => toast.info("No unread billing alerts.")}
-            aria-label="Notifications"
+          {/* Notification bell */}
+          <NotificationBell
+            size={16}
             className="w-9 h-9 rounded-full bg-white border border-[#E5DFD5] flex items-center justify-center text-gray-500 hover:text-gray-800 shadow-2xs transition-colors relative cursor-pointer"
-            type="button"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
 
           {/* Bill Today Counter Metric */}
           <div className="h-10 px-4 bg-white border border-[#E5DFD5] rounded-xl flex flex-col justify-center items-center shadow-2xs ml-1">

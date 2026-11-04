@@ -6,7 +6,7 @@ import PackingBenchKanban from "./PackingBenchKanban"
 import AllOrdersTablePage from "./AllOrdersTablePage"
 import ReturnsOrdersPage from "./ReturnsOrdersPage"
 
-/* ── Pelago design tokens ── */
+/* ── SG Ecommerce design tokens ── */
 const FONT = "'Plus Jakarta Sans','Inter',sans-serif"
 
 const OUTER_TABS = [

@@ -1,4 +1,4 @@
-import { useState, useCallback, memo } from "react"
+import { useState, useCallback, useEffect, memo } from "react"
 import { NavLink, useNavigate, useLocation } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { supabase } from "../../context/SupabaseConfig"
@@ -6,8 +6,10 @@ import { clearUser } from "../../context/UserSlice"
 import { broadcastAuth, clearSession } from "../../utils/sessionUtils"
 import { clearLocalSession } from "../../utils/sessionManager"
 import { KeyRound } from "lucide-react"
+import { notificationsService } from "../../services/notifications"
+import { NOTIFICATIONS_CHANGED } from "../../features/notifications/NotificationBell"
 
-/* ─── Brand colour tokens (matching the new Pelago HTML designs) ─── */
+/* ─── Brand colour tokens (matching the new SG Ecommerce HTML designs) ─── */
 const TEAL      = "#104945"
 const TEAL_DARK = "#0c3936"
 const TEAL_BG   = "#E8F3F1"
@@ -42,6 +44,7 @@ const ICONS = {
   settings:   "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4",
   returns:    "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15",
   analytics:  "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+  bell:       "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
 }
 
 /* ─── Sidebar link styles ─── */
@@ -83,7 +86,7 @@ function NavItem({ icon, label, to, badge, exact = false }) {
       <Icon d={ICONS[icon]} />
       <span style={{ flex: 1 }}>{label}</span>
       {badge != null && (
-        <span style={{ background: isActive ? TEAL : "#F0ECE8", color: isActive ? WHITE : "#78716C", fontSize: "10px", fontWeight: 700, padding: "1px 6px", borderRadius: "9999px" }}>
+        <span style={{ background: isActive ? TEAL : "#BE413B", color: WHITE, fontSize: "10px", fontWeight: 700, padding: "1px 6px", borderRadius: "9999px" }}>
           {badge}
         </span>
       )}
@@ -193,6 +196,28 @@ const AdminSidebar = () => {
   const [ordersOpen, setOrdersOpen] = useState(() => location.pathname.startsWith("/admin/myorders") || location.pathname.startsWith("/admin/returns"))
   const [productsOpen, setProductsOpen] = useState(() => location.pathname.startsWith("/admin/add-product") || location.pathname.startsWith("/admin/edit-product"))
   const [customersOpen, setCustomersOpen] = useState(() => location.pathname.startsWith("/admin/users"))
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    let mounted = true
+    const refresh = async () => {
+      try {
+        const c = await notificationsService.unreadCount()
+        if (mounted) setUnreadCount(c)
+      } catch {}
+    }
+    refresh()
+    const timer = setInterval(refresh, 60000)
+    const onVisible = () => { if (document.visibilityState === "visible") refresh() }
+    document.addEventListener("visibilitychange", onVisible)
+    window.addEventListener(NOTIFICATIONS_CHANGED, refresh)
+    return () => {
+      mounted = false
+      clearInterval(timer)
+      document.removeEventListener("visibilitychange", onVisible)
+      window.removeEventListener(NOTIFICATIONS_CHANGED, refresh)
+    }
+  }, [])
 
   // Initials from name
   const name = user?.name || user?.email || "Admin"
@@ -250,7 +275,7 @@ const AdminSidebar = () => {
             </svg>
           </div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: "13px", color: INK, letterSpacing: "-0.3px" }}>Pelago</div>
+            <div style={{ fontWeight: 800, fontSize: "13px", color: INK, letterSpacing: "-0.3px" }}>SG Ecommerce</div>
             <div style={{ fontSize: "11px", color: MUTED, fontWeight: 500 }}>{user?.name ? user.name.split(" ")[0] + "'s Store" : "Admin Store"}</div>
           </div>
         </div>
@@ -304,6 +329,7 @@ const AdminSidebar = () => {
           <NavItem icon="inventory" label="Inventory"       to="/admin/inventory" />
           <NavItem icon="discount"  label="Discounts"       to="/admin/add-discount" />
           <NavItem icon="upload"    label="Upload Orders"   to="/admin/adminUploadOrders" />
+          <NavItem icon="bell"      label="Notifications"   to="/notifications" badge={unreadCount > 0 ? (unreadCount > 99 ? "99+" : unreadCount) : undefined} />
         </div>
       </div>
 

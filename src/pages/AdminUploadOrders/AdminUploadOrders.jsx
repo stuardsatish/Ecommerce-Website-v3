@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react"
 import Papa from "papaparse"
 import { useSelector } from "react-redux"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import { supabase } from "../../context/SupabaseConfig"
 import { callFunction } from "../../utils/edgeFunctions"
 import {
@@ -25,7 +26,7 @@ import {
   TrendingUp,
 } from "lucide-react"
 
-/* ── Pelago Typography & Design Tokens ────────────────────────────── */
+/* ── SG Ecommerce Typography & Design Tokens ────────────────────────────── */
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
@@ -349,7 +350,7 @@ const AdminUploadOrders = () => {
 
     const link = document.createElement("a")
     link.setAttribute("href", csvContent)
-    link.setAttribute("download", "pelago_orders_import_template.csv")
+    link.setAttribute("download", "SG Ecommerce_orders_import_template.csv")
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -409,16 +410,12 @@ const AdminUploadOrders = () => {
             <Moon className="w-4 h-4" />
           </button>
 
-          {/* Notification Bell with Ping */}
-          <button
-            onClick={() => toast.info("No unread alerts.")}
-            aria-label="Notifications"
+          {/* Notification Bell */}
+          <NotificationBell
+            size={16}
             className="w-9 h-9 bg-white border border-[#E5DFD5] rounded-full flex items-center justify-center text-[#717A76] hover:text-[#172220] relative transition shadow-2xs cursor-pointer"
-            type="button"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
         </div>
       </header>
 
@@ -878,7 +875,7 @@ const AdminUploadOrders = () => {
             </div>
           </div>
 
-          {/* Card: CSV Template Download (Signature Pelago Terracotta Accent) */}
+          {/* Card: CSV Template Download (Signature SG Ecommerce Terracotta Accent) */}
           <div
             className="bg-white border border-[#E5DFD5] rounded-2xl p-6 shadow-sm"
             data-purpose="csv-template-card"

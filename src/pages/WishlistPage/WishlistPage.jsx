@@ -255,7 +255,7 @@ const WishlistPage = () => {
   }
 
   /* ============================================================
-     DESKTOP LAYOUT (lg+) — Pelago / Fernhill artisanal redesign
+     DESKTOP LAYOUT (lg+) — SG Ecommerce / Fernhill artisanal redesign
   ============================================================ */
   return (
     <div

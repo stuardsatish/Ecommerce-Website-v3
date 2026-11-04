@@ -1,5 +1,5 @@
 /**
- * AdminDashboard — Pelago Command Center & Overview
+ * AdminDashboard — SG Ecommerce Command Center & Overview
  * Route: /admin/dashboard
  *
  * Implements the complete design from Dashboard.html with:
@@ -14,6 +14,7 @@ import React, { useEffect, useState, useCallback, useMemo, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import * as XLSX from "xlsx"
 import {
   Search,
@@ -46,7 +47,7 @@ import { supabase } from "../../context/SupabaseConfig"
 import { mapOrderRows } from "../../utils/supabaseOrders"
 import { queryOrdersWithShipments } from "../../services/shipping"
 
-/* ── Pelago Design Tokens ─────────────────────────────────────────── */
+/* ── SG Ecommerce Design Tokens ─────────────────────────────────────────── */
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
@@ -597,7 +598,7 @@ const AdminDashboard = () => {
       XLSX.utils.book_append_sheet(wb, ws, "Dashboard Summary")
       XLSX.writeFile(
         wb,
-        `Pelago_Dashboard_${dateBounds.label.replace(/[^a-zA-Z0-9]/g, "_")}_${new Date()
+        `SG Ecommerce_Dashboard_${dateBounds.label.replace(/[^a-zA-Z0-9]/g, "_")}_${new Date()
           .toISOString()
           .slice(0, 10)}.xlsx`
       )
@@ -1051,15 +1052,11 @@ const AdminDashboard = () => {
             </button>
 
             {/* Notification bell button */}
-            <button
-              type="button"
-              onClick={() => toast.info("All orders synchronized with Supabase.")}
-              aria-label="Notifications"
-              className="relative p-2 bg-white/80 hover:bg-white border border-[#E2DBD0] rounded-full text-[#717A76] hover:text-[#1A2421] transition cursor-pointer"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#BE413B] rounded-full ring-2 ring-white" />
-            </button>
+            <NotificationBell
+              size={16}
+              className="relative p-2 bg-white/80 hover:bg-white border border-[#E2DBD0] rounded-full text-[#717A76] hover:text-[#1A2421] transition cursor-pointer flex items-center justify-center"
+              badgeClassName="absolute -top-1 -right-1"
+            />
 
             {/* Export Report Button */}
             <button

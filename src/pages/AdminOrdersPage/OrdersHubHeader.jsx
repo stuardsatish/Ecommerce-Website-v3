@@ -12,8 +12,9 @@ import {
   RotateCcw,
 } from "lucide-react"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 
-/* ── Pelago Design Tokens ── */
+/* ── SG Ecommerce Design Tokens ── */
 const FONT = "'Plus Jakarta Sans', 'Inter', sans-serif"
 
 const formatINR = (n) =>
@@ -89,16 +90,11 @@ const OrdersHubHeader = ({
           </button>
 
           {/* Notifications */}
-          <button
-            aria-label="Notifications"
-            type="button"
-            onClick={() => toast.info("No unread order notifications.")}
+          <NotificationBell
+            size={14}
             className="w-8 h-8 rounded-full bg-[#E4DDD2]/80 flex items-center justify-center text-[#4B5563] hover:text-black hover:bg-white relative transition-colors cursor-pointer"
-            title="Notifications"
-          >
-            <Bell size={14} />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 ring-2 ring-white"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
 
           {/* Top New action */}
           <button

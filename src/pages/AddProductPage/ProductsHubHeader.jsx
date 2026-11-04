@@ -15,8 +15,9 @@ import {
   Package,
 } from "lucide-react"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 
-/* ── Pelago Design Tokens ── */
+/* ── SG Ecommerce Design Tokens ── */
 const FONT = "'Plus Jakarta Sans', 'Inter', sans-serif"
 
 const DATE_RANGES = [
@@ -140,15 +141,11 @@ const ProductsHubHeader = ({
           </button>
 
           {/* Notification bell */}
-          <button
-            type="button"
-            onClick={() => toast.info("No unread product notifications.")}
+          <NotificationBell
+            size={15}
             className="w-8 h-8 rounded-full bg-[#DDD7CD]/80 flex items-center justify-center text-[#554E44] hover:bg-white hover:text-black transition-colors relative cursor-pointer"
-            title="Notifications"
-          >
-            <Bell size={15} />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#E1432E] rounded-full ring-2 ring-white"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
         </div>
       </header>
 

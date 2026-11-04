@@ -1,7 +1,7 @@
 /**
  * AdminTopBar — shared top action bar used by all admin pages.
  * Renders: global search, live-orders pill, notification bell, + New button.
- * Matches the header pattern from all Pelago HTML designs.
+ * Matches the header pattern from all SG Ecommerce HTML designs.
  */
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"

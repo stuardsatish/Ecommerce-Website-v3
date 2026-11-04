@@ -27,8 +27,8 @@ Flow: components use **semantic Tailwind classes** (`bg-primary`,
 `ThemeProvider` generates one CSS block per theme+mode from `themes.js`:
 
 ```css
-:root[data-theme="default"][data-mode="light"] { --color-primary: #A43B31; … }
-:root[data-theme="default"][data-mode="dark"]  { --color-primary: #D46A5E; … }
+:root[data-theme="default"][data-mode="light"] { --color-primary: #104945; … }
+:root[data-theme="default"][data-mode="dark"]  { --color-primary: #2DD4BF; … }
 ```
 
 and flips `data-theme` / `data-mode` on `<html>`. The cascade does the rest —
@@ -113,7 +113,7 @@ theme/mode.
 
 | Group | Tokens |
 |---|---|
-| Interactive | `primary` `primary-hover` `primary-fg` · `accent` `accent-strong` `accent-subtle` `accent-fg` · `link` `link-hover` · `ring` · `disabled` `disabled-fg` |
+| Interactive | `primary` `primary-hover` `primary-fg` `primary-subtle` `primary-bg` · `accent` `accent-strong` `accent-subtle` `accent-fg` · `link` `link-hover` · `ring` · `disabled` `disabled-fg` |
 | Surfaces | `background` `surface` `surface-muted` `surface-inverse` `overlay` |
 | Text / foreground | `ink` `body` `muted` `inverse` (disabled text → `disabled-fg`) |
 | Borders | `border` `border-strong` `border-subtle` |

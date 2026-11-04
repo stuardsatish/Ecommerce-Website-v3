@@ -1352,7 +1352,7 @@ Thank you.`;
 
 
   /* ============================================================
-     DESKTOP LAYOUT (lg+) — Pelago artisanal redesign
+     DESKTOP LAYOUT (lg+) — SG Ecommerce artisanal redesign
   ============================================================ */
   return (
     <>

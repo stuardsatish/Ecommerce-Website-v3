@@ -1,11 +1,11 @@
 import AdminSidebar from "./AdminSidebar"
 import { useSelector } from "react-redux"
 
-/* ─── Brand colour tokens (matching Pelago HTML designs) ─── */
+/* ─── Brand colour tokens (matching SG Ecommerce HTML designs) ─── */
 const CANVAS = "#EDE8E1"
 
 /**
- * AdminLayout — wraps every admin page with the new Pelago-style sidebar.
+ * AdminLayout — wraps every admin page with the new SG Ecommerce-style sidebar.
  *
  * Usage in App.jsx:
  *   <AdminRoute><AdminLayout><SomePage /></AdminLayout></AdminRoute>

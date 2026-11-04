@@ -12,7 +12,7 @@
 @import "tailwindcss";
 
 /* ── ADMIN LAYOUT — scoped to .admin-layout to avoid leaking into the
-   customer-facing storefront. Mirrors the Pelago design system colours. ── */
+   customer-facing storefront. Mirrors the SG Ecommerce design system colours. ── */
 .admin-layout {
   --adm-teal:        #104945;
   --adm-teal-dark:   #0c3936;
@@ -103,9 +103,14 @@ body:has(.admin-layout) {
       See src/theme/README.md.
   ═══════════════════════════════════════════════════════════════════════ */
     /* Interactive / brand */
-    --color-primary: #A43B31;
-    --color-primary-hover: #8A322A;
+    --color-primary: #104945;
+    --color-primary-hover: #0c3936;
     --color-primary-fg: #FFFFFF;
+    --color-primary-subtle: #E8F3F1;
+    --color-primary-bg: #E8F3F1;
+    --color-teal: #104945;
+    --color-teal-dark: #0c3936;
+    --color-teal-bg: #E8F3F1;
     --color-accent: #F59E0B;
     --color-accent-strong: #B45309;
     --color-accent-subtle: #FEF3C7;
@@ -153,7 +158,7 @@ body:has(.admin-layout) {
     --color-info-subtle: #DBEAFE;
     --color-info-border: #BFDBFE;
     /* Data viz / charts */
-    --color-chart-1: #A43B31;
+    --color-chart-1: #104945;
     --color-chart-2: #F59E0B;
     --color-chart-3: #2563EB;
     --color-chart-4: #16A34A;

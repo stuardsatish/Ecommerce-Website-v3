@@ -13,7 +13,15 @@ const POLL_MS = 60000
  * and whenever the inbox page changes something. It is a convenience: a failure to count never shows an error, the badge just stays as it was.
  * Renders nothing for a visitor who is not signed in.
  */
-const NotificationBell = ({ size = 18, className = "relative text-ink hover:text-accent-strong transition-colors", badgeClassName = "absolute -top-2 -right-2", color }) => {
+const NotificationBell = ({
+  size = 18,
+  className = "relative text-ink hover:text-accent-strong transition-colors",
+  badgeClassName = "absolute -top-2 -right-2",
+  color,
+  style,
+  badgeStyle,
+  onClick,
+}) => {
   const navigate = useNavigate()
   const signedIn = useSelector((state) => !!state.user.user)
   const [count, setCount] = useState(0)
@@ -42,18 +50,30 @@ const NotificationBell = ({ size = 18, className = "relative text-ink hover:text
 
   if (!signedIn) return null
   const shown = count > 99 ? "99+" : String(count)
+
+  const handleClick = (e) => {
+    if (onClick) {
+      onClick(e)
+    } else {
+      navigate("/notifications")
+    }
+  }
+
   return (
     <button
       type="button"
-      onClick={() => navigate("/notifications")}
+      onClick={handleClick}
       className={className}
-      style={color ? { color } : undefined}
+      style={{ ...(color ? { color } : {}), ...(style || {}) }}
       aria-label={count > 0 ? `Notifications, ${count} unread` : "Notifications"}
       title="Notifications"
     >
       <Bell size={size} />
       {count > 0 && (
-        <span className={`${badgeClassName} bg-accent-strong text-inverse text-[10px] rounded-full min-w-4 h-4 px-1 flex items-center justify-center font-bold`}>
+        <span
+          className={`${badgeClassName} bg-[#BE413B] text-white text-[10px] rounded-full min-w-4 h-4 px-1 flex items-center justify-center font-bold shadow-xs leading-none pointer-events-none`}
+          style={badgeStyle}
+        >
           {shown}
         </span>
       )}

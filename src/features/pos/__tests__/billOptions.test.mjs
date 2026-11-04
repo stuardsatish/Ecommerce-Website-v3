@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import {
   UNLIMITED, billLineKey, lineLabel, unitPriceOfOption, searchBillOptions, findOptionByCode, makeBillLine, normalizeBillLine,
-  addOptionToBill, changeLineQty, setLineQty, removeLine, billPayloadItems,
+  addOptionToBill, changeLineQty, setLineQty, setLinePrice, removeLine, billPayloadItems, manualBillingPayloadItems,
 } from '../billOptions.js'
 import { getPurchaseOptions } from '../../products/purchaseOptions.js'
 
@@ -143,6 +143,15 @@ describe('quantity edits', () => {
   it('removeLine removes exactly one option', () => {
     assert.deepEqual(removeLine(two(), 'prod_shirt::').map((l) => l.lineKey), ['prod_shirt::var_pink'])
   })
+  it('setLinePrice overrides ONE line\'s price; a negative / non-numeric value is a no-op', () => {
+    let lines = setLinePrice(two(), 'prod_shirt::var_pink', 250)
+    assert.deepEqual(lines.map((l) => l.finalPrice), [500, 250])
+    lines = setLinePrice(two(), 'prod_shirt::var_pink', -5)
+    assert.deepEqual(lines.map((l) => l.finalPrice), [500, 300])
+    lines = setLinePrice(two(), 'prod_shirt::var_pink', 'abc')
+    assert.deepEqual(lines.map((l) => l.finalPrice), [500, 300])
+    assert.deepEqual(setLinePrice(two(), 'prod_shirt::var_pink', 0).map((l) => l.finalPrice), [500, 0])
+  })
 })
 
 describe('what is sent to the server, and held bills from before variants', () => {
@@ -161,5 +170,10 @@ describe('what is sent to the server, and held bills from before variants', () =
     assert.deepEqual([n.lineKey, n.variantId, n.variantName], ['prod_pen::', '', ''])
     assert.equal(changeLineQty([n], 'prod_pen::', 1).lines[0].quantity, 3)
     assert.deepEqual(billPayloadItems([n]), [{ productId: 'prod_pen', variantId: '', quantity: 2 }])
+  })
+  it('manual billing payload carries the admin-edited price alongside (productId, variantId, quantity)', () => {
+    const p = shirt()
+    const lines = setLinePrice(addOptionToBill([], p, opt(p, 'var_pink')).lines, 'prod_shirt::var_pink', 275)
+    assert.deepEqual(manualBillingPayloadItems(lines), [{ productId: 'prod_shirt', variantId: 'var_pink', quantity: 1, unitPrice: 275 }])
   })
 })

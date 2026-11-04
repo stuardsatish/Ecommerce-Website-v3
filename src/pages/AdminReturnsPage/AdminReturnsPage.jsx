@@ -92,7 +92,7 @@ const AdminReturnsPage = () => {
           <p style={{ fontSize: "13px", color: MUTED, marginTop: "4px" }}>Review, decide, arrange the return, inspect. Nothing is refunded or restocked from this list directly.</p>
         </div>
 
-        {/* Tab switcher — Pelago pill style */}
+        {/* Tab switcher — SG Ecommerce pill style */}
         <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "16px", background: "#EDE8E2", borderRadius: "999px", padding: "3px", width: "fit-content" }} role="tablist">
           {TABS.map((t) => (
             <button key={t.key} role="tab" aria-selected={tab === t.key} onClick={() => update({ tab: t.key, open: "" })}

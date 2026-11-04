@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import { supabase } from "../../context/SupabaseConfig"
 import { mapProductRows } from "../../utils/supabaseProducts"
 import {
@@ -18,7 +19,7 @@ import {
   Loader2,
 } from "lucide-react"
 
-/* ── Pelago Typography Tokens ────────────────────────────────────────── */
+/* ── SG Ecommerce Typography Tokens ────────────────────────────────────────── */
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const DISPLAY = "'Space Grotesk', 'Plus Jakarta Sans', sans-serif"
 
@@ -469,16 +470,11 @@ const AddDiscountPage = () => {
             <Moon className="w-4 h-4" />
           </button>
 
-          <button
-            aria-label="View notifications"
-            onClick={() => toast.info("No unread notifications.")}
+          <NotificationBell
+            size={16}
             className="relative w-8 h-8 rounded-full bg-white border border-[#DFD9CD] flex items-center justify-center text-[#5D6B65] hover:text-black shadow-sm transition-colors cursor-pointer"
-            type="button"
-            title="Notifications"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
         </div>
       </header>
 

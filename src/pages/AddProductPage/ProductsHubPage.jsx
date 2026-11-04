@@ -5,7 +5,7 @@ import ProductsHubHeader from "./ProductsHubHeader"
 import AddProductPage from "./AddProductPage"
 import AllProductsOrdersAnalytics from "../AllProductsOrdersAnalytics/AllProductsOrdersAnalytics"
 
-/* ── Pelago Design Tokens ── */
+/* ── SG Ecommerce Design Tokens ── */
 const FONT = "'Plus Jakarta Sans', 'Inter', sans-serif"
 
 const TABS = [

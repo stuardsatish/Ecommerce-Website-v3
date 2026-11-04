@@ -130,6 +130,8 @@ export function createReturnsService(client, deps = {}) {
       const d = await rpc('respond_to_request', { p_request_id: requestId, p_message: message || null, p_evidence: evidence })
       return { status: d.status }
     },
+    /** a free-form reply while the request is open (any status but rejected / closed / cancelled) - unlike respond(), this never changes the status */
+    async sendMessage(requestId, message) { await rpc('customer_message_request', { p_request_id: requestId, p_message: message }) },
     /** "I sent it myself": courier + tracking number of the parcel (customer-arranged returns) */
     async submitReturnTracking({ requestId, courierName, trackingNumber = null, trackingUrl = null, shippedAt = null }) {
       const d = await rpc('customer_submit_return_shipment', {

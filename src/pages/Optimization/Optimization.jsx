@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { useSettings } from "../../hooks/useSettings"
 import { supabase } from "../../context/SupabaseConfig"
 import { toast } from "react-toastify"
+import NotificationBell from "../../features/notifications/NotificationBell"
 import ReturnPolicyDefaultsCard from "../../features/products/admin/ReturnPolicyDefaultsCard"
 import CouriersCard from "../../features/orders/shipping/CouriersCard"
 import RequestReasonsCard from "../../features/returns/admin/RequestReasonsCard"
@@ -11,7 +12,7 @@ import {
   ShieldCheck, Banknote, Moon, Bell, ChevronDown, ChevronUp, Gift
 } from "lucide-react"
 
-/* ── Pelago Typography ────────────────────────────────────────────── */
+/* ── SG Ecommerce Typography ────────────────────────────────────────────── */
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const DISPLAY = "'Space Grotesk', 'Plus Jakarta Sans', sans-serif"
 
@@ -247,15 +248,11 @@ const Optimization = () => {
           </button>
 
           {/* Notification Bell Button */}
-          <button
-            onClick={() => toast.info("No unread notifications.")}
+          <NotificationBell
+            size={16}
             className="relative w-8 h-8 rounded-full bg-white border border-[#DFD9CD] flex items-center justify-center text-[#5D6B65] hover:text-black shadow-sm transition-colors cursor-pointer"
-            type="button"
-            title="Notifications"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-          </button>
+            badgeClassName="absolute -top-1 -right-1"
+          />
         </div>
       </header>
 

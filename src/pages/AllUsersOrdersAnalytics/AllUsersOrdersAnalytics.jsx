@@ -40,7 +40,7 @@ import RightDrawer from "../../components/Common/RightDrawer"
 import Pagination from "../../components/Pagination"
 
 /* ============================================================
-   PELAGO DESIGN TOKENS
+   SG Ecommerce DESIGN TOKENS
 ============================================================ */
 const FONT = "'Plus Jakarta Sans', 'Inter', sans-serif"
 const MONO = "'JetBrains Mono', monospace"
@@ -504,7 +504,7 @@ const AllUsersOrdersAnalytics = () => {
         const periodLabel = { today: "Today", week: "Last 7 Days", month: "Last 30 Days", custom: "Custom Range" }[filter] || filter
 
         const summary = [
-            ["Users & Orders Analytics — Pelago Store"],
+            ["Users & Orders Analytics — SG Ecommerce Store"],
             ["Period", periodLabel],
             ["Generated", new Date().toLocaleString("en-IN")],
             [],
@@ -724,7 +724,7 @@ const AllUsersOrdersAnalytics = () => {
                 </div>
             </div>
 
-            {/* CUSTOMER SEGMENT CARDS (5 Cards Grid from Pelago CustomerAnalytics.html) */}
+            {/* CUSTOMER SEGMENT CARDS (5 Cards Grid from SG Ecommerce CustomerAnalytics.html) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 mb-6">
                 {m.segmentCards.map((seg) => (
                     <div
@@ -827,7 +827,7 @@ const AllUsersOrdersAnalytics = () => {
                     <ResponsiveContainer width="100%" height={230}>
                         <AreaChart data={m.revenueSeries} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                             <defs>
-                                <linearGradient id="pelagoRev" x1="0" y1="0" x2="0" y2="1">
+                                <linearGradient id="SG EcommerceRev" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor={TEAL} stopOpacity={0.25} />
                                     <stop offset="95%" stopColor={TEAL} stopOpacity={0} />
                                 </linearGradient>
@@ -839,7 +839,7 @@ const AllUsersOrdersAnalytics = () => {
                                 formatter={(v) => [formatINR(v), "Revenue"]}
                                 contentStyle={{ background: "#172220", borderRadius: "10px", border: "none", color: "#FFF", fontSize: "12px", fontFamily: FONT }}
                             />
-                            <Area type="monotone" dataKey="revenue" stroke={TEAL} strokeWidth={2.5} fill="url(#pelagoRev)" />
+                            <Area type="monotone" dataKey="revenue" stroke={TEAL} strokeWidth={2.5} fill="url(#SG EcommerceRev)" />
                             <Area type="monotone" dataKey="target" stroke={TERRACOTTA} strokeWidth={1.8} strokeDasharray="4 3" fill="none" />
                         </AreaChart>
                     </ResponsiveContainer>

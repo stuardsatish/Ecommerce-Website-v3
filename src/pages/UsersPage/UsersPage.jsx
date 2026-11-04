@@ -397,7 +397,7 @@ const UsersPage = () => {
   }
 
   /* ============================== RENDER ============================== */
-  // Pelago design tokens
+  // SG Ecommerce design tokens
   const TEAL   = "#104945"
   const TEAL_L = "#DDF0EB"
   const WHITE  = "#FFFFFF"
@@ -407,7 +407,7 @@ const UsersPage = () => {
   const MUTED  = "#78716C"
   const FONT   = "'Plus Jakarta Sans','Inter',sans-serif"
 
-  // Avatar colour buckets (warm Pelago palette)
+  // Avatar colour buckets (warm SG Ecommerce palette)
   const avatarColor = (name) => {
     const palettes = [
       { bg: "#F6DDCC", fg: "#93441A" }, { bg: "#FAECD6", fg: "#8E5C1E" },

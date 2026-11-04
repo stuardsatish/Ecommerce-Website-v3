@@ -121,7 +121,7 @@ function readStored() {
  * Always reflects the currently-active theme + mode.
  * @param {string} token  e.g. "primary", "text-muted", "chart-1"
  * @param {string} [fallback]
- * @returns {string} e.g. "#A43B31"
+ * @returns {string} e.g. "#104945"
  */
 export function readCssColor(token, fallback = "") {
     if (typeof window === "undefined") return fallback;

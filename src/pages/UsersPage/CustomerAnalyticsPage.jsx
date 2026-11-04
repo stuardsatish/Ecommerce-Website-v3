@@ -56,7 +56,7 @@ const INK = "#171412"
 const MUTED = "#736B62"
 const CARD_BG = "#FFFFFF"
 
-/* Pastel avatar color palettes matching the Pelago design */
+/* Pastel avatar color palettes matching the SG Ecommerce design */
 const AVATAR_PALETTES = [
   { bg: "#FCE6DD", text: "#A64A2F" },
   { bg: "#FEF1D4", text: "#A6771F" },
@@ -168,7 +168,7 @@ const CustomerAnalyticsPage = ({
   // Starred customers
   const [starredIds, setStarredIds] = useState(() => {
     try {
-      const saved = localStorage.getItem("pelago_starred_customers")
+      const saved = localStorage.getItem("SG Ecommerce_starred_customers")
       return saved ? JSON.parse(saved) : ["cust-demo-1", "cust-demo-2", "cust-demo-4"]
     } catch {
       return ["cust-demo-1", "cust-demo-2", "cust-demo-4"]
@@ -200,7 +200,7 @@ const CustomerAnalyticsPage = ({
     setStarredIds((prev) => {
       const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
       try {
-        localStorage.setItem("pelago_starred_customers", JSON.stringify(next))
+        localStorage.setItem("SG Ecommerce_starred_customers", JSON.stringify(next))
       } catch (err) {
         console.error("Storage error:", err)
       }
@@ -822,7 +822,7 @@ const CustomerAnalyticsPage = ({
     }
 
     const summary = [
-      ["Pelago Customers & Segments Analytics"],
+      ["SG Ecommerce Customers & Segments Analytics"],
       ["Generated", new Date().toLocaleString("en-IN")],
       [],
       ["Metric", "Value"],
@@ -853,7 +853,7 @@ const CustomerAnalyticsPage = ({
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), "Overview")
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dataRows), "Top Spenders")
-    XLSX.writeFile(wb, `Pelago_Analytics_${new Date().toISOString().slice(0, 10)}.xlsx`)
+    XLSX.writeFile(wb, `SG Ecommerce_Analytics_${new Date().toISOString().slice(0, 10)}.xlsx`)
     toast.success(`Exported ${filteredCustomers.length} customers analytics to Excel.`)
   }
 

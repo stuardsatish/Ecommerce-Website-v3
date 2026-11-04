@@ -52,7 +52,7 @@ import {
 } from "../../utils/searchHistory";
 
 /* ============================================================
-   DESIGN TOKENS (matching Products.html Pelago palette)
+   DESIGN TOKENS (matching Products.html SG Ecommerce palette)
 ============================================================ */
 const TEAL = "#114A46";
 const TEAL_DARK = "#0B3633";
@@ -132,7 +132,7 @@ const Stars = ({ rating = 0, size = 12 }) => {
     );
 };
 
-/* ── PRODUCT CARD (Pelago HTML design) ── */
+/* ── PRODUCT CARD (SG Ecommerce HTML design) ── */
 const NewProductCard = ({
     product,
     onAddToCart,
@@ -1358,7 +1358,7 @@ const ProductsPage = () => {
     }
 
     /* ============================================================
-         DESKTOP / WEB LAYOUT — Pelago HTML design
+         DESKTOP / WEB LAYOUT — SG Ecommerce HTML design
       ============================================================ */
     return (
         <div

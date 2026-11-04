@@ -21,7 +21,7 @@ import autoTable from "jspdf-autotable"
 import { toast } from "react-toastify"
 import RightDrawer from "../../components/Common/RightDrawer"
 
-/* ============================== PELAGO DESIGN TOKENS ============================== */
+/* ============================== SG Ecommerce DESIGN TOKENS ============================== */
 const FONT = "'Plus Jakarta Sans', 'Inter', sans-serif"
 const MONO = "'JetBrains Mono', monospace"
 
@@ -845,7 +845,7 @@ const AllProductsOrdersAnalytics = ({
         }
         const periodStr = FILTERS.find((f) => f.key === filter)?.label || "Selected Period"
         const summary = [
-            ["Products & Orders Analytics — Pelago Store"],
+            ["Products & Orders Analytics — SG Ecommerce Store"],
             ["Period", periodStr],
             ["Generated", new Date().toLocaleString("en-IN")],
             [],

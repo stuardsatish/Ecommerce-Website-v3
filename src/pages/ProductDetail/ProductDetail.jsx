@@ -965,7 +965,7 @@ const ProductDetail = () => {
                     </div>
 
                     {/* ============================================================
-              DESKTOP LAYOUT (lg+) — Pelago design
+              DESKTOP LAYOUT (lg+) — SG Ecommerce design
           ============================================================ */}
                     <div
                         className="hidden lg:block"

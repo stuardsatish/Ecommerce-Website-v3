@@ -70,14 +70,17 @@ describe('customer calls', () => {
       cancel_return_request: { data: { ok: true, already: false, status: 'cancelled' }, error: null },
       respond_to_request: { data: { ok: true, status: 'pending_review' }, error: null },
       customer_submit_return_shipment: { data: { ok: true, status: 'return_in_transit', shipment_id: 's1' }, error: null },
+      customer_message_request: { data: { ok: true }, error: null },
     } })
     const svc = createReturnsService(c)
     assert.deepEqual(await svc.submit({ p_request_id: 'r1' }), { created: true, requestId: 'r1', requestNo: 'RET-2026-000001', status: 'pending_review' })
     assert.deepEqual(await svc.cancel('r1', 'changed my mind'), { already: false, status: 'cancelled' })
     assert.deepEqual(await svc.respond('r1', 'here', [{ path: 'p' }]), { status: 'pending_review' })
     assert.deepEqual(await svc.submitReturnTracking({ requestId: 'r1', courierName: 'India Post', trackingNumber: 'RR1' }), { status: 'return_in_transit', shipmentId: 's1' })
+    await svc.sendMessage('r1', 'any update?')
     assert.deepEqual(c.log[2], ['rpc', 'respond_to_request', { p_request_id: 'r1', p_message: 'here', p_evidence: [{ path: 'p' }] }])
     assert.deepEqual(c.log[3][2], { p_request_id: 'r1', p_courier_name: 'India Post', p_tracking_number: 'RR1', p_tracking_url: null, p_shipped_at: null })
+    assert.deepEqual(c.log[4], ['rpc', 'customer_message_request', { p_request_id: 'r1', p_message: 'any update?' }])
   })
   it('an RPC error becomes a thrown Error with the database message', async () => {
     const c = fakeClient({ rpcs: { create_return_request: { data: null, error: { code: '22023', message: 'Please add at least one photo (required for this reason)' } } } })
