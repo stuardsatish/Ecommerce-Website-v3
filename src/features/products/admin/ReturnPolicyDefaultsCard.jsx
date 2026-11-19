@@ -90,28 +90,41 @@ export default function ReturnPolicyDefaultsCard() {
         return
       }
 
-      // For each product, compute the correct policy based on its category
-      const updates = products.map((p) => {
+      // Group products by their computed policy so we can run one UPDATE per group
+      // instead of upsert (which requires all NOT NULL columns).
+      // Key = "retEnabled|retDays|excEnabled|excDays"
+      const groups = new Map()
+      for (const p of products) {
         const cat = String(p.category || "").trim().toLowerCase()
-        const noReturn = lists.noReturnCategories.some((c) => sameCategory(c, cat))
+        const noReturn   = lists.noReturnCategories.some((c)  => sameCategory(c, cat))
         const noExchange = lists.noExchangeCategories.some((c) => sameCategory(c, cat))
-        return {
-          id: p.id,
-          return_enabled: noReturn ? false : !!policy.returnEnabled,
-          return_window_days: noReturn ? null : (policy.returnEnabled ? Number(policy.returnDays) : null),
-          exchange_enabled: noExchange ? false : !!policy.exchangeEnabled,
-          exchange_window_days: noExchange ? null : (policy.exchangeEnabled ? Number(policy.exchangeDays) : null),
-        }
-      })
 
-      // Batch update in chunks of 100
+        const retEnabled  = noReturn   ? false : !!policy.returnEnabled
+        const retDays     = noReturn   ? null  : (policy.returnEnabled   ? Number(policy.returnDays)   : null)
+        const excEnabled  = noExchange ? false : !!policy.exchangeEnabled
+        const excDays     = noExchange ? null  : (policy.exchangeEnabled ? Number(policy.exchangeDays) : null)
+
+        const key = `${retEnabled}|${retDays}|${excEnabled}|${excDays}`
+        if (!groups.has(key)) {
+          groups.set(key, {
+            patch: { return_enabled: retEnabled, return_window_days: retDays, exchange_enabled: excEnabled, exchange_window_days: excDays },
+            ids: [],
+          })
+        }
+        groups.get(key).ids.push(p.id)
+      }
+
+      // For each unique policy, run a targeted UPDATE … WHERE id IN (…)
+      // Split into chunks of 100 ids to stay within URL-length limits.
       const CHUNK = 100
-      for (let i = 0; i < updates.length; i += CHUNK) {
-        const chunk = updates.slice(i, i + CHUNK)
-        const { error: updateErr } = await supabase
-          .from("products")
-          .upsert(chunk, { onConflict: "id" })
-        if (updateErr) throw updateErr
+      for (const { patch, ids } of groups.values()) {
+        for (let i = 0; i < ids.length; i += CHUNK) {
+          const { error: updateErr } = await supabase
+            .from("products")
+            .update(patch)
+            .in("id", ids.slice(i, i + CHUNK))
+          if (updateErr) throw updateErr
+        }
       }
 
       toast.success(`Applied return & exchange policy to ${products.length} existing product${products.length !== 1 ? "s" : ""}.`)
