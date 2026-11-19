@@ -9,6 +9,7 @@ import { mapOrderRows } from "../../utils/supabaseOrders"
 import CustomerHubHeader from "./CustomerHubHeader"
 import CustomerEveryonePage from "./CustomerEveryonePage"
 import CustomerAnalyticsPage from "./CustomerAnalyticsPage"
+import { CUSTOMER_CHANNELS } from "./customerChannels"
 
 /* ── Pelago design tokens ── */
 const FONT = "'Plus Jakarta Sans', sans-serif"
@@ -83,7 +84,7 @@ export const getDateBounds = (range = "Today", customFrom = "", customTo = "") =
     label = "All Time"
   }
 
-  return { startDate, endDate, prevStart, prevEnd, isAllTime, label }
+  return { startDate, endDate, prevStart, prevEnd, isAllTime, label, now }
 }
 
 const CustomersHubPage = () => {
@@ -112,6 +113,7 @@ const CustomersHubPage = () => {
 
   // Data state
   const [profiles, setProfiles] = useState([])
+  const [contacts, setContacts] = useState([])
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -159,13 +161,16 @@ const CustomersHubPage = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
-      const [{ data: profilesData }, { data: rawOrdersData, error: ordersError }] = await Promise.all([
+      const [{ data: profilesData }, { data: rawOrdersData, error: ordersError }, contactsResult] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
         queryOrdersWithShipments(
           (select) => supabase.from("orders").select(select).order("created_at", { ascending: false }),
           { admin: true }
         ),
+        supabase.from("billing_contacts").select("*").order("created_at", { ascending: false }),
       ])
+      if (contactsResult.error) console.error("Could not load saved customer contacts:", contactsResult.error)
+      setContacts(contactsResult.data || [])
 
       if (profilesData) setProfiles(profilesData)
 
@@ -218,6 +223,11 @@ const CustomersHubPage = () => {
       .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, fetchData)
       .subscribe()
 
+    const contactsChannel = supabase
+      .channel("hub-customers-contacts")
+      .on("postgres_changes", { event: "*", schema: "public", table: "billing_contacts" }, fetchData)
+      .subscribe()
+
     const ordersChannel = supabase
       .channel("hub-customers-orders")
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, fetchData)
@@ -225,6 +235,7 @@ const CustomersHubPage = () => {
 
     return () => {
       supabase.removeChannel(profilesChannel)
+      supabase.removeChannel(contactsChannel)
       supabase.removeChannel(ordersChannel)
     }
   }, [fetchData])
@@ -237,6 +248,9 @@ const CustomersHubPage = () => {
     // 1. Index profiles
     for (const p of profiles) {
       const email = p.email ? p.email.toLowerCase().trim() : ""
+      const matchedContact = contacts.find((contact) => contact.linked_user_id === p.id) ||
+        contacts.find((contact) => !contact.linked_user_id && email && String(contact.email || '').trim().toLowerCase() === email)
+      const matchedChannel = CUSTOMER_CHANNELS.find((channel) => channel.value.toLowerCase() === matchedContact?.category)?.value
       const name = p.name || p.full_name || (email ? email.split("@")[0] : "Customer")
       const addr = p.address
       const city =
@@ -253,7 +267,7 @@ const CustomersHubPage = () => {
         phone: p.phone || "",
         city,
         joinDate: p.created_at || new Date().toISOString(),
-        channel: p.channel || "Retail",
+        channel: matchedChannel || p.channel || "Retail",
         role: p.role || "user",
         status: p.status || "active",
         isStarred: starredIds.includes(p.id),
@@ -265,6 +279,25 @@ const CustomersHubPage = () => {
       if (email) {
         customersMap[email] = custObj
       }
+    }
+
+    // Saved contacts can exist without an auth account.
+    for (const contact of contacts) {
+      const email = String(contact.email || '').trim().toLowerCase()
+      const linked = (contact.linked_user_id && customersMap[contact.linked_user_id]) ||
+        (!contact.linked_user_id && email && customersMap[email])
+      if (linked) continue
+      const id = `contact:${contact.id}`
+      const channel = CUSTOMER_CHANNELS.find((c) => c.value.toLowerCase() === contact.category)?.value || ''
+      const customer = {
+        id, name: contact.name, subtitle: contact.email || '', email: contact.email || '',
+        phone: contact.phone || '', city: contact.address?.city || '', joinDate: contact.created_at,
+        channel, role: 'user', status: 'active', isStarred: starredIds.includes(id),
+        rawProfile: null, rawContact: contact, orders: [],
+      }
+      customersMap[id] = customer
+      if (email && !customersMap[email]) customersMap[email] = customer
+      if (contact.phone) customersMap[`phone:${String(contact.phone).replace(/\D/g, '')}`] = customer
     }
 
     // 2. Attach orders and discover unprofiled customers
@@ -284,6 +317,8 @@ const CustomersHubPage = () => {
         customer = customersMap[uid]
       } else if (email && customersMap[email]) {
         customer = customersMap[email]
+      } else if (phone && customersMap[`phone:${String(phone).replace(/\D/g, "")}`]) {
+        customer = customersMap[`phone:${String(phone).replace(/\D/g, "")}`]
       }
 
       if (!customer) {
@@ -296,7 +331,7 @@ const CustomersHubPage = () => {
           phone,
           city: city || "",
           joinDate: o.createdAt || o.created_at || new Date().toISOString(),
-          channel: "Retail",
+          channel: "",
           role: "user",
           status: "active",
           isStarred: starredIds.includes(fallbackId),
@@ -336,7 +371,7 @@ const CustomersHubPage = () => {
         : null
       const aov = ordersCount > 0 ? Math.round(totalSpent / ordersCount) : 0
       // profiles.channel is a real column now (migration 20261102_02) - Retail is its own default, not a spend guess
-      const channel = c.rawProfile?.channel || "Retail"
+      const channel = c.channel || c.rawProfile?.channel || ""
 
       // Period-filtered orders for this customer
       const periodOrders = sortedOrders.filter((ord) => {
@@ -371,7 +406,7 @@ const CustomersHubPage = () => {
         periodLastOrder,
       }
     })
-  }, [profiles, orders, starredIds, dateBounds])
+  }, [profiles, contacts, orders, starredIds, dateBounds])
 
   /* ── 6 KPI Metrics + Segment Calculation Based on Selected Filter ── */
   const metrics = useMemo(() => {
@@ -621,20 +656,23 @@ const CustomersHubPage = () => {
       return
     }
 
+    const email = newCustomerForm.email.trim().toLowerCase()
+    if (profiles.some((p) => String(p.email || '').trim().toLowerCase() === email) ||
+        contacts.some((c) => String(c.email || '').trim().toLowerCase() === email)) {
+      toast.error("A customer with this email already exists.")
+      return
+    }
     setSubmittingCustomer(true)
     try {
       const newRecord = {
         name: newCustomerForm.name.trim(),
         email: newCustomerForm.email.trim(),
-        phone: newCustomerForm.phone.trim(),
-        city: newCustomerForm.city.trim() || "Seattle",
-        channel: newCustomerForm.channel,
-        role: newCustomerForm.role || "user",
-        status: "active",
-        created_at: new Date().toISOString(),
+        phone: newCustomerForm.phone.trim() || null,
+        address: newCustomerForm.city.trim() ? { city: newCustomerForm.city.trim() } : null,
+        category: newCustomerForm.channel.toLowerCase(),
       }
 
-      const { error } = await supabase.from("profiles").insert([newRecord]).select()
+      const { error } = await supabase.from("billing_contacts").insert([newRecord]).select()
       if (error) throw error
 
       toast.success(`Customer "${newRecord.name}" created!`)
@@ -807,10 +845,7 @@ const CustomersHubPage = () => {
                     onChange={(e) => setNewCustomerForm({ ...newCustomerForm, channel: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl border border-[#D8D2C9] text-[13px] text-[#171412] bg-white focus:outline-hidden focus:border-[#0F4C4C]"
                   >
-                    <option value="Retail">Retail (online)</option>
-                    <option value="Friends">Friends</option>
-                    <option value="Retailer">Retailer</option>
-                    <option value="Wholesale">Wholesale</option>
+                    {CUSTOMER_CHANNELS.map((channel) => <option key={channel.value} value={channel.value}>{channel.label}</option>)}
                   </select>
                 </div>
               </div>

@@ -31,6 +31,7 @@ import {
 } from "lucide-react"
 
 import { supabase } from "../../context/SupabaseConfig"
+import { CUSTOMER_CHANNELS, channelLabel } from "./customerChannels"
 import RightDrawer from "../../components/Common/RightDrawer"
 
 /* ============================== DESIGN TOKENS ============================== */
@@ -473,6 +474,7 @@ const CustomerEveryonePage = ({
 
   const handleToggleSuspend = async () => {
     if (!selectedCustomer) return
+    if (!selectedCustomer.rawProfile) { toast.error("This customer has no storefront account to suspend."); return }
     const newStatus = selectedCustomer.status === "suspended" ? "active" : "suspended"
     try {
       if (!selectedCustomer.id.startsWith("cust-demo-")) {
@@ -491,16 +493,20 @@ const CustomerEveryonePage = ({
 
   const handleDeleteCustomer = async () => {
     if (!selectedCustomer) return
-    if (!window.confirm(`Delete ${selectedCustomer.name}? This will permanently remove their profile.`)) return
+    if (!selectedCustomer.rawProfile && !selectedCustomer.rawContact) { toast.error("This order-only customer has no saved record to delete."); return }
+    if (!window.confirm(`Delete ${selectedCustomer.name}? This will permanently remove their customer record.`)) return
     try {
       if (!selectedCustomer.id.startsWith("cust-demo-")) {
-        const { error } = await supabase.from("profiles").delete().eq("id", selectedCustomer.id)
+        const { error } = selectedCustomer.rawContact
+          ? await supabase.from("billing_contacts").delete().eq("id", selectedCustomer.rawContact.id)
+          : await supabase.from("profiles").delete().eq("id", selectedCustomer.id)
         if (error) throw error
       }
       toast.success("Customer removed.")
       setDrawerOpen(false)
       setSelectedCustomer(null)
-      fetchData()
+      if (sharedData?.refetchData) sharedData.refetchData()
+      else fetchData()
     } catch (err) {
       toast.error(`Could not delete customer: ${err.message}`)
     }
@@ -554,15 +560,12 @@ const CustomerEveryonePage = ({
       const newRecord = {
         name: newCustomerForm.name.trim(),
         email: newCustomerForm.email.trim(),
-        phone: newCustomerForm.phone.trim(),
-        city: newCustomerForm.city.trim() || "Seattle",
-        channel: newCustomerForm.channel,
-        role: newCustomerForm.role || "user",
-        status: "active",
-        created_at: new Date().toISOString(),
+        phone: newCustomerForm.phone.trim() || null,
+        address: newCustomerForm.city.trim() ? { city: newCustomerForm.city.trim() } : null,
+        category: newCustomerForm.channel.toLowerCase(),
       }
 
-      const { data, error } = await supabase.from("profiles").insert([newRecord]).select()
+      const { data, error } = await supabase.from("billing_contacts").insert([newRecord]).select()
       if (error) throw error
 
       toast.success(`Customer "${newRecord.name}" created!`)
@@ -842,7 +845,7 @@ const CustomerEveryonePage = ({
                 }`}
                 type="button"
               >
-                Retail <span className={channelFilter === "retail" ? "text-slate-300" : "text-[#A8A29E]"}>{counts.retail}</span>
+                Online customers <span className={channelFilter === "retail" ? "text-slate-300" : "text-[#A8A29E]"}>{counts.retail}</span>
               </button>
               <button
                 onClick={() => setChannelFilter("friends")}
@@ -864,7 +867,7 @@ const CustomerEveryonePage = ({
                 }`}
                 type="button"
               >
-                Retailer <span className={channelFilter === "retailer" ? "text-slate-300" : "text-[#A8A29E]"}>{counts.retailer}</span>
+                Retail businesses <span className={channelFilter === "retailer" ? "text-slate-300" : "text-[#A8A29E]"}>{counts.retailer}</span>
               </button>
               <button
                 onClick={() => setChannelFilter("wholesale")}
@@ -1005,7 +1008,7 @@ const CustomerEveryonePage = ({
 
                       {/* City */}
                       <td className="py-4 px-4 text-[#44403C] font-medium whitespace-nowrap">
-                        {c.city || "Seattle"}
+                        {c.city || "—"}
                       </td>
 
                       {/* Orders */}
@@ -1132,7 +1135,7 @@ const CustomerEveryonePage = ({
                 </p>
                 <div className="flex items-center space-x-2 mt-2">
                   <span className="bg-[#DDF0EB] text-[#0F4C4C] text-[10.5px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    {selectedCustomer.channel || "Retail"}
+                    {channelLabel(selectedCustomer.channel)}
                   </span>
                   <span
                     className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
@@ -1433,25 +1436,7 @@ const CustomerEveryonePage = ({
                     }
                     className="w-full px-3.5 py-2 text-[13px] rounded-xl border border-[#D8D2C9] bg-white text-[#171412] focus:outline-none focus:ring-1 focus:ring-[#0F4C4C]"
                   >
-                    <option value="Retail">Retail (online)</option>
-                    <option value="Friends">Friends</option>
-                    <option value="Retailer">Retailer</option>
-                    <option value="Wholesale">Wholesale</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[12px] font-bold text-[#171412] mb-1">
-                    Role
-                  </label>
-                  <select
-                    value={newCustomerForm.role}
-                    onChange={(e) =>
-                      setNewCustomerForm((prev) => ({ ...prev, role: e.target.value }))
-                    }
-                    className="w-full px-3.5 py-2 text-[13px] rounded-xl border border-[#D8D2C9] bg-white text-[#171412] focus:outline-none focus:ring-1 focus:ring-[#0F4C4C]"
-                  >
-                    <option value="user">User / Buyer</option>
-                    <option value="admin">Admin</option>
+                    {CUSTOMER_CHANNELS.map((channel) => <option key={channel.value} value={channel.value}>{channel.label}</option>)}
                   </select>
                 </div>
               </div>
