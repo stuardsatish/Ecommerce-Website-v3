@@ -1200,9 +1200,9 @@ const ProductDetail = () => {
                                                 <button
                                                     onClick={handleAddToCartDesktop}
                                                     className="w-full flex items-center justify-center"
-                                                    style={{ height: "52px", borderRadius: "14px", gap: "10px", background: "#A84D38", color: "#FFFFFF", fontWeight: 700, fontSize: "14px", letterSpacing: "0.8px", textTransform: "uppercase", boxShadow: "0 4px 14px rgba(168,77,56,0.3)", transition: "all 0.2s", cursor: "pointer" }}
-                                                    onMouseEnter={e => e.currentTarget.style.background = "#8F3E2C"}
-                                                    onMouseLeave={e => e.currentTarget.style.background = "#A84D38"}
+                                                    style={{ height: "52px", borderRadius: "14px", gap: "10px", background: "#114A46", color: "#FFFFFF", fontWeight: 700, fontSize: "14px", letterSpacing: "0.8px", textTransform: "uppercase", boxShadow: "0 4px 14px rgba(17,74,70,0.3)", transition: "all 0.2s", cursor: "pointer" }}
+                                                    onMouseEnter={e => e.currentTarget.style.background = "#0B3633"}
+                                                    onMouseLeave={e => e.currentTarget.style.background = "#114A46"}
                                                 >
                                                     <ShoppingCart size={18} />
                                                     Add to Cart · {formatINR(priceNum * quantity)}
@@ -1224,8 +1224,16 @@ const ProductDetail = () => {
                                             <div className="flex items-start" style={{ gap: "10px", background: "rgba(247,245,240,0.6)", borderRadius: "12px", padding: "12px" }}>
                                                 <Shield size={18} style={{ color: "#114A46", flexShrink: 0, marginTop: "1px" }} />
                                                 <div>
-                                                    <p style={{ fontSize: "12px", fontWeight: 700, color: "#1E2524" }}>1-Year Guarantee</p>
-                                                    <p style={{ fontSize: "11px", color: "#7A8481" }}>Brand warranty covered</p>
+                                                    <p style={{ fontSize: "12px", fontWeight: 700, color: "#1E2524" }}>
+                                                        {activeOption?.returnPolicy?.enabled !== false
+                                                            ? `${activeOption?.returnPolicy?.days ?? 7}-Day Returns`
+                                                            : "No Returns"}
+                                                    </p>
+                                                    <p style={{ fontSize: "11px", color: "#7A8481" }}>
+                                                        {activeOption?.exchangePolicy?.enabled !== false
+                                                            ? `${activeOption?.exchangePolicy?.days ?? 7}-day exchange window`
+                                                            : "No exchanges"}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>

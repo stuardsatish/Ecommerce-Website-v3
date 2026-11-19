@@ -71,7 +71,7 @@ export function OptionMeta({ product, selectedVariant }) {
     const o = options.find((x) => x.variantId === id) || options[0]
     if (!o) return null
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "12px", color: "var(--color-body)" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "12px", color: "var(--color-body)", marginTop: "10px" }}>
             {o.sku ? <span>SKU: <strong style={{ color: "var(--color-ink)" }}>{o.sku}</strong></span> : null}
             <span>{policySummary(o)} <span style={{ color: "var(--color-muted)" }}>(from delivery)</span></span>
         </div>

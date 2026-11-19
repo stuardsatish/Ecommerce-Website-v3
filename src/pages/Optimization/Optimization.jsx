@@ -81,7 +81,7 @@ const Optimization = () => {
 
   // Live today stats
   const [today, setToday] = useState({ count: 0, revenue: 0 })
-  const [showAdvancedPolicies, setShowAdvancedPolicies] = useState(false)
+  const [showAdvancedPolicies, setShowAdvancedPolicies] = useState(true)
 
   // Sync state with hook data when loaded
   useEffect(() => {

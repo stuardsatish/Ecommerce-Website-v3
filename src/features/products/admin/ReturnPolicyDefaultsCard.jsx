@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { Loader2, RotateCcw, Save } from "lucide-react"
+import { Loader2, RefreshCw, RotateCcw, Save } from "lucide-react"
 import { toast } from "react-toastify"
 import { supabase } from "../../../context/SupabaseConfig"
 import { getReturnPolicyDefaults, saveReturnPolicyDefaults } from "../../../services/settingsService"
@@ -7,10 +7,8 @@ import PolicyFields from "./PolicyFields"
 import { categoryListsFromSettings, policyError, policyFromSettings, policyToSettings } from "./productForm"
 
 // Admin ▸ Optimization: the STORE-WIDE return / exchange defaults (settings.returnPolicyDefaults).
-// What they do: pre-fill the policy of every NEW product (and bulk-import rows that leave the policy blank). What they do NOT do:
-// change existing products, or the policy an order was bought under. The two category lists answer "which categories are not
-// returnable / exchangeable by default" (perishables, customised items …): a new product in such a category starts with that
-// policy OFF — the admin can still switch it back on for that one product.
+// What they do: pre-fill the policy of every NEW product (and bulk-import rows that leave the policy blank).
+// "Apply to existing products" pushes the current defaults to all matching existing products too.
 // The database validates the same rules (windows 1–365 while enabled, none while disabled).
 
 const sameCategory = (a, b) => String(a).trim().toLowerCase() === String(b).trim().toLowerCase()
@@ -18,6 +16,7 @@ const sameCategory = (a, b) => String(a).trim().toLowerCase() === String(b).trim
 export default function ReturnPolicyDefaultsCard() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [applying, setApplying] = useState(false)
   const [policy, setPolicy] = useState(() => policyFromSettings(null))
   const [lists, setLists] = useState({ noReturnCategories: [], noExchangeCategories: [] })
   const [known, setKnown] = useState([])     // categories that exist in the catalogue
@@ -71,6 +70,59 @@ export default function ReturnPolicyDefaultsCard() {
     }
   }
 
+  // Push the current defaults to ALL existing products, respecting per-category on/off overrides.
+  const handleApplyToExisting = async () => {
+    const problem = policyError(policy)
+    if (problem) { toast.error(`Fix validation errors first: ${problem}`); return }
+    setApplying(true)
+    try {
+      // First save the settings so they're consistent
+      await saveReturnPolicyDefaults(policyToSettings(policy, lists))
+
+      // Fetch all products (id + category)
+      const { data: products, error: fetchErr } = await supabase
+        .from("products")
+        .select("id, category")
+      if (fetchErr) throw fetchErr
+
+      if (!products || products.length === 0) {
+        toast.info("No existing products found.")
+        return
+      }
+
+      // For each product, compute the correct policy based on its category
+      const updates = products.map((p) => {
+        const cat = String(p.category || "").trim().toLowerCase()
+        const noReturn = lists.noReturnCategories.some((c) => sameCategory(c, cat))
+        const noExchange = lists.noExchangeCategories.some((c) => sameCategory(c, cat))
+        return {
+          id: p.id,
+          return_enabled: noReturn ? false : !!policy.returnEnabled,
+          return_window_days: noReturn ? null : (policy.returnEnabled ? Number(policy.returnDays) : null),
+          exchange_enabled: noExchange ? false : !!policy.exchangeEnabled,
+          exchange_window_days: noExchange ? null : (policy.exchangeEnabled ? Number(policy.exchangeDays) : null),
+        }
+      })
+
+      // Batch update in chunks of 100
+      const CHUNK = 100
+      for (let i = 0; i < updates.length; i += CHUNK) {
+        const chunk = updates.slice(i, i + CHUNK)
+        const { error: updateErr } = await supabase
+          .from("products")
+          .upsert(chunk, { onConflict: "id" })
+        if (updateErr) throw updateErr
+      }
+
+      toast.success(`Applied return & exchange policy to ${products.length} existing product${products.length !== 1 ? "s" : ""}.`)
+    } catch (err) {
+      console.error("Failed to apply policy to existing products:", err)
+      toast.error("Failed to apply policy to existing products.")
+    } finally {
+      setApplying(false)
+    }
+  }
+
   const reset = () => { setPolicy(policyFromSettings(null)); setLists({ noReturnCategories: [], noExchangeCategories: [] }) }
 
   if (loading) {
@@ -89,8 +141,8 @@ export default function ReturnPolicyDefaultsCard() {
             <RotateCcw className="text-amber-600" size={22} /> Return &amp; Exchange Defaults
           </h2>
           <p className="text-neutral-500 text-sm mt-1">
-            What a NEW product starts with (and what a bulk-import row gets when it leaves the policy blank). Existing products and
-            existing orders are never changed by this page; each product can still override it in its own form.
+            Sets the default policy for NEW products and bulk imports. Use <strong>Apply to existing products</strong> to push
+            these values to products already in the catalogue (their individual settings will be overwritten).
           </p>
         </div>
 
@@ -122,13 +174,19 @@ export default function ReturnPolicyDefaultsCard() {
 
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
           <button
-            type="button" onClick={reset} disabled={saving}
+            type="button" onClick={reset} disabled={saving || applying}
             className="px-5 h-12 rounded-xl font-bold text-sm border border-neutral-300 text-neutral-700 hover:bg-neutral-50 cursor-pointer"
           >
             Reset to 7 / 7
           </button>
           <button
-            type="submit" disabled={saving}
+            type="button" onClick={handleApplyToExisting} disabled={saving || applying}
+            className={`px-5 h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border transition-all ${applying ? "bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed" : "border-blue-600 text-blue-700 hover:bg-blue-50 cursor-pointer"}`}
+          >
+            {applying ? <><Loader2 size={16} className="animate-spin" /> Applying…</> : <><RefreshCw size={16} /> Apply to existing products</>}
+          </button>
+          <button
+            type="submit" disabled={saving || applying}
             className={`px-6 h-12 rounded-xl font-bold text-white text-sm tracking-wide flex items-center justify-center gap-2 shadow-md transition-all ${saving ? "bg-neutral-300 text-neutral-500 cursor-not-allowed shadow-none" : "bg-amber-600 hover:bg-amber-700 active:scale-[0.99] cursor-pointer"}`}
           >
             {saving ? <><Loader2 size={16} className="animate-spin" /> Saving…</> : <><Save size={16} /> Save defaults</>}

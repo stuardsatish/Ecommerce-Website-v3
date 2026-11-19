@@ -1121,7 +1121,7 @@ const ProductsPage = () => {
                     className="px-5"
                     style={{ paddingTop: "140px", paddingBottom: "72px" }}
                 >
-                    {!loading && recentlyViewedProducts.length > 0 && (
+                    {!loading && recentlyViewedProducts.length > 0 && !selectedCategories.length && !search && minPrice === 0 && minRating === 0 && !sort && (
                         <div style={{ marginBottom: "24px" }}>
                             <h2
                                 style={{
@@ -1687,8 +1687,8 @@ const ProductsPage = () => {
                         </div>
                     </div>
 
-                    {/* Recently viewed */}
-                    {!loading && recentlyViewedProducts.length > 0 && (
+                    {/* Recently viewed — only shown when no filter is active */}
+                    {!loading && recentlyViewedProducts.length > 0 && activeChip === "all" && !deskSearch && !selectedDepartments.length && !priceMin && !priceMax && !ratingThresholds.length && !availability.length && (
                         <div>
                             <div style={{
                                 display: "flex", alignItems: "center", justifyContent: "space-between",
