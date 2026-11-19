@@ -23,6 +23,8 @@ export type CreateOrderParams = {
   promoCode: string;
   promoDiscount: number;
   total: number;
+  gift?: { wrap: boolean; message: string } | null;
+  giftCharge?: number;
   razorpayOrderId?: string | null;
   razorpayPaymentId?: string | null;
 };
@@ -69,7 +71,7 @@ export function toOrderItemsJson(items: GstLineItem[]) {
  * errors were handled.
  */
 export async function createOrderTx(admin: SupabaseClient, p: CreateOrderParams) {
-  const { data, error } = await admin.rpc("create_order_tx", {
+  const { data, error } = await admin.rpc(p.gift ? "create_order_with_gift_tx" : "create_order_tx", {
     p_order_id: p.orderId,
     p_user_id: p.userId,
     p_items: toOrderItemsJson(p.items),
@@ -91,6 +93,7 @@ export async function createOrderTx(admin: SupabaseClient, p: CreateOrderParams)
     p_total: p.total,
     p_razorpay_order_id: p.razorpayOrderId ?? null,
     p_razorpay_payment_id: p.razorpayPaymentId ?? null,
+    ...(p.gift ? { p_gift: p.gift, p_gift_cost: p.giftCharge ?? 0 } : {}),
   });
 
   if (error) {

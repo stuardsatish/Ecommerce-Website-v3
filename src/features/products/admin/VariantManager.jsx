@@ -203,7 +203,7 @@ export default function VariantManager({ attributes, setAttributes, variantRows,
                                             <button type="button" aria-label={`Delete variant ${v.name}`} className="p-1 rounded" style={{ color: C.redText }}
                                                 onClick={(e) => {
                                                     e.stopPropagation()
-                                                    if (mode === "edit" && v.stockLoaded != null && !window.confirm(`Delete the variant "${v.name}"? Past orders keep their details; the variant disappears from the shop.`)) return
+                                                    if (!window.confirm(`Delete the variant "${v.name}"? Past orders keep their details; the variant disappears from the shop.`)) return
                                                     setVariantRows((r) => r.filter((_, j) => j !== i))
                                                     if (isEditing) setEditingId(null)
                                                 }}>

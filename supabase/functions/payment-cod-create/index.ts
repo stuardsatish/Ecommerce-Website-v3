@@ -20,7 +20,7 @@ import {
   sumGstTotals,
 } from "../_shared/cartPricing.ts";
 import { createOrderTx, StockError } from "../_shared/orderWriter.ts";
-import { clientIp, isGuestCodAllowed, isGuestUser, sanitizeGift, saveGiftOptions, validateGuestContact } from "../_shared/orderExtras.ts";
+import { clientIp, isGuestCodAllowed, isGuestUser, sanitizeGift, giftWrapCharge, validateGuestContact } from "../_shared/orderExtras.ts";
 
 const ORDERS_DAILY_CAP = Number(Deno.env.get("ORDERS_DAILY_CAP") || 2000);
 
@@ -123,8 +123,9 @@ Deno.serve(async (req) => {
     const { threshold, fee } = await getShippingConfig(admin);
     const shipping = subtotal >= threshold ? 0 : fee;
 
-    const subtotalRounded = Math.round(subtotal);
-    const total = Math.max(0, Math.round(subtotalRounded + shipping - promoDiscount));
+    const giftCharge = await giftWrapCharge(admin, gift);
+        const subtotalRounded = Math.round(subtotal);
+    const total = Math.max(0, Math.round(subtotalRounded + shipping + giftCharge - promoDiscount));
     if (total <= 0) {
       return jsonResponse(req, 400, { success: false, error: "Invalid order total" });
     }
@@ -159,6 +160,8 @@ Deno.serve(async (req) => {
         promoCode: appliedPromoCode,
         promoDiscount,
         total,
+        gift,
+        giftCharge,
       });
     } catch (e) {
       if (e instanceof StockError) {
@@ -168,7 +171,7 @@ Deno.serve(async (req) => {
     }
 
     // After the order exists; a failure here must not fail an order that is already placed.
-    await saveGiftOptions(admin, orderId, gift);
+    
 
     return jsonResponse(req, 200, { success: true, orderId });
   } catch (err) {

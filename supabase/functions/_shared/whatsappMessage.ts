@@ -29,6 +29,9 @@ export type ParsedMessage = {
     promoCode: string;
     promoDiscount: number;
     totalAmount: number;
+    giftWrap: boolean;
+    giftMessage: string;
+    giftWrapCharge: number;
 };
 
 export function parseWhatsAppMessage(text: string): ParsedMessage {
@@ -39,6 +42,7 @@ export function parseWhatsAppMessage(text: string): ParsedMessage {
         customerId: "", customerName: "", email: "", phone: "",
         items: [], totalItems: 0,
         subtotal: 0, shipping: 0, promoCode: "", promoDiscount: 0, totalAmount: 0,
+        giftWrap: false, giftMessage: "", giftWrapCharge: 0,
     };
 
     const pick = (line: string) => line.slice(line.toLowerCase().indexOf(":") + 1).trim();
@@ -53,6 +57,9 @@ export function parseWhatsAppMessage(text: string): ParsedMessage {
         else if (/^total items\s*:/.test(lc)) result.totalItems = parseInt(pick(line), 10) || 0;
         else if (/^subtotal\s*:/.test(lc)) result.subtotal = parsePrice(pick(line));
         else if (/^shipping\s*:/.test(lc)) result.shipping = parsePrice(pick(line));
+        else if (/^gift wrap\s*:/.test(lc)) result.giftWrap = /^yes$/i.test(pick(line));
+        else if (/^gift wrap charge\s*:/.test(lc)) result.giftWrapCharge = Math.max(0, parsePrice(pick(line)));
+        else if (/^gift message\s*:/.test(lc)) result.giftMessage = pick(line) === "None" ? "" : pick(line).slice(0, 300);
         else if (/^promo code\s*:/.test(lc)) {
             const v = pick(line);
             result.promoCode = v === "None" || v === "none" ? "" : v;

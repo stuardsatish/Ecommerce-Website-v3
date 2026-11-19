@@ -8,7 +8,7 @@
 import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
 import type { GstLineItem } from "./cartPricing.ts";
 import { createOrderTx, StockError } from "./orderWriter.ts";
-import { saveGiftOptions, type GiftOptions } from "./orderExtras.ts";
+import { type GiftOptions } from "./orderExtras.ts";
 import { recordUnfulfilledPayment } from "./paymentException.ts";
 
 export class NoPendingError extends Error {
@@ -34,6 +34,7 @@ type PendingPayload = {
     isInterState: boolean;
     /** Optional gift wrap/message captured at checkout (absent on older pending rows). */
     gift?: GiftOptions | null;
+    giftCharge?: number;
 };
 
 /**
@@ -87,6 +88,8 @@ export async function finalizeOrder(admin: SupabaseClient, razorpayOrderId: stri
         promoCode: pending.promoCode,
         promoDiscount: pending.promoDiscount,
         total: pending.total,
+        gift: pending.gift,
+        giftCharge: pending.giftCharge ?? 0,
         razorpayOrderId,
         razorpayPaymentId,
     }).catch(async (e: unknown) => {
@@ -107,7 +110,7 @@ export async function finalizeOrder(admin: SupabaseClient, razorpayOrderId: stri
 
     // Gift options ride along in the pending payload; applied once the order
     // exists. Safe to repeat — /verify and the webhook may both reach this point.
-    await saveGiftOptions(admin, order.id as string, pending.gift);
+    
 
     // Best-effort bookkeeping so the cleanup cron's `status = 'created'` filter
     // never sweeps up an order that already finalized. create_order_tx's own

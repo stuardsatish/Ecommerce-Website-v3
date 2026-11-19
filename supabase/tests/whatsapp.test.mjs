@@ -43,9 +43,16 @@ Total Amount : ₹1000.00
 Thank you.`
 
 // the same message as an OLD client sent it: no Ref lines
-const OLD = NEW.replace(/ Ref: .*\n/g, '')
+const OLD = NEW.replace(/^\s*Ref: .*\r?\n/gm, '')
 
 describe('parseWhatsAppMessage', () => {
+  it('reads gift wrap, fee and message from checkout', () => {
+    const m = parseWhatsAppMessage(NEW + '\nGift Wrap : Yes\nGift Wrap Charge : 75\nGift Message : Happy birthday')
+    assert.deepEqual([m.giftWrap, m.giftWrapCharge, m.giftMessage], [true, 75, 'Happy birthday'])
+    const legacy = parseWhatsAppMessage(NEW)
+    assert.deepEqual([legacy.giftWrap, legacy.giftWrapCharge, legacy.giftMessage], [false, 0, ''])
+  })
+
   it('reads customer, totals and every item (new format with Ref lines)', () => {
     const m = parseWhatsAppMessage(NEW)
     assert.deepEqual([m.customerId, m.customerName, m.email, m.phone], ['00000000-0000-0000-0000-0000000000a1', 'Alice', 'alice@example.test', '9999999999'])

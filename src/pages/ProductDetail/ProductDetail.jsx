@@ -613,7 +613,7 @@ const ProductDetail = () => {
                                                 </span>
                                                 {product.discountExpiry && (
                                                     <span style={{ width: "100%", fontWeight: 500, fontSize: "12px", color: "var(--color-accent-strong)", display: "flex", alignItems: "center", gap: "4px" }}>
-                                                        Offer ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                                                        Offer ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " IST"}
                                                     </span>
                                                 )}
                                             </>
@@ -1125,7 +1125,7 @@ const ProductDetail = () => {
                                             </div>
                                             {discountPct > 0 && product?.discountExpiry && (
                                                 <p style={{ fontSize: "11px", color: "#A84D38", fontWeight: 500, marginBottom: "8px" }}>
-                                                    Offer ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                                                    Offer ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " IST"}
                                                 </p>
                                             )}
                                             <div className="flex items-center justify-between" style={{ fontSize: "12px", paddingTop: "4px" }}>

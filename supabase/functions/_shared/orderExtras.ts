@@ -9,6 +9,18 @@ import type { SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 export type GiftOptions = { wrap: boolean; message: string };
 
+export async function giftWrapCharge(admin: SupabaseClient, gift: GiftOptions | null): Promise<number> {
+ if (!gift?.wrap) return 0;
+ const { data, error } = await admin.from("settings").select("data").eq("id", "giftWrapSettings").maybeSingle();
+ if (error) throw error;
+ const config = data?.data;
+ if (!config || config.giftWrapEnabled !== true) throw new Error("Gift wrapping is no longer available. Please refresh your cart.");
+ if (config.giftWrapFree !== false) return 0;
+ const charge = Number(config.giftWrapCost);
+ if (!Number.isFinite(charge) || charge < 0) throw new Error("Gift wrapping price is invalid.");
+ return charge;
+}
+
 /**
  * Normalises the client's `gift` object. Returns null when there is nothing to
  * store, and NEVER throws — a malformed gift field must not stop an order.

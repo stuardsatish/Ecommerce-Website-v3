@@ -47,8 +47,8 @@ export function loadRazorpayScript() {
  * @param {{ items: Array<{productId:string, quantity:number}>, promoCode?: string }} params
  * @returns {Promise<{orderId:string, amount:number, currency:string, subtotal:number, shipping:number, promoDiscount:number, total:number, keyId:string}>}
  */
-export async function createRazorpayOrder({ items, promoCode }) {
-  const { res, data } = await callFunction("payment-create-order", { items, promoCode: promoCode || "" })
+export async function createRazorpayOrder({ items, promoCode, gift }) {
+  const { res, data } = await callFunction("payment-create-order", { items, promoCode: promoCode || "", gift })
   if (!res.ok || !data.success) {
     throw new Error(data.error || "Could not start payment. Please try again.")
   }
@@ -63,8 +63,8 @@ export async function createRazorpayOrder({ items, promoCode }) {
  * @param {{ items: Array<{productId:string, quantity:number}>, promoCode?: string }} params
  * @returns {Promise<{ success:boolean, orderId:string }>}
  */
-export async function createCodOrder({ items, promoCode }) {
-  const { res, data } = await callFunction("payment-cod-create", { items, promoCode: promoCode || "" })
+export async function createCodOrder({ items, promoCode, gift }) {
+  const { res, data } = await callFunction("payment-cod-create", { items, promoCode: promoCode || "", gift })
   if (!res.ok || !data.success) {
     throw new Error(data.error || "Could not place your COD order. Please try again.")
   }

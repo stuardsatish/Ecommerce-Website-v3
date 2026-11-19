@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
         const serverSubtotal = Math.round(resolvedItems.reduce((s, it) => s + it.finalPrice * it.quantity, 0) * 100) / 100;
         const msgShipping = Number(parsed.shipping) || 0;
         const msgPromoDiscount = Number(parsed.promoDiscount) || 0;
-        const serverTotal = Math.max(0, Math.round(serverSubtotal + msgShipping - msgPromoDiscount));
+        const serverTotal = Math.max(0, Math.round(serverSubtotal + msgShipping + (parsed.giftWrap ? parsed.giftWrapCharge : 0) - msgPromoDiscount));
         const pastedTotal = Math.round(Number(parsed.totalAmount) || 0);
         const priceMismatch = Math.abs(serverTotal - pastedTotal) > PRICE_TOLERANCE;
 
@@ -214,6 +214,8 @@ Deno.serve(async (req) => {
                 promoCode: parsed.promoCode || "",
                 promoDiscount: msgPromoDiscount,
                 total: recordedTotal,
+                gift: parsed.giftWrap ? { wrap: true, message: parsed.giftMessage } : null,
+                giftCharge: parsed.giftWrap ? parsed.giftWrapCharge : 0,
             });
         } catch (e) {
             if (e instanceof StockError) {

@@ -21,7 +21,7 @@ import {
     sumGstTotals,
 } from "../_shared/cartPricing.ts";
 import { getRazorpay } from "../_shared/razorpay.ts";
-import { clientIp, isGuestUser, sanitizeGift, validateGuestContact } from "../_shared/orderExtras.ts";
+import { clientIp, isGuestUser, sanitizeGift, giftWrapCharge, validateGuestContact } from "../_shared/orderExtras.ts";
 
 // Hard ceiling on Razorpay order creations per UTC day, across ALL users —
 // tune via the ORDERS_DAILY_CAP secret. Same default as the original.
@@ -102,8 +102,9 @@ Deno.serve(async (req) => {
         const { threshold, fee } = await getShippingConfig(admin);
         const shipping = subtotal >= threshold ? 0 : fee;
 
+        const giftCharge = await giftWrapCharge(admin, gift);
         const subtotalRounded = Math.round(subtotal);
-        const total = Math.max(0, Math.round(subtotalRounded + shipping - promoDiscount));
+        const total = Math.max(0, Math.round(subtotalRounded + shipping + giftCharge - promoDiscount));
         if (total <= 0) {
             return jsonResponse(req, 400, { success: false, error: "Invalid order total" });
         }
@@ -139,6 +140,7 @@ Deno.serve(async (req) => {
                 totalIgst: gstTotals.totalIgst,
                 isInterState,
                 gift,
+                giftCharge,
             },
         });
         if (pendingErr) throw pendingErr;

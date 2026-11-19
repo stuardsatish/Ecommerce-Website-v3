@@ -273,7 +273,7 @@ const NewProductCard = ({
                             </span>
                             {product.discountExpiry && (
                                 <div style={{ fontSize: "10px", color: "#D97706", fontWeight: 500, width: "100%" }}>
-                                    Ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short" })}
+                                    Ends: {new Date(product.discountExpiry).toLocaleString("en-IN", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Kolkata" })} IST
                                 </div>
                             )}
                         </div>

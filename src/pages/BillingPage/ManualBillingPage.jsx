@@ -114,7 +114,7 @@ const ManualBillingPage = () => {
     })
   }
   const editPrice = (lineKey, value) => setBillItems((prev) => setLinePrice(prev, lineKey, value))
-  const removeItem = (lineKey) => setBillItems((prev) => removeLine(prev, lineKey))
+  const removeItem = (lineKey) => { if (window.confirm("Remove this item from the bill?")) setBillItems((prev) => removeLine(prev, lineKey)) }
 
   const handleSkuEnter = (e) => {
     if (e.key !== "Enter") return
