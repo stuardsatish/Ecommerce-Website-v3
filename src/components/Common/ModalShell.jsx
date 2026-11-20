@@ -8,19 +8,31 @@ import { X } from "lucide-react"
  */
 const ModalShell = ({ open, onClose, title, subtitle, width = 560, busy = false, children, footer }) => {
   const boxRef = useRef(null)
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose })
 
+  // Focus the modal box only on mount (open becoming true), never on subsequent re-renders.
+  // Putting focus() in a deps-tracked effect caused it to fire on every re-render (e.g. when
+  // the caller's onClose reference changed), which stole focus away from inputs inside the modal.
   useEffect(() => {
     if (!open) return undefined
-    const onKey = (e) => { if (e.key === "Escape" && !busy) onClose?.() }
+    boxRef.current?.focus()
+  }, [open])
+
+  // Keyboard handler and body scroll-lock are separated so they can track `busy` without
+  // touching focus. onCloseRef lets the handler always call the latest onClose without
+  // being listed as a dep (which would have re-registered the listener on every render).
+  useEffect(() => {
+    if (!open) return undefined
+    const onKey = (e) => { if (e.key === "Escape" && !busy) onCloseRef.current?.() }
     window.addEventListener("keydown", onKey)
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = "hidden"
-    boxRef.current?.focus()
     return () => {
       window.removeEventListener("keydown", onKey)
       document.body.style.overflow = prevOverflow
     }
-  }, [open, busy, onClose])
+  }, [open, busy])
 
   if (!open) return null
 
