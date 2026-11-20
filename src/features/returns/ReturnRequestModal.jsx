@@ -43,33 +43,57 @@ const ReturnRequestModal = ({ order, eligibility, reasons, user, initialType = "
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(null)
   const [catalog, setCatalog] = useState({})              // productId -> { product, variants } (exchange only)
+  const [catalogLoading, setCatalogLoading] = useState(false)
 
-  const items = eligibility?.items || []
+  const items = useMemo(() => eligibility?.items || [], [eligibility])
   const reasonList = useMemo(() => reasonOptions(reasons, type), [reasons, type])
   const selectedReason = reasonList.find((r) => r.code === reasonCode)
+  const [catalogError, setCatalogError] = useState(null)
 
   // exchange: what each product can be swapped for
   useEffect(() => {
     if (type !== "exchange") return undefined
     let alive = true
-    const ids = [...new Set(items.filter((i) => i.exchange?.eligible).map((i) => i.product_id))]
+    setCatalogError(null)
+    setCatalogLoading(true)
+    // filter out null/undefined product_ids to avoid bad queries
+    const ids = [...new Set(
+      items.filter((i) => i.exchange?.eligible && i.product_id).map((i) => i.product_id)
+    )].filter(Boolean)
     if (ids.length === 0) return undefined
     ;(async () => {
-      const [{ data: prods }, { data: vars }] = await Promise.all([
+      const [{ data: prods, error: e1 }, { data: vars, error: e2 }] = await Promise.all([
         supabase.from("products").select("id, title, price, discount, discount_expiry, has_variants, main_option_enabled, stock, track_inventory, status").in("id", ids),
         supabase.from("product_variants").select("id, product_id, name, price, stock, track_inventory, status").in("product_id", ids),
       ])
       if (!alive) return
+      if (e1 || e2) { setCatalogError("Could not load replacement options. Please try again."); setCatalogLoading(false); return }
       const next = {}
       for (const id of ids) next[id] = { product: (prods || []).find((p) => p.id === id) || null, variants: (vars || []).filter((v) => v.product_id === id) }
       setCatalog(next)
-    })().catch(() => { /* the exchange list simply shows no options; the server still validates */ })
+      setCatalogLoading(false)
+    })().catch((err) => { if (alive) { setCatalogError("Could not load replacement options. Please try again."); setCatalogLoading(false) } })
     return () => { alive = false }
   }, [type, items])
 
   const optionsFor = (line) => {
     const c = catalog[line.product_id]
-    return c ? replacementOptions(c.product, c.variants, { variantId: line.variant_id || "", unitPrice: line.unit_price }) : []
+    if (!c) {
+      // Catalog not yet loaded for this item (still fetching) → return empty for now
+      return []
+    }
+    // Product not found in DB (deleted/archived) or no product_id → offer "same as bought" from order line data
+    if (!c.product || !line.product_id) {
+      return [{
+        variantId: line.variant_id || "",
+        label: `${line.title || "This item"}${line.variant_name ? ` · ${line.variant_name}` : ""} (same as bought)`,
+        price: Number(line.unit_price) || 0,
+        inStock: true,
+        isSame: true,
+        difference: 0,
+      }]
+    }
+    return replacementOptions(c.product, c.variants, { variantId: line.variant_id || "", unitPrice: line.unit_price })
   }
   const setLine = (id, patch) => setLines((cur0) => ({ ...cur0, [id]: { ...cur0[id], ...patch } }))
 
@@ -187,7 +211,14 @@ const ReturnRequestModal = ({ order, eligibility, reasons, user, initialType = "
                           </option>
                         ))}
                       </select>
-                      {opts.length === 0 ? <p style={HINT_STYLE}>Loading the options...</p> : <p style={HINT_STYLE}>Any price difference is noted on your request; you are not charged or refunded automatically.</p>}
+                      {catalogError
+                        ? <p style={ERROR_STYLE}>{catalogError}</p>
+                        : catalogLoading
+                          ? <p style={HINT_STYLE}>Loading options…</p>
+                          : opts.length === 0
+                            ? <p style={HINT_STYLE}>No replacement options are available for this item.</p>
+                            : <p style={HINT_STYLE}>Any price difference is noted on your request; you are not charged or refunded automatically.</p>
+                      }
                     </div>
                   ) : null}
                 </div>
