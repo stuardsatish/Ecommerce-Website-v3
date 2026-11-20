@@ -79,23 +79,45 @@ const ReturnRequestModal = ({ order, eligibility, reasons, user, initialType = "
   const optionsFor = (line) => {
     const c = catalog[line.product_id]
     if (!c) {
-      // Catalog not yet loaded for this item (still fetching) → return empty for now
+      // Catalog not yet loaded (still fetching) → return empty for now
       return []
     }
-    // Product not found in DB (deleted/archived) or no product_id → offer "same as bought" from order line data
-    if (!c.product || !line.product_id) {
-      return [{
-        variantId: line.variant_id || "",
-        label: `${line.title || "This item"}${line.variant_name ? ` · ${line.variant_name}` : ""} (same as bought)`,
-        price: Number(line.unit_price) || 0,
-        inStock: true,
-        isSame: true,
-        difference: 0,
-      }]
+    // Build the fallback "same as bought" option from order line data — always available for exchange-eligible items
+    const sameAsBought = {
+      variantId: line.variant_id || "",
+      label: `${line.title || "This item"}${line.variant_name ? ` · ${line.variant_name}` : ""} (same as bought)`,
+      price: Number(line.unit_price) || 0,
+      inStock: true,
+      isSame: true,
+      difference: 0,
     }
-    return replacementOptions(c.product, c.variants, { variantId: line.variant_id || "", unitPrice: line.unit_price })
+    // Product not found in DB (deleted) → only the fallback
+    if (!c.product) return [sameAsBought]
+    // Build from live catalog
+    const opts = replacementOptions(c.product, c.variants, { variantId: line.variant_id || "", unitPrice: line.unit_price })
+    if (opts.length > 0) return opts
+    // replacementOptions returned [] (all variants inactive / draft product edge case)
+    // → still offer the same-as-bought option so exchange can be submitted
+    return [sameAsBought]
   }
   const setLine = (id, patch) => setLines((cur0) => ({ ...cur0, [id]: { ...cur0[id], ...patch } }))
+
+  // Once catalog loads, auto-select the default replacement for any already-selected exchange lines
+  useEffect(() => {
+    if (type !== "exchange" || catalogLoading || Object.keys(catalog).length === 0) return
+    setLines((cur0) => {
+      const next = { ...cur0 }
+      for (const line of items) {
+        const st = cur0[line.order_item_id]
+        if (!st?.selected || st.replacementVariantId !== undefined) continue
+        const opts = optionsFor(line)
+        const def = defaultReplacement(opts)
+        if (def !== null) next[line.order_item_id] = { ...st, replacementVariantId: def }
+      }
+      return next
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalog, catalogLoading])
 
   const toggle = (line, on) => {
     const patch = { selected: on }
@@ -207,7 +229,7 @@ const ReturnRequestModal = ({ order, eligibility, reasons, user, initialType = "
                         <option value="__none" disabled>Choose an option</option>
                         {opts.map((o) => (
                           <option key={o.variantId || "main"} value={o.variantId} disabled={!o.inStock}>
-                            {o.label}{o.isSame ? " (same as bought)" : ""} - {cur(o.price)}{o.difference ? ` (${o.difference > 0 ? "+" : "-"}${cur(Math.abs(o.difference))} vs. what you paid)` : ""}{o.inStock ? "" : " - out of stock"}
+                            {o.label} - {cur(o.price)}{o.difference ? ` (${o.difference > 0 ? "+" : "-"}${cur(Math.abs(o.difference))} vs. what you paid)` : ""}{o.inStock ? "" : " - out of stock"}
                           </option>
                         ))}
                       </select>
