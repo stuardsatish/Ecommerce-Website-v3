@@ -60,6 +60,19 @@ export const upsertCartItem = async (uid, product, quantity) => {
     { onConflict: "user_id,product_id,variant_id" }
   )
   if (error) console.error("Cart upsert error:", error)
+
+  // Silently register a price alert so the DB trigger sends a price-drop
+  // notification if the admin lowers the effective price later.
+  // set_price_alert() upserts on (user_id, product_id) — calling it again for
+  // the same product is safe and just refreshes the price_when_set baseline.
+  if (realProductId) {
+    try {
+      await supabase.rpc("set_price_alert", { p_product_id: String(realProductId) })
+    } catch (e) {
+      // Non-fatal: cart item is already saved.
+      console.warn("Could not set price alert for cart item:", e?.message || e)
+    }
+  }
 }
 
 export const parseCartIds = (productOrId, variantId = "") => {
