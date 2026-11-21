@@ -67,6 +67,9 @@ const EditProductPage = () => {
 
     const progressRef = useRef(null)
 
+    /* ── Track original pricing to detect price drops for notifications ── */
+    const originalPricingRef = useRef({ price: 0, discount: 0 })
+
     /* ── Fetch product ── */
     useEffect(() => {
         const fetch = async () => {
@@ -98,6 +101,12 @@ const EditProductPage = () => {
                 setTrackInventory(p.trackInventory)
                 setTagsText((p.tags || []).join(", "))
                 setPolicy(policyFromProduct(p))
+
+                // Capture original pricing so we can compare on save
+                originalPricingRef.current = {
+                    price: Number(p.price) || 0,
+                    discount: Number(p.discount) || 0,
+                }
 
                 setProductType(p.hasVariants ? "variant" : "single")
                 setAttributes(p.attributes || [])
@@ -214,6 +223,52 @@ const EditProductPage = () => {
                 p_expected_updated_at: loaded.updatedAt,
             })
             if (saveErr) throw saveErr
+
+            // 5. Send price-drop notifications to users who have this product in cart or wishlist
+            try {
+                const oldPrice = originalPricingRef.current.price
+                const oldDiscount = originalPricingRef.current.discount
+                const oldEffective = oldPrice * (1 - oldDiscount / 100)
+
+                const newPrice = Number(form.price) || 0
+                const newDiscount = Number(form.discount) || 0
+                const newEffective = newPrice * (1 - newDiscount / 100)
+
+                // Only notify if effective price dropped by more than 1 paisa
+                if (newEffective < oldEffective - 0.01) {
+                    const [cartResult, wishlistResult] = await Promise.all([
+                        supabase.from("cart_items").select("user_id").eq("product_id", prodId).not("user_id", "is", null),
+                        supabase.from("wishlist_items").select("user_id").eq("product_id", prodId).not("user_id", "is", null),
+                    ])
+
+                    const userIds = [...new Set([
+                        ...((cartResult.data || []).map((r) => r.user_id)),
+                        ...((wishlistResult.data || []).map((r) => r.user_id)),
+                    ])]
+
+                    if (userIds.length > 0) {
+                        const pctLabel = newDiscount > 0
+                            ? `${newDiscount}% off`
+                            : `now ₹${newEffective.toFixed(2)}`
+
+                        const notifications = userIds.map((uid) => ({
+                            user_id: uid,
+                            kind: "price_drop",
+                            title: `Price drop on ${form.title}`,
+                            body: `${form.title} is ${pctLabel}. Check it out before the offer ends!`,
+                            data: { type: "product", productId: prodId, title: form.title },
+                        }))
+
+                        await supabase.from("notifications").insert(notifications)
+                    }
+
+                    // Update ref so a second save uses the new price as the baseline
+                    originalPricingRef.current = { price: newPrice, discount: newDiscount }
+                }
+            } catch (notifErr) {
+                // Never block the product save because of a notification failure
+                console.warn("Could not send price-drop notifications:", notifErr)
+            }
 
             setUploadProgress(100)
             setSaved(true)
@@ -341,7 +396,7 @@ const EditProductPage = () => {
                             <input name="discount" type="number" value={form.discount} onChange={onField} placeholder="0" className={inputCls} />
                         </div>
                         <div className="md:col-span-2">
-                            <label className={labelCls}>Discount Expiry Date & Time</label>
+                            <label className={labelCls}>Discount Expiry Date &amp; Time</label>
                             <input name="discountExpiry" type="datetime-local" value={form.discountExpiry || ""} onChange={onField} className={inputCls} />
                         </div>
                         <div className="md:col-span-2">

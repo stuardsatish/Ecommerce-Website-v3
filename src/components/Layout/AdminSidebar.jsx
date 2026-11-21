@@ -150,7 +150,7 @@ function NavGroup({ icon, label, children, isOpen, onToggle, matchPaths = [], de
 }
 
 /* ─── Sub-link ─── */
-function SubNavItem({ label, to, dot }) {
+function SubNavItem({ label, to, dot, badge }) {
   const location = useLocation()
   const currentUrl = location.pathname + (location.search || "")
   const isDefaultView =
@@ -172,7 +172,12 @@ function SubNavItem({ label, to, dot }) {
     >
       {dot && isActive && <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: TEAL, display: "inline-block", flexShrink: 0 }} />}
       {!(dot && isActive) && <span style={{ width: "6px", height: "6px", display: "inline-block", flexShrink: 0 }} />}
-      {label}
+      <span style={{ flex: 1 }}>{label}</span>
+      {badge != null && badge > 0 && (
+        <span style={{ background: "#BE413B", color: WHITE, fontSize: "10px", fontWeight: 700, padding: "1px 5px", borderRadius: "9999px", marginLeft: "4px", flexShrink: 0 }}>
+          {badge > 99 ? "99+" : badge}
+        </span>
+      )}
     </NavLink>
   )
 }
@@ -197,6 +202,7 @@ const AdminSidebar = () => {
   const [productsOpen, setProductsOpen] = useState(() => location.pathname.startsWith("/admin/add-product") || location.pathname.startsWith("/admin/edit-product"))
   const [customersOpen, setCustomersOpen] = useState(() => location.pathname.startsWith("/admin/users"))
   const [unreadCount, setUnreadCount] = useState(0)
+  const [pendingReturnsCount, setPendingReturnsCount] = useState(0)
 
   useEffect(() => {
     let mounted = true
@@ -216,6 +222,28 @@ const AdminSidebar = () => {
       clearInterval(timer)
       document.removeEventListener("visibilitychange", onVisible)
       window.removeEventListener(NOTIFICATIONS_CHANGED, refresh)
+    }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+    const fetchReturnsCount = async () => {
+      try {
+        const { count } = await supabase
+          .from("return_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending_review")
+        if (mounted) setPendingReturnsCount(count || 0)
+      } catch {}
+    }
+    fetchReturnsCount()
+    const timer = setInterval(fetchReturnsCount, 60000)
+    const onVisible = () => { if (document.visibilityState === "visible") fetchReturnsCount() }
+    document.addEventListener("visibilitychange", onVisible)
+    return () => {
+      mounted = false
+      clearInterval(timer)
+      document.removeEventListener("visibilitychange", onVisible)
     }
   }, [])
 
@@ -294,7 +322,7 @@ const AdminSidebar = () => {
           >
             <SubNavItem label="To Pack & Ship" to="/admin/myorders?view=pack" dot />
             <SubNavItem label="All Orders" to="/admin/myorders?view=all" dot />
-            <SubNavItem label="Returns" to="/admin/myorders?view=returns" dot />
+            <SubNavItem label="Returns" to="/admin/myorders?view=returns" dot badge={pendingReturnsCount > 0 ? pendingReturnsCount : undefined} />
           </NavGroup>
 
           {/* Products collapsible */}
